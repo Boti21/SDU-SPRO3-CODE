@@ -50,19 +50,23 @@ void test_task2(void* pvParameters) {
 
 void app_main(void)
 {
-    gpio_reset_pin(2);
-    gpio_set_direction(2, GPIO_MODE_OUTPUT);
-
-    char* main_name = pcTaskGetName(NULL);
-    ESP_LOGI(main_name, "this is a task");
-
+    /* Initializing mutexes and semaphores */
     screen_mutex = xSemaphoreCreateMutex();
+
+
+    /* Little boot up message ;) */
+    char* main_name = pcTaskGetName(NULL); // A way to get the name of the current task
+    ESP_LOGI(main_name, "Program started..."); // The wayto print something to the terminal
+
 
     TaskHandle_t test_handle = NULL;
     xTaskCreate(test_task, "test_task", CUSTOM_STACK_SIZE, NULL, 2, &test_handle);
 
     TaskHandle_t test_handle2 = NULL;
     xTaskCreate(test_task2, "test_task2", CUSTOM_STACK_SIZE, NULL, 2, &test_handle2);
+
+    gpio_reset_pin(2);
+    gpio_set_direction(2, GPIO_MODE_OUTPUT);
 
     while(1) {
         vTaskDelay(150 / portTICK_PERIOD_MS);

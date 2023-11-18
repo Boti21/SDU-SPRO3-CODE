@@ -1,4 +1,3 @@
-.vscode
-build
-CMakeLists.txt
-sdkconfig
+!main/SPRO3-Firmware.c
+!ESP_pic.png
+!Pinout.png
