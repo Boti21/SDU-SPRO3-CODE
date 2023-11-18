@@ -1,3 +1,8 @@
 !main/SPRO3-Firmware.c
 !ESP_pic.png
 !Pinout.png
+
+.vscode
+*.txt
+build
+sdkconfig
