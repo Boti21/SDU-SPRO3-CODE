@@ -1,7 +1,7 @@
 {
     "version":            "1",
     "project_name":       "SPRO3-Firmware",
-    "project_version":    "f07b931-dirty",
+    "project_version":    "05b640e-dirty",
     "project_path":       "C:/Users/botib/SDU/SemesterProjects/SDU-SPRO3/SDU-SPRO3-CODE/SPRO3-Firmware",
     "idf_path":           "C:/Users/botib/esp/esp-idf",
     "build_dir":          "C:/Users/botib/SDU/SemesterProjects/SDU-SPRO3/SDU-SPRO3-CODE/SPRO3-Firmware/build",
