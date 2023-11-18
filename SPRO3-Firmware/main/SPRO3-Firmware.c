@@ -59,11 +59,13 @@ void app_main(void)
     ESP_LOGI(main_name, "Program started..."); // The wayto print something to the terminal
 
 
+    /* Task handles and task creation */
     TaskHandle_t test_handle = NULL;
     xTaskCreate(test_task, "test_task", CUSTOM_STACK_SIZE, NULL, 2, &test_handle);
 
     TaskHandle_t test_handle2 = NULL;
     xTaskCreate(test_task2, "test_task2", CUSTOM_STACK_SIZE, NULL, 2, &test_handle2);
+
 
     gpio_reset_pin(2);
     gpio_set_direction(2, GPIO_MODE_OUTPUT);
