@@ -46,7 +46,6 @@ void test_task2(void* pvParameters) {
         gpio_set_level(2, 0);
         vTaskDelay(150);
     }
-    
 }
 
 void app_main(void)
