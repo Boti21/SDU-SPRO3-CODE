@@ -17,7 +17,7 @@ SemaphoreHandle_t screen_mutex;
 #define CUSTOM_STACK_SIZE 2048
 
 /* Pin macros */
-#define ADC_INPUT
+// try to use macros for specific pins so they can be easily reassigned
 
 void test_task(void *pvParameters)
 {
