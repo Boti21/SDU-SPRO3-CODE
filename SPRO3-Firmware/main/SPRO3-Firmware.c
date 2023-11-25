@@ -31,10 +31,10 @@ void test_task(void *pvParameters)
 
     for (;;)
     {
-        xSemaphoreTake(screen_mutex, portMAX_DELAY);
+        xSemaphoreTake(screen_mutex, portMAX_DELAY); // Critical region started
         vTaskDelay(1000 / portTICK_PERIOD_MS);
         ESP_LOGI(test_task_name, "task");
-        xSemaphoreGive(screen_mutex);
+        xSemaphoreGive(screen_mutex); // Critical region ended
 
         vTaskDelay(400 / portTICK_PERIOD_MS);
     }
@@ -46,9 +46,9 @@ void test_task2(void *pvParameters)
 
     for (;;)
     {
-        xSemaphoreTake(screen_mutex, portMAX_DELAY);
+        xSemaphoreTake(screen_mutex, portMAX_DELAY); // Critical region started
         ESP_LOGI(test_task_name2, "task2");
-        xSemaphoreGive(screen_mutex);
+        xSemaphoreGive(screen_mutex); // Critical region ended
 
         gpio_set_level(2, 1);
         vTaskDelay(150);
