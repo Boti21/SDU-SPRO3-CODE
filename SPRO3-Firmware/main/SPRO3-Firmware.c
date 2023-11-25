@@ -6,6 +6,7 @@
 
 #include "driver/gpio.h"
 #include "driver/adc.h"
+#include "driver/timer.h"
 
 #include "esp_log.h"
 #include "esp_adc_cal.h"
@@ -15,6 +16,9 @@ SemaphoreHandle_t screen_mutex;
 
 /* Misc macros */
 #define CUSTOM_STACK_SIZE 2048
+#define TIMER_GROUP 0
+#define TIMER 0
+#define TIMER_PRESCALER 80 // 80 Mhz input signal --> microseconds counted
 
 /* Pin macros */   // try to use macros for specific pins so they can be easily reassigned
 
@@ -90,7 +94,7 @@ void app_main(void)
 // Usage: after calling the init function
 // calling the adc1_get_raw(A4) will return an int
 // Conversion Vout = Dout* Vmax/Dmax
-void init_adc(void){
+void init_adc(void) {
 
     // Configuration of ADC
     adc1_config_channel_atten(A4, ADC_ATTEN_DB_11); // (channel we want to put for attenuation, which attenuation do we want)
@@ -100,4 +104,14 @@ void init_adc(void){
     // Set pin GPO32 as an input
     gpio_num_t pinNumber = GPIO_NUM_32;
     gpio_set_direction(pinNumber, GPIO_MODE_INPUT);
+}
+
+void init_ultrasonic(void) {
+
+    // Making config struct
+    timer_config_t timer_config;
+    timer_set_divider((timer_group_t)TIMER_GROUP, (timer_idx_t)TIMER, (uin32t_t)TIMER_PRESCALER);
+    
+
+    timer_init(timer_config);
 }
