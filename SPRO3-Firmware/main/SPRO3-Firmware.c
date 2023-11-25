@@ -16,8 +16,14 @@ SemaphoreHandle_t screen_mutex;
 /* Misc macros */
 #define CUSTOM_STACK_SIZE 2048
 
-/* Pin macros */
-// try to use macros for specific pins so they can be easily reassigned
+/* Pin macros */   // try to use macros for specific pins so they can be easily reassigned
+
+//GPIO 32 => ADC 1, CHANNEL 4
+#define A4 ADC1_CHANNEL_4 // which analog is used, The channel depends on which GPO we want to use
+
+/* Prototypes */
+void init_adc(void);
+
 
 void test_task(void *pvParameters)
 {
@@ -77,4 +83,21 @@ void app_main(void)
         ESP_LOGI(main_name, "this is a task");
         xSemaphoreGive(screen_mutex);
     }
+}
+
+/* Functions */
+
+// Usage: after calling the init function
+// calling the adc1_get_raw(A4) will return an int
+// Conversion Vout = Dout* Vmax/Dmax
+void init_adc(void){
+
+    // Configuration of ADC
+    adc1_config_channel_atten(A4, ADC_ATTEN_DB_11); // (channel we want to put for attenuation, which attenuation do we want)
+    // Attenuation of db 11 is the biggest one, it allows the biggest range of reading
+    adc1_config_width(ADC_WIDTH_BIT_12); // The resolution of all the adc1; 12 bits
+
+    // Set pin GPO32 as an input
+    gpio_num_t pinNumber = GPIO_NUM_32;
+    gpio_set_direction(pinNumber, GPIO_MODE_INPUT);
 }
