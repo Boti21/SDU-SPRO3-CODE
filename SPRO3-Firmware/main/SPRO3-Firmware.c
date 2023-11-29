@@ -11,22 +11,28 @@
 #include "esp_log.h"
 #include "esp_adc_cal.h"
 
-// Semaphores and Mutexes
-SemaphoreHandle_t screen_mutex;
 
 /* Misc macros */
 #define CUSTOM_STACK_SIZE 2048
 #define TIMER_GROUP 0
 #define TIMER 0
-#define TIMER_PRESCALER 80 // 80 Mhz input signal --> microseconds counted
+#define TIMER_PRESCALER (uint32_t)80 //80 // 80 Mhz input signal --> microseconds counted
 
 /* Pin macros */   // try to use macros for specific pins so they can be easily reassigned
 
 //GPIO 32 => ADC 1, CHANNEL 4
-#define A4 ADC1_CHANNEL_4 // which analog is used, The channel depends on which GPO we want to use
+#define A4 ADC1_CHANNEL_4 // which analog is used, The channel depends on which GPIO we want to use
+
+// Semaphores and Mutexes
+SemaphoreHandle_t screen_mutex;
+
+/* Tasks */
+TaskHandle_t test_handle = NULL;
+TaskHandle_t test_handle2 = NULL;
 
 /* Prototypes */
 void init_adc(void);
+void init_ultrasonic(void);
 
 
 void test_task(void *pvParameters)
@@ -70,22 +76,30 @@ void app_main(void)
     char *main_name = pcTaskGetName(NULL);     // A way to get the name of the current task
     ESP_LOGI(main_name, "Program started..."); // The wayto print something to the terminal
 
-    /* Task handles and task creation */
-    TaskHandle_t test_handle = NULL;
-    xTaskCreate(test_task, "test_task", CUSTOM_STACK_SIZE, NULL, 2, &test_handle);
-
-    TaskHandle_t test_handle2 = NULL;
-    xTaskCreate(test_task2, "test_task2", CUSTOM_STACK_SIZE, NULL, 2, &test_handle2);
+    /* Task creation */
+    //xTaskCreate(test_task, "test_task", CUSTOM_STACK_SIZE, NULL, 2, &test_handle);
+    //xTaskCreate(test_task2, "test_task2", CUSTOM_STACK_SIZE, NULL, 2, &test_handle2);
 
     gpio_reset_pin(2);
     gpio_set_direction(2, GPIO_MODE_OUTPUT);
 
+    // Testing
+    long unsigned int timer_val = 0;
+    init_ultrasonic();
+
     while (1)
     {
+        timer_start((timer_group_t)TIMER_GROUP, (timer_idx_t)TIMER);
         vTaskDelay(150 / portTICK_PERIOD_MS);
+        timer_get_counter_value((timer_group_t)TIMER_GROUP, (timer_idx_t)TIMER, &timer_val);
+        ESP_LOGI(main_name, "%lu", timer_val);
+        //timer_pause((timer_group_t)TIMER_GROUP, (timer_idx_t)TIMER);
+        //timer_set_counter_value((timer_group_t)TIMER_GROUP, (timer_idx_t)TIMER, 0);
+        /*
         xSemaphoreTake(screen_mutex, portMAX_DELAY);
         ESP_LOGI(main_name, "this is a task");
         xSemaphoreGive(screen_mutex);
+        */
     }
 }
 
@@ -108,10 +122,34 @@ void init_adc(void) {
 
 void init_ultrasonic(void) {
 
-    // Making config struct
-    timer_config_t timer_config;
-    timer_set_divider((timer_group_t)TIMER_GROUP, (timer_idx_t)TIMER, (uin32t_t)TIMER_PRESCALER);
-    
+    timer_config_t test;
+    test.alarm_en = TIMER_ALARM_DIS;
+    test.counter_en = TIMER_PAUSE;
+    test.intr_type = TIMER_INTR_NONE;
+    test.counter_dir = TIMER_COUNT_UP;
+    test.auto_reload = TIMER_AUTORELOAD_DIS;
+    //test.clk_src = 0;
+    test.divider = TIMER_PRESCALER;
+    //timer_src_clk_t clk_src;        /*!< Selects source clock. */
+    timer_init((timer_group_t)TIMER_GROUP, (timer_idx_t)TIMER, &test);
 
-    timer_init(timer_config);
+    timer_set_divider((timer_group_t)TIMER_GROUP, (timer_idx_t)TIMER, TIMER_PRESCALER);
+    timer_set_counter_mode((timer_group_t)TIMER_GROUP, (timer_idx_t)TIMER, TIMER_COUNT_UP);
+    timer_set_auto_reload((timer_group_t)TIMER_GROUP, (timer_idx_t)TIMER, TIMER_AUTORELOAD_DIS);
+    timer_set_counter_value((timer_group_t)TIMER_GROUP, (timer_idx_t)TIMER, 0);
+    timer_init((timer_group_t)TIMER_GROUP, (timer_idx_t)TIMER, &test);
+
+    // Comments so I won't forget
+    /*
+        One thread high priority
+        does not get interrupted by anything
+        pulses the sensor
+        then waits until it gets a return blocking the core
+        this will take a maximium of 38 ms of waiting so the whole
+        task could be maybe around 40 ms
+        this task can be fully periodic let's say at 10 Hz
+        maybe there is a way to either make interrupts or events
+        to signal the thread, but I have to look more into it
+        40 ms is not long so it probably won't be a problem
+    */
 }
