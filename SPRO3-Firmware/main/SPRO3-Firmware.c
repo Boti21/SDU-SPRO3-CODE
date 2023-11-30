@@ -86,15 +86,15 @@ void app_main(void)
     // Testing
     long unsigned int timer_val = 0;
     init_ultrasonic();
+    timer_start((timer_group_t)TIMER_GROUP, (timer_idx_t)TIMER);
 
     while (1)
     {
-        timer_start((timer_group_t)TIMER_GROUP, (timer_idx_t)TIMER);
+        timer_set_counter_value((timer_group_t)TIMER_GROUP, (timer_idx_t)TIMER, 0);
         vTaskDelay(150 / portTICK_PERIOD_MS);
         timer_get_counter_value((timer_group_t)TIMER_GROUP, (timer_idx_t)TIMER, &timer_val);
         ESP_LOGI(main_name, "%lu", timer_val);
         //timer_pause((timer_group_t)TIMER_GROUP, (timer_idx_t)TIMER);
-        //timer_set_counter_value((timer_group_t)TIMER_GROUP, (timer_idx_t)TIMER, 0);
         /*
         xSemaphoreTake(screen_mutex, portMAX_DELAY);
         ESP_LOGI(main_name, "this is a task");
@@ -128,15 +128,8 @@ void init_ultrasonic(void) {
     test.intr_type = TIMER_INTR_NONE;
     test.counter_dir = TIMER_COUNT_UP;
     test.auto_reload = TIMER_AUTORELOAD_DIS;
-    //test.clk_src = 0;
+    //test.clk_src does not need to be set
     test.divider = TIMER_PRESCALER;
-    //timer_src_clk_t clk_src;        /*!< Selects source clock. */
-    timer_init((timer_group_t)TIMER_GROUP, (timer_idx_t)TIMER, &test);
-
-    timer_set_divider((timer_group_t)TIMER_GROUP, (timer_idx_t)TIMER, TIMER_PRESCALER);
-    timer_set_counter_mode((timer_group_t)TIMER_GROUP, (timer_idx_t)TIMER, TIMER_COUNT_UP);
-    timer_set_auto_reload((timer_group_t)TIMER_GROUP, (timer_idx_t)TIMER, TIMER_AUTORELOAD_DIS);
-    timer_set_counter_value((timer_group_t)TIMER_GROUP, (timer_idx_t)TIMER, 0);
     timer_init((timer_group_t)TIMER_GROUP, (timer_idx_t)TIMER, &test);
 
     // Comments so I won't forget
