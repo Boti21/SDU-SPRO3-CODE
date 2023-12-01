@@ -6,29 +6,32 @@
 
 #include "driver/gpio.h"
 #include "driver/adc.h"
+#include "driver/gptimer.h"
 #include "driver/timer.h"
 
 #include "esp_log.h"
 #include "esp_adc_cal.h"
+#include "esp_err.h"
 
 
 /* Misc macros */
 #define CUSTOM_STACK_SIZE 2048
-#define TIMER_GROUP 0
-#define TIMER 0
-#define TIMER_PRESCALER (uint32_t)80 //80 // 80 Mhz input signal --> microseconds counted
+#define TIMER_RESOLUTION 1000000 // 1MHz, 1 tick = 1us
 
 /* Pin macros */   // try to use macros for specific pins so they can be easily reassigned
 
 //GPIO 32 => ADC 1, CHANNEL 4
 #define A4 ADC1_CHANNEL_4 // which analog is used, The channel depends on which GPIO we want to use
 
-// Semaphores and Mutexes
+/* Semaphores and Mutexes */
 SemaphoreHandle_t screen_mutex;
 
 /* Tasks */
 TaskHandle_t test_handle = NULL;
 TaskHandle_t test_handle2 = NULL;
+
+/* Timer handle */
+gptimer_handle_t timer = NULL;
 
 /* Prototypes */
 void init_adc(void);
@@ -82,19 +85,13 @@ void app_main(void)
 
     gpio_reset_pin(2);
     gpio_set_direction(2, GPIO_MODE_OUTPUT);
+    gpio_set_level(2, 1);
 
     // Testing
-    long unsigned int timer_val = 0;
-    init_ultrasonic();
-    timer_start((timer_group_t)TIMER_GROUP, (timer_idx_t)TIMER);
 
     while (1)
     {
-        timer_set_counter_value((timer_group_t)TIMER_GROUP, (timer_idx_t)TIMER, 0);
         vTaskDelay(150 / portTICK_PERIOD_MS);
-        timer_get_counter_value((timer_group_t)TIMER_GROUP, (timer_idx_t)TIMER, &timer_val);
-        ESP_LOGI(main_name, "%lu", timer_val);
-        //timer_pause((timer_group_t)TIMER_GROUP, (timer_idx_t)TIMER);
         /*
         xSemaphoreTake(screen_mutex, portMAX_DELAY);
         ESP_LOGI(main_name, "this is a task");
@@ -122,15 +119,22 @@ void init_adc(void) {
 
 void init_ultrasonic(void) {
 
-    timer_config_t test;
-    test.alarm_en = TIMER_ALARM_DIS;
-    test.counter_en = TIMER_PAUSE;
-    test.intr_type = TIMER_INTR_NONE;
-    test.counter_dir = TIMER_COUNT_UP;
-    test.auto_reload = TIMER_AUTORELOAD_DIS;
-    //test.clk_src does not need to be set
-    test.divider = TIMER_PRESCALER;
-    timer_init((timer_group_t)TIMER_GROUP, (timer_idx_t)TIMER, &test);
+    gptimer_config_t timer_config = {
+        .clk_src = GPTIMER_CLK_SRC_DEFAULT,
+        .direction = GPTIMER_COUNT_UP,
+        .resolution_hz = TIMER_RESOLUTION, // 1MHz, 1 tick = 1us
+    };
+    ESP_ERROR_CHECK(gptimer_new_timer(&timer_config, &timer));
+    ESP_ERROR_CHECK(gptimer_enable(timer));
+
+    /* Usage */
+    /* The error checks are just for error checking... i know
+    The timer is used by passing the handle of it to a function
+    ESP_ERROR_CHECK(gptimer_start(timer)); // To start the timer
+    ESP_ERROR_CHECK(gptimer_set_raw_count(timer, 0)); // Set the value of the timer
+    ESP_ERROR_CHECK(gptimer_get_raw_count(timer, &timer_value)); // Get the value of the timer
+    ESP_LOGI(main_name, "%llu", timer_value); // Printing, %llu stands for long long unsigned int OR uint64_t
+    */
 
     // Comments so I won't forget
     /*
