@@ -18,7 +18,8 @@
 #define CUSTOM_STACK_SIZE 2048
 #define TIMER_RESOLUTION 1000000 // 1MHz, 1 tick = 1us
 
-/* Pin macros */   // try to use macros for specific pins so they can be easily reassigned
+/* Pin macros */   // try to use macros for specific pins so they can be easily
+#define PIN_INF 10
 
 //GPIO 32 => ADC 1, CHANNEL 4
 #define A4 ADC1_CHANNEL_4 // which analog is used, The channel depends on which GPIO we want to use
@@ -36,6 +37,9 @@ gptimer_handle_t timer = NULL;
 /* Prototypes */
 void init_adc(void);
 void init_ultrasonic(void);
+
+/*Global variables*/
+int inf_values[6];
 
 
 void test_task(void *pvParameters)
@@ -120,7 +124,7 @@ void init_adc(void) {
 void init_ultrasonic(void) {
 
     gptimer_config_t timer_config = {
-        .clk_src = GPTIMER_CLK_SRC_DEFAULT,
+        .clk_src = GPTIMER_CLK_SRC_DEFAULT, 
         .direction = GPTIMER_COUNT_UP,
         .resolution_hz = TIMER_RESOLUTION, // 1MHz, 1 tick = 1us
     };
@@ -129,7 +133,7 @@ void init_ultrasonic(void) {
 
     /* Usage */
     /* The error checks are just for error checking... i know
-    The timer is used by passing the handle of it to a function
+    The timer is used by passing thesize_t handle of it to a function
     ESP_ERROR_CHECK(gptimer_start(timer)); // To start the timer
     ESP_ERROR_CHECK(gptimer_set_raw_count(timer, 0)); // Set the value of the timer
     ESP_ERROR_CHECK(gptimer_get_raw_count(timer, &timer_value)); // Get the value of the timer
@@ -142,11 +146,26 @@ void init_ultrasonic(void) {
         does not get interrupted by anything
         pulses the sensor
         then waits until it gets a return blocking the core
-        this will take a maximium of 38 ms of waiting so the whole
+        this will take a maxpvParametersimium of 38 ms of waiting so the whole
         task could be maybe around 40 ms
         this task can be fully periodic let's say at 10 Hz
         maybe there is a way to either make interrupts or events
         to signal the thread, but I have to look more into it
         40 ms is not long so it probably won't be a problem
     */
+}
+
+/*Check each adc value of infrared sensor*/
+void infrared_adc_check(void){
+    for (;;)
+    {
+        for (int i = 0; i < 5; i++)
+        {
+            int value = adc1_get_raw(PIN_INF+i);
+            inf_values[i]=value;
+        }
+        
+    }
+    
+    
 }
