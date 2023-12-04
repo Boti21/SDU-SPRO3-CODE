@@ -9,6 +9,8 @@
 #include "driver/gptimer.h"
 #include "driver/timer.h"
 
+#include "esp_adc/adc_oneshot.h"
+#include "esp_adc/adc_continuous.h"
 #include "esp_log.h"
 #include "esp_adc_cal.h"
 #include "esp_err.h"
