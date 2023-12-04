@@ -1,5 +1,19 @@
 {
     "idf.flashType": "UART",
     "idf.portWin": "COM5",
-    "idf.adapterTargetName": "esp32"
+    "idf.adapterTargetName": "esp32",
+    "files.associations": {
+        "*.cake": "plaintext",
+        "esp_log.h": "c",
+        "esp_adc_cal.h": "c",
+        "gptimer.h": "c",
+        "atomic": "c",
+        "timer.h": "c",
+        "esp_err.h": "c",
+        "gpio.h": "c",
+        "adc.h": "c",
+        "adc_oneshot.h": "c",
+        "adc_continuous.h": "c"
+    },
+    "C_Cpp.default.compilerPath": "C:\\MinGW\\bin\\gcc.exe"
 }
