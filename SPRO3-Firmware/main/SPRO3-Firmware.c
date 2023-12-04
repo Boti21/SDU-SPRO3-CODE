@@ -31,6 +31,7 @@ SemaphoreHandle_t screen_mutex;
 /* Tasks */
 TaskHandle_t test_handle = NULL;
 TaskHandle_t test_handle2 = NULL;
+TaskHandle_t monitor_handle = NULL;
 
 /* Timer handle */
 gptimer_handle_t timer = NULL;
@@ -39,6 +40,12 @@ gptimer_handle_t timer = NULL;
 void init_adc(void);
 void init_ultrasonic(void);
 
+
+void monitor_task(void* pvParameters) {
+    for(;;) {
+        // Functions which check for battery voltage and collision detection
+    }
+}
 
 void test_task(void *pvParameters)
 {
@@ -84,6 +91,7 @@ void app_main(void)
     /* Task creation */
     //xTaskCreate(test_task, "test_task", CUSTOM_STACK_SIZE, NULL, 2, &test_handle);
     //xTaskCreate(test_task2, "test_task2", CUSTOM_STACK_SIZE, NULL, 2, &test_handle2);
+    //xTaskCreate(monitor_task, "monitor_task", CUSTOM_STACK_SIZE, NULL, 2, &monitor_handle);
 
     gpio_reset_pin(2);
     gpio_set_direction(2, GPIO_MODE_OUTPUT);
