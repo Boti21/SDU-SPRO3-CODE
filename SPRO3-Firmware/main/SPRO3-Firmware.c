@@ -40,6 +40,8 @@
 #define ADC2_2 GPIO_NUM_2
 #define ADC2_3 GPIO_NUM_15
 
+#define IR_FRONT_NUMBER_OF_PINS 6
+
 #define IR_FRONT_D1_GPIO ADC1_0
 #define IR_FRONT_D3_GPIO ADC1_3
 #define IR_FRONT_D4_GPIO ADC1_6
@@ -76,8 +78,8 @@ void pwm_stop();
 
 
 /*Global variables*/
-uint8_t IR_CHANNELS[] = {0, 1, 3, 4, 5, 6, 7, 8, 9};
-int inf_values[6];
+uint8_t IR_CHANNELS_FRONT[] = {IR_FRONT_D1_GPIO, IR_FRONT_D3_GPIO, IR_FRONT_D4_GPIO, IR_FRONT_D5_GPIO, IR_FRONT_D6_GPIO, IR_FRONT_D8_GPIO, IR_BACK_D4_GPIO, IR_BACK_D5_GPIO};
+int inf_values_front[IR_FRONT_NUMBER_OF_PINS];
 
 void monitor_task(void* pvParameters) {
     for(;;) {
@@ -240,9 +242,9 @@ void infrared_adc_check(void)
 {
     for (;;)
     {
-        for (int i = 0; i < 5; i++)
+        for (int i = 0; i < IR_FRONT_NUMBER_OF_PINS; i++)
         {
-            adc_oneshot_read(adc1_handle, IR_CHANNELS[i], &inf_values[i]);
+            adc_oneshot_read(adc1_handle, IR_CHANNELS_FRONT[i], &inf_front_values[i]);
         }
     }
 }
