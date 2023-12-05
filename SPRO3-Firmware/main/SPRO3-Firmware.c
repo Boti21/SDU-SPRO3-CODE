@@ -51,7 +51,13 @@
 #define IR_FRONT_D8_GPIO ADC1_5
 #define IR_BACK_D4_GPIO ADC1_8
 #define IR_BACK_D5_GPIO ADC1_9
-#define LOAD_CELL_GPIO ADC2_0
+#define LOAD_CELL_GPIO ADC2_0 
+
+// Ultrasonic Macros
+#define TRIG_PIN 19
+#define ECHO_PIN 18
+#define SOUND_SPEED_IN_US_PER_CM 58.0 // Speed of sound in microseconds per cm
+
 
 #define LOAD_CELL_GPIO ADC1_CHANNEL_4 // which analog is used, The channel depends on which GPIO we want to use
 
@@ -88,6 +94,13 @@ int inf_values_front[IR_FRONT_NUMBER_OF_PINS];
 
 uint8_t IR_CHANNELS_BACK[] = {IR_BACK_D4_GPIO, IR_BACK_D5_GPIO};
 int inf_values_back[IR_BACK_NUMBER_OF_PINS];
+
+
+double distance_ultrasonic(void);
+double distance_obs;
+const TickType_t xDelay10uS = pdMS_TO_TICKS(10);
+
+
 
 void monitor_task(void* pvParameters) {
     for(;;) {
@@ -147,6 +160,7 @@ void app_main(void)
     init_pwm(M_MOTOR, M_MOTOR_GPIO);
     init_pwm(L_MOTOR, L_MOTOR_GPIO);
     init_pwm(R_MOTOR, R_MOTOR_GPIO);
+    init_ultrasonic();
 
     // Testing
     int adc_value = 0;
@@ -159,24 +173,27 @@ void app_main(void)
     {
         ESP_LOGI(main_name, "Main loop...");
         vTaskDelay(150 / portTICK_PERIOD_MS);
-        
+        /*
         pwm_start(M_MOTOR, 250);
         pwm_start(L_MOTOR, 250);
         pwm_start(R_MOTOR, 250);
+        */
 
         vTaskDelay(5000 / portTICK_PERIOD_MS);
-
+        /*
         pwm_stop(M_MOTOR);
         pwm_stop(L_MOTOR);
         pwm_stop(R_MOTOR);
         vTaskDelay(500 / portTICK_PERIOD_MS);
+        */
         /*
         xSemaphoreTake(screen_mutex, portMAX_DELAY);
         ESP_LOGI(main_name, "this is a task");
         xSemaphoreGive(screen_mutex);
         */
+        volatile double dis_to_obj = distance_ultrasonic();
         //Code to be removed
-        adc_oneshot_read(adc1_handle, IR_CHANNELS[0], &adc_value);
+        //adc_oneshot_read(adc1_handle, IR_CHANNELS_FRONT[0], &adc_value);
         vTaskDelay(1 / portTICK_PERIOD_MS);
         ESP_LOGI(main_name, "ADC value: %d", adc_value);
         vTaskDelay(75 / portTICK_PERIOD_MS);
@@ -213,6 +230,9 @@ void init_adc(void)
 
 void init_ultrasonic(void)
 {
+    gpio_set_direction(ECHO_PIN, GPIO_MODE_INPUT);
+    gpio_set_direction(TRIG_PIN, GPIO_MODE_OUTPUT);
+
     gptimer_config_t timer_config = {
         .clk_src = GPTIMER_CLK_SRC_DEFAULT, 
         .direction = GPTIMER_COUNT_UP,
@@ -303,3 +323,46 @@ void pwm_stop(int motor){
    ledc_timer_pause(0,motor);
 }
 
+double distance_ultrasonic(void){
+
+    ESP_LOGI("DisFunc", "Hello 1...");
+    // Send a 10us pulse to the sensor's TRIG pin
+    gpio_set_level(TRIG_PIN, 1);
+    esp_rom_delay_us(10);
+    gpio_set_level(TRIG_PIN, 0);
+
+    ESP_LOGI("DisFunc", "Hello 2...");
+    // wait for the signal to arrive to the Echo pin
+    while (gpio_get_level(ECHO_PIN) == 0){
+
+        vTaskDelay(1 / portTICK_PERIOD_MS);
+    }
+    ESP_LOGI("DisFunc", "Hello3...");
+    // Start timer 
+    gptimer_start(timer);
+
+    // While the pin Echo is high
+    while (gpio_get_level(ECHO_PIN) == 1){
+
+        vTaskDelay(10 / portTICK_PERIOD_MS);
+
+    }
+
+    // Stop timer
+    gptimer_stop(timer);
+
+    // Time that the pin ECHO is high 
+    uint64_t time_Echo_High;  // positive
+  gptimer_get_raw_count(timer, &time_Echo_High);  
+
+  gptimer_set_raw_count(timer, 0); // reset timer
+
+    // Distance in cm
+    distance_obs = (double)time_Echo_High / SOUND_SPEED_IN_US_PER_CM;
+
+    ESP_LOGI("DisFunc", "DisFunc %f",distance_obs);
+
+    return distance_obs;
+
+        
+}
