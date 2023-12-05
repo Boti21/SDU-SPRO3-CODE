@@ -18,7 +18,7 @@
 #define CUSTOM_STACK_SIZE 2048
 #define TIMER_RESOLUTION 1000000 // 1MHz, 1 tick = 1us
 #define ADC1_CHANNELS_NUM 8 // Number of ADC channels on ADC unit 1
-#define ADC2_CHANNELS_NUM 0 // Number of ADC channels on ADC unit 2
+#define ADC2_CHANNELS_NUM 2 // (for now) Number of ADC channels on ADC unit 2
 
 /* Pin macros */   // try to use macros for specific pins so they can be easily reassigned
 #define M_MOTOR 0 // Mast motor
@@ -28,18 +28,27 @@
 #define L_MOTOR_GPIO 18 // TBD
 #define R_MOTOR_GPIO 19 // TBD
 
-// Most of these will probably change and these placeholders
-#define IR_FRONT_0_GPIO 0 // TBD
-#define IR_FRONT_1_GPIO 0 // TBD
-#define IR_FRONT_3_GPIO 0 // TBD
-#define IR_FRONT_4_GPIO 0 // TBD
-#define IR_FRONT_5_GPIO 0 // TBD
-#define IR_FRONT_6_GPIO 0 // TBD
-#define IR_FRONT_7_GPIO 0 // TBD
-#define IR_FRONT_8_GPIO 0 // TBD
-#define IR_FRONT_9_GPIO 0 // TBD
-#define IR_BACK_0_GPIO 0 // TBD
-#define IR_BACK_1_GPIO 0 // TBD
+#define ADC1_0 GPIO_NUM_36
+#define ADC1_3 GPIO_NUM_39
+#define ADC1_6 GPIO_NUM_34
+#define ADC1_7 GPIO_NUM_35
+#define ADC1_4 GPIO_NUM_32
+#define ADC1_5 GPIO_NUM_33
+#define ADC1_8 GPIO_NUM_25
+#define ADC1_9 GPIO_NUM_26
+#define ADC2_0 GPIO_NUM_4
+#define ADC2_2 GPIO_NUM_2
+#define ADC2_3 GPIO_NUM_15
+
+#define IR_FRONT_D1_GPIO ADC1_0
+#define IR_FRONT_D3_GPIO ADC1_3
+#define IR_FRONT_D4_GPIO ADC1_6
+#define IR_FRONT_D5_GPIO ADC1_7
+#define IR_FRONT_D6_GPIO ADC1_4
+#define IR_FRONT_D8_GPIO ADC1_5
+#define IR_BACK_D4_GPIO ADC1_8
+#define IR_BACK_D5_GPIO ADC1_9
+#define LOAD_CELL_GPIO ADC2_0
 
 #define LOAD_CELL_GPIO ADC1_CHANNEL_4 // which analog is used, The channel depends on which GPIO we want to use
 
