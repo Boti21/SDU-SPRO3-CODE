@@ -335,7 +335,7 @@ double distance_ultrasonic(void){
     // wait for the signal to arrive to the Echo pin
     while (gpio_get_level(ECHO_PIN) == 0){
 
-        vTaskDelay(1 / portTICK_PERIOD_MS);
+        //vTaskDelay(1 / portTICK_PERIOD_MS);
     }
     ESP_LOGI("DisFunc", "Hello3...");
     // Start timer 
@@ -344,7 +344,7 @@ double distance_ultrasonic(void){
     // While the pin Echo is high
     while (gpio_get_level(ECHO_PIN) == 1){
 
-        vTaskDelay(10 / portTICK_PERIOD_MS);
+        //vTaskDelay(1 / portTICK_PERIOD_MS);
 
     }
 
