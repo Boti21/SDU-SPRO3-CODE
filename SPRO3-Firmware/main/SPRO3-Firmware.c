@@ -40,6 +40,9 @@
 #define ADC2_2 GPIO_NUM_2
 #define ADC2_3 GPIO_NUM_15
 
+#define IR_FRONT_NUMBER_OF_PINS 6
+#define IR_BACK_NUMBER_OF_PINS 2
+
 #define IR_FRONT_D1_GPIO ADC1_0
 #define IR_FRONT_D3_GPIO ADC1_3
 #define IR_FRONT_D4_GPIO ADC1_6
@@ -75,9 +78,16 @@ void pwm_start();
 void pwm_stop();
 
 
+void infrared_adc_check_front(void);
+
+void infrared_adc_check_back(void);
+
 /*Global variables*/
-uint8_t IR_CHANNELS[] = {0, 1, 3, 4, 5, 6, 7, 8, 9};
-int inf_values[6];
+uint8_t IR_CHANNELS_FRONT[] = {IR_FRONT_D1_GPIO, IR_FRONT_D3_GPIO, IR_FRONT_D4_GPIO, IR_FRONT_D5_GPIO, IR_FRONT_D6_GPIO, IR_FRONT_D8_GPIO};
+int inf_values_front[IR_FRONT_NUMBER_OF_PINS];
+
+uint8_t IR_CHANNELS_BACK[] = {IR_BACK_D4_GPIO, IR_BACK_D5_GPIO};
+int inf_values_back[IR_BACK_NUMBER_OF_PINS];
 
 void monitor_task(void* pvParameters) {
     for(;;) {
@@ -236,16 +246,28 @@ void init_ultrasonic(void)
 }
 
 /* Check each adc value of infrared sensor */
-void infrared_adc_check(void)
+void infrared_adc_check_front(void)
 {
     for (;;)
     {
-        for (int i = 0; i < 5; i++)
+        for (int i = 0; i < IR_FRONT_NUMBER_OF_PINS; i++)
         {
-            adc_oneshot_read(adc1_handle, IR_CHANNELS[i], &inf_values[i]);
+            adc_oneshot_read(adc1_handle, IR_CHANNELS_FRONT[i], &inf_values_front[i]);
         }
     }
 }
+
+void infrared_adc_check_back(void)
+{
+    for (;;)
+    {
+        for (int i = 0; i < IR_FRONT_NUMBER_OF_PINS; i++)
+        {
+            adc_oneshot_read(adc1_handle, IR_CHANNELS_BACK[i], &inf_values_back[i]);
+        }
+    }
+}
+
 
 void init_pwm(int motor, int GPIO)
 {
