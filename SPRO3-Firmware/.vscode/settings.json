@@ -13,7 +13,8 @@
         "gpio.h": "c",
         "adc.h": "c",
         "adc_oneshot.h": "c",
-        "adc_continuous.h": "c"
+        "adc_continuous.h": "c",
+        "adc_cali.h": "c"
     },
     "C_Cpp.default.compilerPath": "C:\\MinGW\\bin\\gcc.exe"
 }

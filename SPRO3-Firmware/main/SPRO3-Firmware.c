@@ -5,34 +5,43 @@
 #include "freertos/semphr.h"
 
 #include "driver/gpio.h"
-//#include "driver/adc.h"
 #include "driver/gptimer.h"
-#include "driver/timer.h"
 #include "driver/ledc.h"
 
 #include "esp_adc/adc_oneshot.h"
 #include "esp_adc/adc_continuous.h"
 #include "esp_log.h"
-#include "esp_adc_cal.h"
 #include "esp_err.h"
-#include "esp_adc/adc_oneshot.h" //New ADC libary
 
 
 /* Misc macros */
 #define CUSTOM_STACK_SIZE 2048
 #define TIMER_RESOLUTION 1000000 // 1MHz, 1 tick = 1us
+#define ADC1_CHANNELS_NUM 8 // Number of ADC channels on ADC unit 1
+#define ADC2_CHANNELS_NUM 0 // Number of ADC channels on ADC unit 2
 
 /* Pin macros */   // try to use macros for specific pins so they can be easily reassigned
-#define Mast_motor  0
-#define Left_motor  1
-#define Right_motor 2
-#define Mast_motor_GPIO 5
-#define Left_motor_GPIO  18
-#define Right_motor_GPIO 19
+#define M_MOTOR 0 // Mast motor
+#define L_MOTOR 1 // Left motor (facing the same way as the fork)
+#define R_MOTOR 2 // Right motor (facing the same way as the fork)
+#define M_MOTOR_GPIO 5 // TBD
+#define L_MOTOR_GPIO 18 // TBD
+#define R_MOTOR_GPIO 19 // TBD
 
-#define PIN_INF 10
-//GPIO 32 => ADC 1, CHANNEL 4
-#define A4 ADC1_CHANNEL_4 // which analog is used, The channel depends on which GPIO we want to use
+// Most of these will probably change and these placeholders
+#define IR_FRONT_0_GPIO 0 // TBD
+#define IR_FRONT_1_GPIO 0 // TBD
+#define IR_FRONT_3_GPIO 0 // TBD
+#define IR_FRONT_4_GPIO 0 // TBD
+#define IR_FRONT_5_GPIO 0 // TBD
+#define IR_FRONT_6_GPIO 0 // TBD
+#define IR_FRONT_7_GPIO 0 // TBD
+#define IR_FRONT_8_GPIO 0 // TBD
+#define IR_FRONT_9_GPIO 0 // TBD
+#define IR_BACK_0_GPIO 0 // TBD
+#define IR_BACK_1_GPIO 0 // TBD
+
+#define LOAD_CELL_GPIO ADC1_CHANNEL_4 // which analog is used, The channel depends on which GPIO we want to use
 
 /* Semaphores and Mutexes */
 SemaphoreHandle_t screen_mutex;
@@ -49,21 +58,17 @@ gptimer_handle_t timer = NULL;
 adc_oneshot_unit_handle_t adc1_handle;
 
 /* Prototypes */
-//void init_adc(void);
 void init_ultrasonic(void);
-void init_adc_oneshot(void);
-
-
-/*Global variables*/
-uint8_t IR_CHANNELS[] = {0, 1, 3};
-int inf_values[6];
-
+void init_adc(void);
 void init_pwm(int, int);
 
 void pwm_start();
 void pwm_stop();
 
 
+/*Global variables*/
+uint8_t IR_CHANNELS[] = {0, 1, 3, 4, 5, 6, 7, 8, 9};
+int inf_values[6];
 
 void monitor_task(void* pvParameters) {
     for(;;) {
@@ -108,8 +113,6 @@ void app_main(void)
     /* Initializing mutexes and semaphores */
     screen_mutex = xSemaphoreCreateMutex();
 
-    /*Init ADC*/
-    init_adc_oneshot();
 
     /* Little boot up message ;) */
     char *main_name = pcTaskGetName(NULL);     // A way to get the name of the current task
@@ -120,32 +123,33 @@ void app_main(void)
     //xTaskCreate(test_task2, "test_task2", CUSTOM_STACK_SIZE, NULL, 2, &test_handle2);
     //xTaskCreate(monitor_task, "monitor_task", CUSTOM_STACK_SIZE, NULL, 2, &monitor_handle);
 
+    /* Init functions */
+    init_adc();
+    init_pwm(M_MOTOR, M_MOTOR_GPIO);
+    init_pwm(L_MOTOR, L_MOTOR_GPIO);
+    init_pwm(R_MOTOR, R_MOTOR_GPIO);
+
+    // Testing
+    int adc_value = 0;
     gpio_reset_pin(2);
     gpio_set_direction(2, GPIO_MODE_OUTPUT);
     gpio_set_level(2, 1);
 
-    // Testing
-    int adc_value = 0;
-
-    //initalise pwm
-    init_pwm(Mast_motor,Mast_motor_GPIO);
-    init_pwm(Left_motor,Left_motor_GPIO);
-    init_pwm(Right_motor,Right_motor_GPIO);
 
     while (1)
     {
         ESP_LOGI(main_name, "Main loop...");
         vTaskDelay(150 / portTICK_PERIOD_MS);
-        //speed control 0-255
-        pwm_start(Mast_motor,250);
-        pwm_start(Left_motor,250);
-        pwm_start(Right_motor,250);
+        
+        pwm_start(M_MOTOR, 250);
+        pwm_start(L_MOTOR, 250);
+        pwm_start(R_MOTOR, 250);
 
         vTaskDelay(5000 / portTICK_PERIOD_MS);
 
-        pwm_stop(Mast_motor);
-        pwm_stop(Left_motor);
-        pwm_stop(Right_motor);
+        pwm_stop(M_MOTOR);
+        pwm_stop(L_MOTOR);
+        pwm_stop(R_MOTOR);
         vTaskDelay(500 / portTICK_PERIOD_MS);
         /*
         xSemaphoreTake(screen_mutex, portMAX_DELAY);
@@ -153,7 +157,7 @@ void app_main(void)
         xSemaphoreGive(screen_mutex);
         */
         //Code to be removed
-        adc_oneshot_read(adc1_handle, 0, &adc_value);
+        adc_oneshot_read(adc1_handle, IR_CHANNELS[0], &adc_value);
         vTaskDelay(1 / portTICK_PERIOD_MS);
         ESP_LOGI(main_name, "ADC value: %d", adc_value);
         vTaskDelay(75 / portTICK_PERIOD_MS);
@@ -161,70 +165,35 @@ void app_main(void)
 }
 
 /* Functions */
-
-// Usage: after calling the init function
-// calling the adc1_get_raw(A4) will return an int
-// Conversion Vout = Dout* Vmax/Dmax
-
-/*
-void init_adc(void) {
-=======
 void init_adc(void)
 {
-
-
-    // Configuration of ADC
-    adc1_config_channel_atten(A4, ADC_ATTEN_DB_11); // (channel we want to put for attenuation, which attenuation do we want)
-    // Attenuation of db 11 is the biggest one, it allows the biggest range of reading
-    adc1_config_width(ADC_WIDTH_BIT_12); // The resolution of all the adc1; 12 bits
-
-    // Set pin GPO32 as an input
-    gpio_num_t pinNumber = GPIO_NUM_32;
-    gpio_set_direction(pinNumber, GPIO_MODE_INPUT);
-}
-*/
-
-void init_adc_oneshot(void){
-    //Creating oneshot handle
-    /*
-     * ADC configuration:
-     * unit: ADC 1
-     * ulp mode (Low power mode): Disable
-     * Clock: Default
-     */
+    // Setting up ADC handle
     adc_oneshot_unit_init_cfg_t init_config1={
-        .unit_id=ADC_UNIT_1,
-        .ulp_mode=ADC_ULP_MODE_DISABLE
-    };
-    //Check if handle allocation was successful
-    ESP_ERROR_CHECK(adc_oneshot_new_unit(&init_config1, &adc1_handle));
+        .unit_id=ADC_UNIT_1, // ADC 1 is used
+        .ulp_mode=ADC_ULP_MODE_DISABLE // Low power mode disabled
+    }; // Default clock
+    ESP_ERROR_CHECK(adc_oneshot_new_unit(&init_config1, &adc1_handle)); // Error checking
 
-    //Setting up ADC channels
-    /*
-    * ADC channel config:
-    * atten: Input voltage of ADC attenuated extending the range of measurement by about 11 dB
-    * bitwidth: default
-    */
+    // Setting up ADC channels
     adc_oneshot_chan_cfg_t config = {
-        .bitwidth = ADC_BITWIDTH_DEFAULT,
-        .atten = ADC_ATTEN_DB_11,
+        .bitwidth = ADC_BITWIDTH_DEFAULT, // Default bitwidth
+        .atten = ADC_ATTEN_DB_11, // Input attenuated, range increase by 11 dB
     };
-    //Checking the channels
-    //Testing code:
+    // Testing code:
     ESP_ERROR_CHECK(adc_oneshot_config_channel(adc1_handle, 0, &config));
-    //Actual code:
+    // Actual code:
     /*
-    for (int i = 0; i < 8; i++)
+    for (int i = 0; i < ADC1_CHANNELS_NUM; i++)
     {
-        ESP_ERROR_CHECK(adc_oneshot_config_channel(adc1_handle, i, &config));
+        ESP_ERROR_CHECK(adc_oneshot_config_channel(adc1_handle, IR_CHANNELS[i], &config)); // Error checking
     }
     */
-    
+    /* Usage */
+    // adc_oneshot_read(adc1_handle, IR_CHANNELS[0], &adc_value);    
 }
 
 void init_ultrasonic(void)
 {
-
     gptimer_config_t timer_config = {
         .clk_src = GPTIMER_CLK_SRC_DEFAULT, 
         .direction = GPTIMER_COUNT_UP,
@@ -257,8 +226,9 @@ void init_ultrasonic(void)
     */
 }
 
-/*Check each adc value of infrared sensor*/
-void infrared_adc_check(void){
+/* Check each adc value of infrared sensor */
+void infrared_adc_check(void)
+{
     for (;;)
     {
         for (int i = 0; i < 5; i++)
