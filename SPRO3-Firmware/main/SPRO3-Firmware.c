@@ -5,7 +5,7 @@
 #include "freertos/semphr.h"
 
 #include "driver/gpio.h"
-#include "driver/adc.h"
+//#include "driver/adc.h"
 #include "driver/gptimer.h"
 #include "driver/timer.h"
 
@@ -35,15 +35,17 @@ TaskHandle_t test_handle2 = NULL;
 /* Timer handle */
 gptimer_handle_t timer = NULL;
 
+/* ADC Handles */
+adc_oneshot_unit_handle_t adc1_handle;
+
 /* Prototypes */
-void init_adc(void);
+//void init_adc(void);
 void init_ultrasonic(void);
 void init_adc_oneshot(void);
 
-/*Handles*/
-adc_oneshot_unit_handle_t adc1_handle;
 
 /*Global variables*/
+uint8_t IR_CHANNELS[] = {0, 1, 3};
 int inf_values[6];
 
 
@@ -100,6 +102,7 @@ void app_main(void)
     gpio_set_level(2, 1);
 
     // Testing
+    int adc_value = 0;
 
     while (1)
     {
@@ -109,10 +112,11 @@ void app_main(void)
         ESP_LOGI(main_name, "this is a task");
         xSemaphoreGive(screen_mutex);
         */
-       //Code to be removed
-       int adc_value=0;
-       adc_oneshot_read(adc1_handle,0,&adc_value);
-       printf("ADC value: %d",adc_value);
+        //Code to be removed
+        adc_oneshot_read(adc1_handle, 0, &adc_value);
+        vTaskDelay(1 / portTICK_PERIOD_MS);
+        ESP_LOGI(main_name, "ADC value: %d", adc_value);
+        vTaskDelay(75 / portTICK_PERIOD_MS);
     }
 }
 
@@ -121,6 +125,7 @@ void app_main(void)
 // Usage: after calling the init function
 // calling the adc1_get_raw(A4) will return an int
 // Conversion Vout = Dout* Vmax/Dmax
+/*
 void init_adc(void) {
 
     // Configuration of ADC
@@ -132,6 +137,7 @@ void init_adc(void) {
     gpio_num_t pinNumber = GPIO_NUM_32;
     gpio_set_direction(pinNumber, GPIO_MODE_INPUT);
 }
+*/
 
 void init_adc_oneshot(void){
     //Creating oneshot handle
@@ -162,10 +168,12 @@ void init_adc_oneshot(void){
     //Testing code:
     ESP_ERROR_CHECK(adc_oneshot_config_channel(adc1_handle, 0, &config));
     //Actual code:
-    /*for (int i = 0; i < 8; i++)
+    /*
+    for (int i = 0; i < 8; i++)
     {
-        ESP_ERROR_CHECK(adc_oneshot_config_channel(adc1_handle,i,&config));
-    }*/
+        ESP_ERROR_CHECK(adc_oneshot_config_channel(adc1_handle, i, &config));
+    }
+    */
     
 }
 
@@ -209,10 +217,7 @@ void infrared_adc_check(void){
     {
         for (int i = 0; i < 5; i++)
         {
-            adc_oneshot_read(adc1_handle,0,&inf_values[i]);
+            adc_oneshot_read(adc1_handle, IR_CHANNELS[i], &inf_values[i]);
         }
-        
     }
-    
-    
 }
