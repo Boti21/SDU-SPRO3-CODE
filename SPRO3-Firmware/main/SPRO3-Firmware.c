@@ -27,6 +27,12 @@
 #define CALIBRATION_FLOOR
 #define BORDER_VALUE
 
+#define BASE_SPEED 200
+#define RIGHT_TURN_LIGHT 180 , 230
+#define RIGHT_TURN_STRONG 150 , 250
+#define LEFT_TURN_LIGHT 230 , 180
+#define LEFT_TURN_STRONG 250 , 150
+
 #define LOAD_CELL_GPIO ADC1_CHANNEL_4 // which analog is used, The channel depends on which GPIO we want to use
 
 void app_main(void)
@@ -67,14 +73,10 @@ void app_main(void)
         /*
         pwm_start(M_MOTOR, 25);
         */
-        pwm_set(L_MOTOR, 150);
-        pwm_set(R_MOTOR, 150);
-        
+        pwm_wheels(BASE_SPEED, BASE_SPEED);
         
         // Read IR-SENSOR in the front
         infrared_adc_check_front();
-
-
 
         for(int i = 0; i < IR_FRONT_NUMBER_OF_PINS; i++) {
 
@@ -83,7 +85,7 @@ void app_main(void)
         }
 
         // Giving the operating system room to breath
-        vTaskDelay(10 / portTICK_PERIOD_MS);
+        vTaskDelay(1000 / portTICK_PERIOD_MS);
     }
 }
 

@@ -13,8 +13,7 @@
 #include "esp_log.h"
 #include "esp_err.h"
 
-#define CONFIG_IDF_TARGET_ESP32S2
-
+// #define CONFIG_IDF_TARGET_ESP32S2
 #define ADC1_0 0 // GPIO_NUM_36
 #define ADC1_3 3 // GPIO_NUM_39
 #define ADC1_6 6 // GPIO_NUM_34

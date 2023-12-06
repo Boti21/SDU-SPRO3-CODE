@@ -57,3 +57,8 @@ void pwm_set(int motor, int duty){
 void pwm_stop(int motor){
    ledc_timer_pause(0,motor);
 }
+
+void pwm_wheels(int duty_L, int duty_R) {
+    pwm_set(L_MOTOR, duty_L);
+    pwm_set(R_MOTOR, duty_R);
+}
