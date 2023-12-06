@@ -31,7 +31,7 @@ void init_pwm(int motor, int GPIO)
         .speed_mode       = 0, // Low speed mode
         .duty_resolution  = 8,// resolution in bit, 
         .timer_num        = 0, // timer x
-        .freq_hz          = 1000,// Hz
+        .freq_hz          = 1000,// Hz // prev 1000
         .clk_cfg          = 0 // configures clock automatically 
     };
     ledc_timer_config(&ledc_timer);
@@ -50,7 +50,7 @@ void init_pwm(int motor, int GPIO)
     ledc_timer_pause(0,motor);
 }
 
-void pwm_start(int motor, int duty){
+void pwm_set(int motor, int duty){
     ledc_set_duty(0,motor,duty);   
     ledc_timer_resume(0,motor);
 }

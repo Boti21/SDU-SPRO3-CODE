@@ -76,12 +76,14 @@ double distance_ultrasonic(void){
     esp_rom_delay_us(10);
     gpio_set_level(TRIG_PIN, 0);
 
+    ESP_LOGI("DisFunc", "Triggered");
     // Wait for the signal to arrive to the Echo pin
     while (gpio_get_level(ECHO_PIN) == 0);
     
     // Start timer 
     gptimer_start(timer);
-
+    ESP_LOGI("DisFunc", "Started timer!");
+    
     // While the pin Echo is high
     while (gpio_get_level(ECHO_PIN) == 1);
 
@@ -95,6 +97,8 @@ double distance_ultrasonic(void){
 
     // Distance in cm
     distance_obs = (double)time_Echo_High / SOUND_SPEED_IN_US_PER_CM;
+
+    ESP_LOGI("DisFunc", "DisFunc %f",distance_obs);
 
     return distance_obs;
         

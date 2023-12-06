@@ -13,29 +13,31 @@
 #include "esp_log.h"
 #include "esp_err.h"
 
-#define ADC1_0 GPIO_NUM_36
-#define ADC1_3 GPIO_NUM_39
-#define ADC1_6 GPIO_NUM_34
-#define ADC1_7 GPIO_NUM_35
-#define ADC1_4 GPIO_NUM_32
-#define ADC1_5 GPIO_NUM_33
-#define ADC1_8 GPIO_NUM_25
-#define ADC1_9 GPIO_NUM_26
-#define ADC2_0 GPIO_NUM_4
-#define ADC2_2 GPIO_NUM_2
-#define ADC2_3 GPIO_NUM_15
+#define CONFIG_IDF_TARGET_ESP32S2
+
+#define ADC1_0 0 // GPIO_NUM_36
+#define ADC1_3 3 // GPIO_NUM_39
+#define ADC1_6 6 // GPIO_NUM_34
+#define ADC1_7 7 // GPIO_NUM_35
+#define ADC1_4 4 // GPIO_NUM_32
+#define ADC1_5 5 // GPIO_NUM_33
+#define ADC1_8 8 // GPIO_NUM_25
+#define ADC1_9 9 // GPIO_NUM_26
+#define ADC2_0 0 // GPIO_NUM_4
+#define ADC2_2 2 // GPIO_NUM_2
+#define ADC2_3 3 // GPIO_NUM_15
 
 #define IR_FRONT_NUMBER_OF_PINS 6
 #define IR_BACK_NUMBER_OF_PINS 2
 
-#define IR_FRONT_D1_GPIO ADC1_0
-#define IR_FRONT_D3_GPIO ADC1_3
-#define IR_FRONT_D4_GPIO ADC1_6
-#define IR_FRONT_D5_GPIO ADC1_7
-#define IR_FRONT_D6_GPIO ADC1_4
-#define IR_FRONT_D8_GPIO ADC1_5
-#define IR_BACK_D4_GPIO ADC1_8
-#define IR_BACK_D5_GPIO ADC1_9
+#define IR_FRONT_D1_GPIO ADC1_0 // GPIO_NUM_36
+#define IR_FRONT_D3_GPIO ADC1_3 // GPIO_NUM_39
+#define IR_FRONT_D4_GPIO ADC1_6 // GPIO_NUM_34
+#define IR_FRONT_D5_GPIO ADC1_7 // GPIO_NUM_35
+#define IR_FRONT_D6_GPIO ADC1_4 // GPIO_NUM_32
+#define IR_FRONT_D8_GPIO ADC1_5 // GPIO_NUM_33
+#define IR_BACK_D4_GPIO ADC1_8 // GPIO_NUM_25
+#define IR_BACK_D5_GPIO ADC1_9 // GPIO_NUM_26
 #define LOAD_CELL_GPIO ADC2_0 
 
 /* ADC Handles */
@@ -76,23 +78,19 @@ void init_adc(void)
 /* Check each adc value of infrared sensor */
 void infrared_adc_check_front(void)
 {
-    for (;;)
+    for (int i = 0; i < IR_FRONT_NUMBER_OF_PINS; i++)
     {
-        for (int i = 0; i < IR_FRONT_NUMBER_OF_PINS; i++)
-        {
-            adc_oneshot_read(adc1_handle, IR_CHANNELS_FRONT[i], &inf_values_front[i]);
-        }
+        adc_oneshot_read(adc1_handle, IR_CHANNELS_FRONT[i], &inf_values_front[i]);
     }
+
 }
 
 void infrared_adc_check_back(void)
 {
-    for (;;)
+    for (int i = 0; i < IR_FRONT_NUMBER_OF_PINS; i++)
     {
-        for (int i = 0; i < IR_FRONT_NUMBER_OF_PINS; i++)
-        {
-            adc_oneshot_read(adc1_handle, IR_CHANNELS_BACK[i], &inf_values_back[i]);
-        }
+        adc_oneshot_read(adc1_handle, IR_CHANNELS_BACK[i], &inf_values_back[i]);
     }
+
 }
 

@@ -23,6 +23,10 @@
 #define ADC1_CHANNELS_NUM 8 // Number of ADC channels on ADC unit 1
 #define ADC2_CHANNELS_NUM 2 // (for now) Number of ADC channels on ADC unit 2
 
+#define CALIBRATION_BLACK_TAPE
+#define CALIBRATION_FLOOR
+#define BORDER_VALUE
+
 #define LOAD_CELL_GPIO ADC1_CHANNEL_4 // which analog is used, The channel depends on which GPIO we want to use
 
 void app_main(void)
@@ -51,25 +55,26 @@ void app_main(void)
     int adc_value = 0;
     gpio_reset_pin(2);
     gpio_set_direction(2, GPIO_MODE_OUTPUT);
+    gpio_set_direction(5, GPIO_MODE_OUTPUT);
     gpio_set_level(2, 1);
 
 
     while (1) {
         ESP_LOGI(main_name, "Main loop...");
-        vTaskDelay(150 / portTICK_PERIOD_MS);
-        /*
-        pwm_start(M_MOTOR, 250);
-        pwm_start(L_MOTOR, 250);
-        pwm_start(R_MOTOR, 250);
-        */
+        //vTaskDelay(250 / portTICK_PERIOD_MS);
+    
         
-        // Measure distance to Object
-        double dis_to_obj = distance_ultrasonic();
-        ESP_LOGI("DisFunc", "DisFunc %f",dis_to_obj);
-
+        /*
+        pwm_start(M_MOTOR, 25);
+        */
+        pwm_set(L_MOTOR, 150);
+        pwm_set(R_MOTOR, 150);
+        
+        
         // Read IR-SENSOR in the front
-
         infrared_adc_check_front();
+
+
 
         for(int i = 0; i < IR_FRONT_NUMBER_OF_PINS; i++) {
 
@@ -77,7 +82,17 @@ void app_main(void)
         
         }
 
-        vTaskDelay(5000 / portTICK_PERIOD_MS);
+        // Giving the operating system room to breath
+        vTaskDelay(10 / portTICK_PERIOD_MS);
+    }
+}
+
+
+
+
+
+
+//vTaskDelay(5000 / portTICK_PERIOD_MS);
         /*
         pwm_stop(M_MOTOR);
         pwm_stop(L_MOTOR);
@@ -90,11 +105,8 @@ void app_main(void)
         xSemaphoreGive(screen_mutex);
         */
 
-
-        //Code to be removed
+//Code to be removed
         //adc_oneshot_read(adc1_handle, IR_CHANNELS_FRONT[0], &adc_value);
-        vTaskDelay(1 / portTICK_PERIOD_MS);
-        ESP_LOGI(main_name, "ADC value: %d", adc_value);
-        vTaskDelay(75 / portTICK_PERIOD_MS);
-    }
-}
+        //vTaskDelay(1 / portTICK_PERIOD_MS);
+        //ESP_LOGI(main_name, "ADC value: %d", adc_value);
+        
