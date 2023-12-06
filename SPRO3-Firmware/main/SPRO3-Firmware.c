@@ -13,75 +13,19 @@
 #include "esp_log.h"
 #include "esp_err.h"
 
-// Custom includes
+// ForkLift includes
 #include "FL_ultrasonic.h"
 #include "FL_PWM.h"
 #include "FL_ADCandIR.h"
+#include "FL_threads.h"
 
-/* Misc macros */
-#define CUSTOM_STACK_SIZE 2048
 
 #define ADC1_CHANNELS_NUM 8 // Number of ADC channels on ADC unit 1
 #define ADC2_CHANNELS_NUM 2 // (for now) Number of ADC channels on ADC unit 2
 
-/* Pin macros */   // try to use macros for specific pins so they can be easily reassigned
-
-
-
-
-
 
 #define LOAD_CELL_GPIO ADC1_CHANNEL_4 // which analog is used, The channel depends on which GPIO we want to use
 
-/* Semaphores and Mutexes */
-SemaphoreHandle_t screen_mutex;
-
-/* Tasks */
-TaskHandle_t test_handle = NULL;
-TaskHandle_t test_handle2 = NULL;
-TaskHandle_t monitor_handle = NULL;
-
-
-
-
-
-void monitor_task(void* pvParameters) {
-    for(;;) {
-        // Functions which check for battery voltage and collision detection (and communication)
-    }
-}
-
-void test_task(void *pvParameters)
-{
-    char *test_task_name = pcTaskGetName(NULL);
-
-    for (;;)
-    {
-        xSemaphoreTake(screen_mutex, portMAX_DELAY); // Critical region started
-        vTaskDelay(1000 / portTICK_PERIOD_MS);
-        ESP_LOGI(test_task_name, "task");
-        xSemaphoreGive(screen_mutex); // Critical region ended
-
-        vTaskDelay(400 / portTICK_PERIOD_MS);
-    }
-}
-
-void test_task2(void *pvParameters)
-{
-    char *test_task_name2 = pcTaskGetName(NULL);
-
-    for (;;)
-    {
-        xSemaphoreTake(screen_mutex, portMAX_DELAY); // Critical region started
-        ESP_LOGI(test_task_name2, "task2");
-        xSemaphoreGive(screen_mutex); // Critical region ended
-
-        gpio_set_level(2, 1);
-        vTaskDelay(150);
-        gpio_set_level(2, 0);
-        vTaskDelay(150);
-    }
-}
 
 void app_main(void)
 {
@@ -94,9 +38,9 @@ void app_main(void)
     ESP_LOGI(main_name, "Program started..."); // The way to print something to the terminal
 
     /* Task creation */
-    //xTaskCreate(test_task, "test_task", CUSTOM_STACK_SIZE, NULL, 2, &test_handle);
-    //xTaskCreate(test_task2, "test_task2", CUSTOM_STACK_SIZE, NULL, 2, &test_handle2);
-    //xTaskCreate(monitor_task, "monitor_task", CUSTOM_STACK_SIZE, NULL, 2, &monitor_handle);
+    // xTaskCreate(test_task, "test_task", CUSTOM_STACK_SIZE, NULL, 2, &test_handle);
+    // xTaskCreate(test_task2, "test_task2", CUSTOM_STACK_SIZE, NULL, 2, &test_handle2);
+    // xTaskCreate(monitor_task, "monitor_task", CUSTOM_STACK_SIZE, NULL, 2, &monitor_handle);
 
     /* Init functions */
     init_adc();
@@ -157,10 +101,3 @@ void app_main(void)
         vTaskDelay(75 / portTICK_PERIOD_MS);
     }
 }
-
-/* Functions */
-
-
-
-
-
