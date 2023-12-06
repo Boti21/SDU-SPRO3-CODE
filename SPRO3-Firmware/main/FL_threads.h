@@ -18,9 +18,9 @@
 #include "FL_PWM.h"
 #include "FL_ADCandIR.h"
 */
+
 /* Misc macros */
 #define CUSTOM_STACK_SIZE 2048
-
 
 /* Semaphores and Mutexes */
 SemaphoreHandle_t screen_mutex;

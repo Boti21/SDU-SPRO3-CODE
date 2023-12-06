@@ -23,9 +23,7 @@
 #define ADC1_CHANNELS_NUM 8 // Number of ADC channels on ADC unit 1
 #define ADC2_CHANNELS_NUM 2 // (for now) Number of ADC channels on ADC unit 2
 
-
 #define LOAD_CELL_GPIO ADC1_CHANNEL_4 // which analog is used, The channel depends on which GPIO we want to use
-
 
 void app_main(void)
 {
@@ -56,8 +54,7 @@ void app_main(void)
     gpio_set_level(2, 1);
 
 
-    while (1)
-    {
+    while (1) {
         ESP_LOGI(main_name, "Main loop...");
         vTaskDelay(150 / portTICK_PERIOD_MS);
         /*
