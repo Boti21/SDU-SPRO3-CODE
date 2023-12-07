@@ -34,7 +34,7 @@ TaskHandle_t monitor_handle = NULL;
 void monitor_task(void* pvParameters) {
     for(;;) {
         // Functions which check for battery voltage and collision detection (and communication)
-        infrared_adc_check_back();
+        ir_adc_check_back();
     }
 }
 

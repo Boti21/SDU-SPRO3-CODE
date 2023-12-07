@@ -41,7 +41,7 @@ void app_main(void)
     screen_mutex = xSemaphoreCreateMutex();
 
 
-    /* Little boot up message ;) */ // <-- very Boti comment
+    /* Little boot up message ;) */ // <-- very Boti comment  // still not sure if that is good
     char *main_name = pcTaskGetName(NULL);     // A way to get the name of the current task
     ESP_LOGI(main_name, "Program started..."); // The way to print something to the terminal
 

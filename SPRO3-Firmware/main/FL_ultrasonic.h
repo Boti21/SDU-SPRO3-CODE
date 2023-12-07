@@ -101,5 +101,4 @@ double distance_ultrasonic(void){
     ESP_LOGI("DisFunc", "DisFunc %f",distance_obs);
 
     return distance_obs;
-        
 }
