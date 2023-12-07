@@ -62,9 +62,9 @@ void init_adc(void)
         .atten = ADC_ATTEN_DB_11, // Input attenuated, range increase by 11 dB
     };
     // Actual code:
-    for (int i = 0; i < ADC1_CHANNELS_NUM; i++)
+    for (int i = 0; i < IR_FRONT_NUMBER_OF_PINS; i++)
     {
-        ESP_ERROR_CHECK(adc_oneshot_config_channel(adc1_handle, IR_CHANNELS[i], &config)); // Error checking
+        ESP_ERROR_CHECK(adc_oneshot_config_channel(adc1_handle, IR_CHANNELS_FRONT[i], &config)); // Error checking
     }
     /* Usage */
     // adc_oneshot_read(adc1_handle, IR_CHANNELS[0], &adc_value);    
