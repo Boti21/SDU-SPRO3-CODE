@@ -14,7 +14,14 @@
         "adc.h": "c",
         "adc_oneshot.h": "c",
         "adc_continuous.h": "c",
-        "adc_cali.h": "c"
+        "adc_cali.h": "c",
+        "*.tcc": "c",
+        "chrono": "c",
+        "cmath": "c",
+        "numeric": "c",
+        "ratio": "c",
+        "cinttypes": "c",
+        "cstdlib": "c"
     },
     "C_Cpp.default.compilerPath": "C:\\MinGW\\bin\\gcc.exe"
 }
