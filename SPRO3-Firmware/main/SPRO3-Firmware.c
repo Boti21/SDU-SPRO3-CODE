@@ -80,7 +80,7 @@ void app_main(void)
 
         for(int i = 0; i < IR_FRONT_NUMBER_OF_PINS; i++) {
 
-            ESP_LOGI("IR_RESULTS_FRONT", "Val %d: %d", i, inf_values_front[i]);
+            ESP_LOGI("IR_RESULTS_FRONT", "Val %d: %d", i, ir_values_front[i]);
         
         }
 

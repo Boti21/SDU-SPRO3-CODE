@@ -42,10 +42,10 @@
 /* ADC Handles */
 adc_oneshot_unit_handle_t adc1_handle;
 uint8_t IR_CHANNELS_FRONT[] = {IR_FRONT_D1_GPIO, IR_FRONT_D3_GPIO, IR_FRONT_D4_GPIO, IR_FRONT_D5_GPIO, IR_FRONT_D6_GPIO, IR_FRONT_D8_GPIO};
-int inf_values_front[IR_FRONT_NUMBER_OF_PINS];
+int ir_values_front[IR_FRONT_NUMBER_OF_PINS];
 
 uint8_t IR_CHANNELS_BACK[] = {IR_BACK_D4_GPIO, IR_BACK_D5_GPIO};
-int inf_values_back[IR_BACK_NUMBER_OF_PINS];
+int ir_values_back[IR_BACK_NUMBER_OF_PINS];
 
 void init_adc(void)
 {
@@ -79,7 +79,7 @@ void infrared_adc_check_front(void)
 {
     for (int i = 0; i < IR_FRONT_NUMBER_OF_PINS; i++)
     {
-        adc_oneshot_read(adc1_handle, IR_CHANNELS_FRONT[i], &inf_values_front[i]);
+        adc_oneshot_read(adc1_handle, IR_CHANNELS_FRONT[i], &ir_values_front[i]);
     }
 
 }
@@ -88,7 +88,7 @@ void infrared_adc_check_back(void)
 {
     for (int i = 0; i < IR_FRONT_NUMBER_OF_PINS; i++)
     {
-        adc_oneshot_read(adc1_handle, IR_CHANNELS_BACK[i], &inf_values_back[i]);
+        adc_oneshot_read(adc1_handle, IR_CHANNELS_BACK[i], &ir_values_back[i]);
     }
 
 }
