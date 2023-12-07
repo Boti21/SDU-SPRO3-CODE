@@ -75,7 +75,7 @@ void init_adc(void)
 }
 
 /* Check each adc value of infrared sensor */
-void infrared_adc_check_front(void)
+void ir_adc_check_front(void)
 {
     for (int i = 0; i < IR_FRONT_NUMBER_OF_PINS; i++)
     {
@@ -84,7 +84,7 @@ void infrared_adc_check_front(void)
 
 }
 
-void infrared_adc_check_back(void)
+void ir_adc_check_back(void)
 {
     for (int i = 0; i < IR_FRONT_NUMBER_OF_PINS; i++)
     {

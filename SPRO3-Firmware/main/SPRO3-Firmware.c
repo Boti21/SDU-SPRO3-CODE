@@ -76,7 +76,7 @@ void app_main(void)
         pwm_wheels(BASE_SPEED, BASE_SPEED);
         
         // Read IR-SENSOR in the front
-        infrared_adc_check_front();
+        ir_adc_check_front();
 
         for(int i = 0; i < IR_FRONT_NUMBER_OF_PINS; i++) {
 
