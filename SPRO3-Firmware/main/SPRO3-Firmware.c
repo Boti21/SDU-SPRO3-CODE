@@ -73,7 +73,7 @@ void app_main(void)
         /*
         pwm_start(M_MOTOR, 25);
         */
-        pwm_wheels(BASE_SPEED, BASE_SPEED);
+        pwm_wheels(RIGHT_TURN_LIGHT);
         
         // Read IR-SENSOR in the front
         ir_adc_check_front();
