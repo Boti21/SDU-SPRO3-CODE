@@ -39,9 +39,6 @@ void monitor_task(void* pvParameters) {
 }
 
 
-
-
-
 void test_task(void *pvParameters)
 {
     char *test_task_name = pcTaskGetName(NULL);

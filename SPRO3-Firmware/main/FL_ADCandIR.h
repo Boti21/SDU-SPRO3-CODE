@@ -118,11 +118,26 @@ void ir_dif(void) {
     dif = max - min;
 }
 
-void ir_avg(void) {
-    avg = (max + min) / 2;
+int ir_avg(void) {
+    int threshhold = (max + min) / 2;
+    return threshhold;
 }
 
 int ir_check_line(void) {
-    printf("I !!!");
+    
+    // Maybe this function is irrelevant
+    int threshhold;
+
+    ir_adc_check_front();
+    ir_min();
+    ir_max();
+    threshhold = ir_avg();
+
+    for (int i = 0; i < IR_FRONT_NUMBER_OF_PINS; i++)
+    {
+        
+    }
+    
+
     return 0;
 }

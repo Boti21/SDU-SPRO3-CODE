@@ -28,6 +28,7 @@
 #define BORDER_VALUE
 
 #define BASE_SPEED 200
+#define STRAIGHT BASE_SPEED, BASE_SPEED
 #define RIGHT_TURN_LIGHT 180 , 230
 #define RIGHT_TURN_STRONG 150 , 250
 #define LEFT_TURN_LIGHT 230 , 180
@@ -75,7 +76,16 @@ void app_main(void)
         /*
         pwm_start(M_MOTOR, 25);
         */
-        pwm_wheels(RIGHT_TURN_LIGHT);
+        pwm_drive(STRAIGHT);
+        
+        vTaskDelay(10000 / portTICK_PERIOD_MS);
+
+        pwm_drive(RIGHT_TURN_LIGHT);
+
+        vTaskDelay(2500 / portTICK_PERIOD_MS);
+
+        pwm_drive(LEFT_TURN_LIGHT);
+        
         
         // Read IR-SENSOR in the front
         ir_adc_check_front();

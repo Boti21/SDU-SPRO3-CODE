@@ -65,10 +65,6 @@ void pwm_stop(int motor){
    ledc_timer_pause(0,motor);
 }
 
-void pwm_wheels(int duty_L, int duty_R) {
-    pwm_set(L_MOTOR, duty_L);
-    pwm_set(R_MOTOR, duty_R);
-}
 
 void init_direction_change(void) {
 
@@ -116,3 +112,43 @@ void direction_set(int motor, int direction) {
     }
 
 }
+
+void pwm_drive(int duty_L, int duty_R) {
+
+    if (duty_L < 0) 
+    {
+        direction_set(L_MOTOR, BACKWARD);
+    } else
+    {
+        direction_set(L_MOTOR, FORWARD);
+    }
+
+    if (duty_R < 0)
+    {
+        direction_set(R_MOTOR, BACKWARD);
+    }
+    else
+    {
+        direction_set(R_MOTOR, FORWARD);
+    }   
+
+    pwm_set(L_MOTOR, abs(duty_L));
+    pwm_set(R_MOTOR, abs(duty_R));
+}
+/*
+void drive_intersections(int intersection_count) 
+{
+    int threshhold;
+    
+    ir_adc_check_front();
+    ir_min();
+    ir_max();
+    threshhold = ir_avg();
+
+    if ((ir_values_front[1] > threshhold) && (ir_values_front[2] > threshhold)) // Line is in center
+    {
+        
+    }
+    
+}
+*/

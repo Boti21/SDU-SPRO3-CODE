@@ -21,7 +21,8 @@
         "numeric": "c",
         "ratio": "c",
         "cinttypes": "c",
-        "cstdlib": "c"
+        "cstdlib": "c",
+        "fl_adcandir.h": "c"
     },
     "C_Cpp.default.compilerPath": "C:\\MinGW\\bin\\gcc.exe"
 }
