@@ -22,6 +22,13 @@
 #define L_MOTOR_GPIO 18 // TBD
 #define R_MOTOR_GPIO 19 // TBD
 
+#define L_MOTOR_FORWARD GPIO_NUM_22
+#define L_MOTOR_BACKWARD GPIO_NUM_23
+#define R_MOTOR_FORWARD GPIO_NUM_2
+#define R_MOTOR_BACKWARD GPIO_NUM_15
+
+#define BACKWARD 0
+#define FORWARD 1
 
 
 void init_pwm(int motor, int GPIO)
@@ -61,4 +68,51 @@ void pwm_stop(int motor){
 void pwm_wheels(int duty_L, int duty_R) {
     pwm_set(L_MOTOR, duty_L);
     pwm_set(R_MOTOR, duty_R);
+}
+
+void init_direction_change(void) {
+
+    gpio_set_direction(L_MOTOR_FORWARD, GPIO_MODE_OUTPUT);
+    gpio_set_direction(R_MOTOR_FORWARD, GPIO_MODE_OUTPUT);
+    gpio_set_direction(L_MOTOR_BACKWARD, GPIO_MODE_OUTPUT);
+    gpio_set_direction(R_MOTOR_BACKWARD, GPIO_MODE_OUTPUT);
+
+    gpio_set_level(L_MOTOR_FORWARD, 1);
+    gpio_set_level(R_MOTOR_FORWARD, 1);
+
+    gpio_set_level(L_MOTOR_BACKWARD, 0);
+    gpio_set_level(R_MOTOR_BACKWARD, 0);
+
+}
+
+void direction_set(int motor, int direction) { 
+
+    if (motor == L_MOTOR)
+    {
+        if (direction == FORWARD)
+        {
+            gpio_set_level(L_MOTOR_FORWARD, 1);
+            gpio_set_level(L_MOTOR_BACKWARD, 0);
+        }
+        else
+        {
+            gpio_set_level(L_MOTOR_FORWARD, 0);
+            gpio_set_level(L_MOTOR_BACKWARD, 1);
+        }
+        
+    } 
+    else if (motor == R_MOTOR) 
+    {
+        if (direction == FORWARD)
+        {
+            gpio_set_level(R_MOTOR_FORWARD, 1);
+            gpio_set_level(R_MOTOR_BACKWARD, 0);
+        }
+        else
+        {
+            gpio_set_level(R_MOTOR_FORWARD, 0);
+            gpio_set_level(R_MOTOR_BACKWARD, 1);
+        }
+    }
+
 }

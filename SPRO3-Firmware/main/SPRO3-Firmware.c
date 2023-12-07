@@ -15,7 +15,7 @@
 
 // ForkLift includes
 #include "FL_ultrasonic.h"
-#include "FL_PWM.h"
+#include "FL_drive.h"
 #include "FL_ADCandIR.h"
 #include "FL_threads.h"
 
@@ -34,6 +34,7 @@
 #define LEFT_TURN_STRONG 250 , 150
 
 #define LOAD_CELL_GPIO ADC1_CHANNEL_4 // which analog is used, The channel depends on which GPIO we want to use
+
 
 void app_main(void)
 {
@@ -56,6 +57,7 @@ void app_main(void)
     init_pwm(L_MOTOR, L_MOTOR_GPIO);
     init_pwm(R_MOTOR, R_MOTOR_GPIO);
     init_ultrasonic();
+    init_direction_change();
 
     // Testing
     int adc_value = 0;

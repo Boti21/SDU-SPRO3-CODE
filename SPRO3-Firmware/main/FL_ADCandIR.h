@@ -47,10 +47,10 @@
 adc_oneshot_unit_handle_t adc1_handle;
 
 uint8_t IR_CHANNELS_FRONT[] = {IR_FRONT_D1_GPIO, IR_FRONT_D3_GPIO, IR_FRONT_D4_GPIO, IR_FRONT_D5_GPIO};
-unsigned int ir_values_front[IR_FRONT_NUMBER_OF_PINS];
+int ir_values_front[IR_FRONT_NUMBER_OF_PINS];
 
 uint8_t IR_CHANNELS_BACK[] = {IR_BACK_D4_GPIO, IR_BACK_D5_GPIO};
-unsigned int ir_values_back[IR_BACK_NUMBER_OF_PINS];
+int ir_values_back[IR_BACK_NUMBER_OF_PINS];
 
 /* Data handling variables */
 unsigned int max = 0;
@@ -123,5 +123,6 @@ void ir_avg(void) {
 }
 
 int ir_check_line(void) {
-
+    printf("I !!!");
+    return 0;
 }
