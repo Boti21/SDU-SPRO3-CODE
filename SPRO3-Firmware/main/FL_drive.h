@@ -57,17 +57,20 @@ void init_pwm(int motor, int GPIO)
     ledc_timer_pause(0,motor);
 }
 
-void pwm_set(int motor, int duty){
-    ledc_set_duty(0,motor,duty);   
-    ledc_timer_resume(0,motor);
-}
-void pwm_stop(int motor){
-   ledc_timer_pause(0,motor);
+void pwm_set(int motor, int duty)
+{
+    ledc_set_duty(0, motor, duty);   
+    ledc_timer_resume(0, motor);
 }
 
+void pwm_stop(int motor)
+{
+   ledc_timer_pause(0, motor);
+}
 
-void init_direction_change(void) {
 
+void init_direction_change(void)
+{
     gpio_set_direction(L_MOTOR_FORWARD, GPIO_MODE_OUTPUT);
     gpio_set_direction(R_MOTOR_FORWARD, GPIO_MODE_OUTPUT);
     gpio_set_direction(L_MOTOR_BACKWARD, GPIO_MODE_OUTPUT);
@@ -78,11 +81,10 @@ void init_direction_change(void) {
 
     gpio_set_level(L_MOTOR_BACKWARD, 0);
     gpio_set_level(R_MOTOR_BACKWARD, 0);
-
 }
 
-void direction_set(int motor, int direction) { 
-
+void direction_set(int motor, int direction)
+{ 
     if (motor == L_MOTOR)
     {
         if (direction == FORWARD)
@@ -95,7 +97,6 @@ void direction_set(int motor, int direction) {
             gpio_set_level(L_MOTOR_FORWARD, 0);
             gpio_set_level(L_MOTOR_BACKWARD, 1);
         }
-        
     } 
     else if (motor == R_MOTOR) 
     {
@@ -110,15 +111,15 @@ void direction_set(int motor, int direction) {
             gpio_set_level(R_MOTOR_BACKWARD, 1);
         }
     }
-
 }
 
-void pwm_drive(int duty_L, int duty_R) {
-
+void pwm_drive(int duty_L, int duty_R)
+{
     if (duty_L < 0) 
     {
         direction_set(L_MOTOR, BACKWARD);
-    } else
+    }
+    else
     {
         direction_set(L_MOTOR, FORWARD);
     }
