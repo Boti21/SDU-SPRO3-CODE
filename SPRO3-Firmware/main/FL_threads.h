@@ -1,3 +1,7 @@
+#ifndef FL_THREADS_H
+#define FL_THREADS_H
+#endif
+
 #include <stdio.h>
 
 #include "freertos/FreeRTOS.h"
@@ -12,12 +16,13 @@
 #include "esp_adc/adc_continuous.h"
 #include "esp_log.h"
 #include "esp_err.h"
-/*
+
 // Custom includes
 #include "FL_ultrasonic.h"
 #include "FL_drive.h"
 #include "FL_ADCandIR.h"
-*/
+
+
 
 /* Misc macros */
 #define CUSTOM_STACK_SIZE 2048

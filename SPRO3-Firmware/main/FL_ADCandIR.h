@@ -1,3 +1,7 @@
+#ifndef FL_ADC_IR_H
+#define FL_ADC_IR_H
+#endif
+
 #include <stdio.h>
 
 #include "freertos/FreeRTOS.h"
@@ -12,6 +16,7 @@
 #include "esp_adc/adc_continuous.h"
 #include "esp_log.h"
 #include "esp_err.h"
+
 
 // #define CONFIG_IDF_TARGET_ESP32S2
 #define ADC1_0 0 // GPIO_NUM_36

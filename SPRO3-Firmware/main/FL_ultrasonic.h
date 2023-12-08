@@ -1,3 +1,7 @@
+#ifndef FL_ULTRASONIC_H
+#define FL_ULTRASONIC_H
+#endif
+
 #include <stdio.h>
 
 #include "freertos/FreeRTOS.h"
@@ -12,6 +16,7 @@
 #include "esp_adc/adc_continuous.h"
 #include "esp_log.h"
 #include "esp_err.h"
+
 
 // Timer Macros
 #define TIMER_RESOLUTION 1000000 // 1MHz, 1 tick = 1us

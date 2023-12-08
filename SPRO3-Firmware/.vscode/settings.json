@@ -22,7 +22,8 @@
         "ratio": "c",
         "cinttypes": "c",
         "cstdlib": "c",
-        "fl_adcandir.h": "c"
+        "fl_adcandir.h": "c",
+        "fl_ultrasonic.h": "c"
     },
     "C_Cpp.default.compilerPath": "C:\\MinGW\\bin\\gcc.exe"
 }
