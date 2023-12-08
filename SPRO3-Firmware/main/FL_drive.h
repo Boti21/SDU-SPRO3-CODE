@@ -62,34 +62,16 @@ void init_pwm(int motor, int GPIO)
    // gpio_set_direction(GPIO, GPIO_MODE_OUTPUT);
 }
 
-<<<<<<< Updated upstream
-void pwm_set(int motor, int duty)
-{
-    ledc_set_duty(0, motor, duty);   
-    ledc_timer_resume(0, motor);
-}
 
-void pwm_stop(int motor)
-{
-=======
-<<<<<<< HEAD
+
 void pwm_set(int motor, int duty){
     ledc_set_duty(LEDC_LOW_SPEED_MODE, motor, duty);  
     ledc_update_duty(LEDC_LOW_SPEED_MODE, motor); 
     ledc_timer_resume(LEDC_LOW_SPEED_MODE, motor);
 }
-void pwm_stop(int motor){
-=======
-void pwm_set(int motor, int duty)
-{
-    ledc_set_duty(0, motor, duty);   
-    ledc_timer_resume(0, motor);
-}
 
-void pwm_stop(int motor)
-{
->>>>>>> eaaab2aa0975c8e92d45bde70ae4c4c18cf8e421
->>>>>>> Stashed changes
+void pwm_stop(int motor){
+
    ledc_timer_pause(0, motor);
 }
 
