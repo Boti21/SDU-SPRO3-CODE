@@ -187,10 +187,23 @@ ir_check_line_ret ir_check_line_front(void)
     };
 
     ir_adc_check_front();
+<<<<<<< Updated upstream
+=======
+<<<<<<< HEAD
+    ir_min();
+    ir_max();
+    threshhold = ir_avg();
+    distance_ultrasonic();
+=======
+>>>>>>> Stashed changes
     ir_max_front();
     ir_min_front();
     ir_dif_front();
     ir_threshhold_front();
+<<<<<<< Updated upstream
+=======
+>>>>>>> eaaab2aa0975c8e92d45bde70ae4c4c18cf8e421
+>>>>>>> Stashed changes
 
     if(ir_values_front[IR_FRONT_LEFT_SENSOR] < threshhold_front)
     {

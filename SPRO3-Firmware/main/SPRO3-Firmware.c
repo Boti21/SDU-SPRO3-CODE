@@ -54,25 +54,34 @@ void app_main(void)
     init_pwm(M_MOTOR, M_MOTOR_GPIO);
     init_pwm(L_MOTOR, L_MOTOR_GPIO);
     init_pwm(R_MOTOR, R_MOTOR_GPIO);
-    init_ultrasonic();
-    init_direction_change();
+    //init_ultrasonic();
 
+    init_direction_change();
+    
+    /*
     // Testing
     int adc_value = 0;
     gpio_reset_pin(2);
     gpio_set_direction(2, GPIO_MODE_OUTPUT);
     gpio_set_direction(5, GPIO_MODE_OUTPUT);
     gpio_set_level(2, 1);
+    */
 
 
     while (1) {
+        
         ESP_LOGI(main_name, "Main loop...");
         //vTaskDelay(250 / portTICK_PERIOD_MS);
-    
-        
         /*
         pwm_start(M_MOTOR, 25);
         */
+       //gpio_set_level(L_MOTOR_GPIO, 1);
+       pwm_set(M_MOTOR, 100);
+        direction_set(L_MOTOR, BACKWARD);
+        vTaskDelay(10000 / portTICK_PERIOD_MS);
+        direction_set(L_MOTOR, FORWARD);
+        direction_set(R_MOTOR, FORWARD);
+       
         pwm_drive(STRAIGHT);
         
         vTaskDelay(10000 / portTICK_PERIOD_MS);
@@ -83,6 +92,8 @@ void app_main(void)
 
         pwm_drive(LEFT_TURN_LIGHT);
         
+       
+       
         
         // Read IR-SENSOR in the front
         ir_adc_check_front();

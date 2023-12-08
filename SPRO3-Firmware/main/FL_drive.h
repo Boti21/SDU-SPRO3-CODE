@@ -25,7 +25,10 @@
 #define L_MOTOR_FORWARD GPIO_NUM_22
 #define L_MOTOR_BACKWARD GPIO_NUM_23
 #define R_MOTOR_FORWARD GPIO_NUM_2
-#define R_MOTOR_BACKWARD GPIO_NUM_15
+#define R_MOTOR_BACKWARD GPIO_NUM_4
+
+// Note
+// Number 15 will always be high! - Even if codewise otherwise
 
 #define BACKWARD 0
 #define FORWARD 1
@@ -35,7 +38,7 @@ void init_pwm(int motor, int GPIO)
 {
     // Prepare and then apply the LEDC PWM timer configuration
     ledc_timer_config_t ledc_timer = {
-        .speed_mode       = 0, // Low speed mode
+        .speed_mode       = LEDC_LOW_SPEED_MODE, // Low speed mode
         .duty_resolution  = 8,// resolution in bit, 
         .timer_num        = 0, // timer x
         .freq_hz          = 1000,// Hz // prev 1000
@@ -45,18 +48,21 @@ void init_pwm(int motor, int GPIO)
 
     // Prepare and then apply the LEDC PWM channel configuration
     ledc_channel_config_t ledc_channel = {
-        .speed_mode     = 0, // Low speed mode 
+        .speed_mode     = LEDC_LOW_SPEED_MODE, // Low speed mode 
         .channel        = motor,
-        .timer_sel      = 0,
+        .timer_sel      = LEDC_TIMER_0,
         .intr_type      = 0, // disable interrupts
         .gpio_num       = GPIO,
         .duty           = 128, //Set duty to 50% in 8 bit :  (2**8)*50% = 128
         .hpoint         = 0
     };
     ledc_channel_config(&ledc_channel);
-    ledc_timer_pause(0,motor);
+    //ledc_timer_pause(0,motor);
+
+   // gpio_set_direction(GPIO, GPIO_MODE_OUTPUT);
 }
 
+<<<<<<< Updated upstream
 void pwm_set(int motor, int duty)
 {
     ledc_set_duty(0, motor, duty);   
@@ -65,6 +71,25 @@ void pwm_set(int motor, int duty)
 
 void pwm_stop(int motor)
 {
+=======
+<<<<<<< HEAD
+void pwm_set(int motor, int duty){
+    ledc_set_duty(LEDC_LOW_SPEED_MODE, motor, duty);  
+    ledc_update_duty(LEDC_LOW_SPEED_MODE, motor); 
+    ledc_timer_resume(LEDC_LOW_SPEED_MODE, motor);
+}
+void pwm_stop(int motor){
+=======
+void pwm_set(int motor, int duty)
+{
+    ledc_set_duty(0, motor, duty);   
+    ledc_timer_resume(0, motor);
+}
+
+void pwm_stop(int motor)
+{
+>>>>>>> eaaab2aa0975c8e92d45bde70ae4c4c18cf8e421
+>>>>>>> Stashed changes
    ledc_timer_pause(0, motor);
 }
 
