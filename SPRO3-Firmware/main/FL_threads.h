@@ -18,11 +18,11 @@
 #include "esp_err.h"
 
 // Custom includes
+#ifndef FL_ADC_IR_H
 #include "FL_ultrasonic.h"
 #include "FL_drive.h"
 #include "FL_ADCandIR.h"
-
-
+#endif
 
 /* Misc macros */
 #define CUSTOM_STACK_SIZE 2048
