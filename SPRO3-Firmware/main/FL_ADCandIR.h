@@ -44,10 +44,17 @@
 #define IR_BACK_D5_GPIO ADC1_9 // GPIO_NUM_26
 #define LOAD_CELL_GPIO ADC2_0
 
+#define CORRECTION_NONE 0 // Could be changed obviously
+#define CORRECTION_LEFT -1 // Could be changed obviously
+#define CORRECTION_RIGHT 1 // Could be changed obviously
 #define CORRECTION_LIGHT 10 // No idea if this will be enough
 #define CORRECTION_HARD 50 // No idea if this will be enough
 
-#define IR_FRONT_LEFT_SENSOR
+#define IR_FRONT_LEFT_SENSOR 1
+#define IR_FRONT_RIGHT_SENSOR 2
+
+#define IR_BACK_LEFT_SENSOR 0
+#define IR_BACK_RIGHT_SENSOR 1
 
 adc_oneshot_unit_handle_t adc1_handle;
 
@@ -58,10 +65,30 @@ uint8_t IR_CHANNELS_BACK[] = {IR_BACK_D4_GPIO, IR_BACK_D5_GPIO};
 int ir_values_back[IR_BACK_NUMBER_OF_PINS];
 
 /* Data handling variables */
-unsigned int max = 0;
-unsigned int min = 0;
-unsigned int dif = 0;
-unsigned int avg = 0; 
+unsigned int max_front = 0;
+unsigned int min_front = 0;
+unsigned int dif_front = 0;
+unsigned int threshhold_front = 0;
+
+unsigned int max_back = 0;
+unsigned int min_back = 0;
+unsigned int dif_back = 0;
+unsigned int threshhold_back = 0;
+
+typedef struct {
+    int correction_dir;
+    int correction_level;
+} ir_check_line_ret;
+
+typedef enum {
+    NO_INTERSECTION,
+    INTERSECTION,
+} intersection_t;
+
+intersection_t grid_intersection = NO_INTERSECTION;
+
+// Use this to check the intersection variable
+SemaphoreHandle_t intersection_mutex = NULL;
 
 void init_adc(void)
 {
@@ -103,46 +130,79 @@ void ir_adc_check_back(void)
     }
 }
 
-void ir_max(void) {
+void ir_max_front(void) {
     for(int i = 0; i < IR_FRONT_NUMBER_OF_PINS; i++) {
-        if(max < ir_values_front[i]) {
-            max = ir_values_front[i];
+        if(max_front < ir_values_front[i]) {
+            max_front = ir_values_front[i];
         }
     }
 }
 
-void ir_min(void) {
+void ir_min_front(void) {
     for(int i = 0; i < IR_FRONT_NUMBER_OF_PINS; i++) {
-        if(min > ir_values_front[i]) {
-            min = ir_values_front[i];
+        if(min_front > ir_values_front[i]) {
+            min_front = ir_values_front[i];
         }
     }
 }
 
-void ir_dif(void) {
-    dif = max - min;
+void ir_dif_front(void) {
+    dif_front = max_front - min_front;
 }
 
-int ir_avg(void) {
-    int threshhold = (max + min) / 2;
-    return threshhold;
+void ir_threshhold_front(void) {
+    threshhold_front = (max_front + min_front) / 2;
 }
 
-int ir_check_line(void) {
-    
-    // Maybe this function is irrelevant
-    int threshhold;
+
+void ir_max_back(void) {
+    for(int i = 0; i < IR_BACK_NUMBER_OF_PINS; i++) {
+        if(max_back < ir_values_back[i]) {
+            max_back = ir_values_back[i];
+        }
+    }
+}
+
+void ir_min_back(void) {
+    for(int i = 0; i < IR_BACK_NUMBER_OF_PINS; i++) {
+        if(min_back > ir_values_back[i]) {
+            min_back = ir_values_back[i];
+        }
+    }
+}
+
+void ir_dif_back(void) {
+    dif_back = max_back - min_back;
+}
+
+void ir_threshhold_back(void) {
+    threshhold_back = (max_back + min_back) / 2;
+}
+
+ir_check_line_ret ir_check_line_front(void)
+{
+    ir_check_line_ret result = {
+        .correction_dir = CORRECTION_NONE,
+        .correction_level = CORRECTION_NONE,
+    };
 
     ir_adc_check_front();
-    ir_min();
-    ir_max();
-    threshhold = ir_avg();
+    ir_max_front();
+    ir_min_front();
+    ir_dif_front();
+    ir_threshhold_front();
 
-    for (int i = 0; i < IR_FRONT_NUMBER_OF_PINS; i++)
+    if(ir_values_front[IR_FRONT_LEFT_SENSOR] < threshhold_front)
     {
-        
+        result.correction_dir = CORRECTION_RIGHT;
     }
-    
+    else if(ir_values_front[IR_FRONT_RIGHT_SENSOR] < threshhold_front)
+    {
+        result.correction_dir = CORRECTION_LEFT;
+    }
 
-    return 0;
+    result.correction_level = CORRECTION_LIGHT;
+
+    return result;
 }
+
