@@ -18,7 +18,7 @@
 #include "esp_err.h"
 
 // Custom includes
-#ifndef FL_ADC_IR_H
+#ifndef FL_ADC_IR_H // Fucking black magic
 #include "FL_ultrasonic.h"
 #include "FL_drive.h"
 #include "FL_ADCandIR.h"
