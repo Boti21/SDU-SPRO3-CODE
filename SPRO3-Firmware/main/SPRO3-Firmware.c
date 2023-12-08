@@ -20,9 +20,6 @@
 #include "FL_threads.h"
 
 
-#define ADC1_CHANNELS_NUM 6 // Number of ADC channels on ADC unit 1
-#define ADC2_CHANNELS_NUM 2 // (for now) Number of ADC channels on ADC unit 2
-
 #define CALIBRATION_BLACK_TAPE
 #define CALIBRATION_FLOOR
 #define BORDER_VALUE
