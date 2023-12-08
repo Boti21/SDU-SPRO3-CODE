@@ -113,14 +113,10 @@ void app_main(void)
         pwm_stop(R_MOTOR);
         vTaskDelay(500 / portTICK_PERIOD_MS);
         */
-        /*
-        xSemaphoreTake(screen_mutex, portMAX_DELAY);
-        ESP_LOGI(main_name, "this is a task");
-        xSemaphoreGive(screen_mutex);
-        */
 
-//Code to be removed
-        //adc_oneshot_read(adc1_handle, IR_CHANNELS_FRONT[0], &adc_value);
-        //vTaskDelay(1 / portTICK_PERIOD_MS);
-        //ESP_LOGI(main_name, "ADC value: %d", adc_value);
+/* Example of using a mutex
+xSemaphoreTake(screen_mutex, portMAX_DELAY);
+ESP_LOGI(main_name, "this is a task");
+xSemaphoreGive(screen_mutex);
+*/
         
