@@ -24,12 +24,12 @@
 #define CALIBRATION_FLOOR
 #define BORDER_VALUE
 
-#define BASE_SPEED 200
+#define BASE_SPEED 250
 #define STRAIGHT BASE_SPEED, BASE_SPEED
-#define RIGHT_TURN_LIGHT 180 , 230
-#define RIGHT_TURN_STRONG 150 , 250
-#define LEFT_TURN_LIGHT 230 , 180
-#define LEFT_TURN_STRONG 250 , 150
+#define RIGHT_TURN_LIGHT -100 , 100
+#define RIGHT_TURN_STRONG -200 , 200
+#define LEFT_TURN_LIGHT 100 , -100
+#define LEFT_TURN_STRONG 200 , -200
 
 #define LOAD_CELL_GPIO ADC1_CHANNEL_4 // which analog is used, The channel depends on which GPIO we want to use
 
@@ -74,7 +74,6 @@ void app_main(void)
         //vTaskDelay(250 / portTICK_PERIOD_MS);
         /*
         pwm_start(M_MOTOR, 25);
-        */
        //gpio_set_level(L_MOTOR_GPIO, 1);
        pwm_set(M_MOTOR, 100);
         direction_set(L_MOTOR, BACKWARD);
@@ -92,7 +91,29 @@ void app_main(void)
 
         pwm_drive(LEFT_TURN_LIGHT);
         
-       
+        */
+
+        //pwm_drive(STRAIGHT);
+
+        //vTaskDelay(3000 / portTICK_PERIOD_MS);
+
+        pwm_drive(RIGHT_TURN_LIGHT);
+        
+        vTaskDelay(500 / portTICK_PERIOD_MS);
+        
+        pwm_drive(RIGHT_TURN_STRONG);
+
+        vTaskDelay(3000 / portTICK_PERIOD_MS);
+
+        pwm_drive(LEFT_TURN_LIGHT);
+        
+        vTaskDelay(500 / portTICK_PERIOD_MS);
+        
+        pwm_drive(LEFT_TURN_STRONG);
+
+        vTaskDelay(3000 / portTICK_PERIOD_MS);
+        
+        pwm_drive(0, 0);
        
         
         // Read IR-SENSOR in the front
@@ -105,7 +126,10 @@ void app_main(void)
         }
 
         // Giving the operating system room to breath
-        vTaskDelay(1000 / portTICK_PERIOD_MS);
+        vTaskDelay(10000 / portTICK_PERIOD_MS);
+
+        
+
     }
 }
 

@@ -22,10 +22,10 @@
 #define L_MOTOR_GPIO 18 // TBD
 #define R_MOTOR_GPIO 19 // TBD
 
-#define L_MOTOR_FORWARD GPIO_NUM_22
-#define L_MOTOR_BACKWARD GPIO_NUM_23
-#define R_MOTOR_FORWARD GPIO_NUM_2
-#define R_MOTOR_BACKWARD GPIO_NUM_4
+#define L_MOTOR_FORWARD GPIO_NUM_23
+#define L_MOTOR_BACKWARD GPIO_NUM_22
+#define R_MOTOR_FORWARD GPIO_NUM_4
+#define R_MOTOR_BACKWARD GPIO_NUM_2
 
 // Note
 // Number 15 will always be high! - Even if codewise otherwise
