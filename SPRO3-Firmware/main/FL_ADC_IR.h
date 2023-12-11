@@ -44,7 +44,7 @@
 #define IR_BACK_D5_GPIO ADC1_9 // GPIO_NUM_26
 
 #define IR_D1 0
-#define IR_D3 1
+#define IR_D3 0
 #define IR_D4 1
 #define IR_D5 2
 #define IR_D6 3
@@ -67,7 +67,7 @@
 
 adc_oneshot_unit_handle_t adc1_handle;
 
-uint8_t IR_CHANNELS_FRONT[] = {IR_FRONT_D1_GPIO, IR_FRONT_D3_GPIO, IR_FRONT_D6_GPIO, IR_FRONT_D8_GPIO};
+uint8_t IR_CHANNELS_FRONT[] = {IR_FRONT_D3_GPIO, IR_FRONT_D4_GPIO, IR_FRONT_D5_GPIO, IR_FRONT_D6_GPIO};
 int ir_values_front[IR_FRONT_NUMBER_OF_PINS];
 
 uint8_t IR_CHANNELS_BACK[] = {IR_BACK_D4_GPIO, IR_BACK_D5_GPIO};
