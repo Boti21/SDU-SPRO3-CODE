@@ -21,7 +21,7 @@
 #ifndef FL_ADC_IR_H // Fucking black magic
 #include "FL_ultrasonic.h"
 #include "FL_drive.h"
-#include "FL_ADCandIR.h"
+#include "FL_ADC_IR.h"
 #endif
 
 /* Misc macros */

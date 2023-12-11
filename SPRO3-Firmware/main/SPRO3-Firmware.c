@@ -16,7 +16,7 @@
 // ForkLift includes
 #include "FL_ultrasonic.h"
 #include "FL_drive.h"
-#include "FL_ADCandIR.h"
+#include "FL_ADC_IR.h"
 #include "FL_threads.h"
 
 
