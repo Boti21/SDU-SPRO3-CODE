@@ -19,13 +19,13 @@
 #define L_MOTOR 1 // Left motor (facing the same way as the fork)
 #define R_MOTOR 2 // Right motor (facing the same way as the fork)
 #define M_MOTOR_GPIO 5 // TBD
-#define L_MOTOR_GPIO 18 // TBD
-#define R_MOTOR_GPIO 19 // TBD
+#define L_MOTOR_GPIO 19 // TBD
+#define R_MOTOR_GPIO 18 // TBD
 
-#define L_MOTOR_FORWARD GPIO_NUM_23
-#define L_MOTOR_BACKWARD GPIO_NUM_22
-#define R_MOTOR_FORWARD GPIO_NUM_4
-#define R_MOTOR_BACKWARD GPIO_NUM_2
+#define R_MOTOR_FORWARD GPIO_NUM_22
+#define R_MOTOR_BACKWARD GPIO_NUM_23
+#define L_MOTOR_FORWARD GPIO_NUM_2
+#define L_MOTOR_BACKWARD GPIO_NUM_4
 
 // Note
 // Number 15 will always be high! - Even if codewise otherwise
