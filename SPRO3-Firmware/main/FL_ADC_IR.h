@@ -216,3 +216,15 @@ ir_check_line_ret ir_check_line_front(void)
     return result;
 }
 
+void init_multiplexer(void)
+{
+    gpio_config_t multiplexer_pin = {
+        .pin_bit_mask = 15,       
+        .mode = GPIO_MODE_INPUT,
+        .pull_up_en = GPIO_PULLUP_ENABLE,
+        .pull_down_en = GPIO_PULLDOWN_DISABLE,
+        .intr_type = GPIO_INTR_DISABLE,
+    };
+    gpio_config(&multiplexer_pin);
+}
+
