@@ -28,14 +28,15 @@
 #define ROTATE_LIGHT 90
 #define ROTATE_STRONG 150
 
-#define STRAIGHT BASE_SPEED, BASE_SPEED
+#define STRAIGHT BASE_SPEED , BASE_SPEED
+#define STOP 0 , 0
 
-#define RIGHT_TURN_LIGHT 250 , 150
+#define RIGHT_TURN_LIGHT 220 , 125
 #define RIGHT_TURN_STRONG 250 , 100
 #define RIGHT_ROTATE_LIGHT ROTATE_LIGHT , -ROTATE_LIGHT
 #define RIGHT_ROTATE_STRONG ROTATE_STRONG , -ROTATE_STRONG
 
-#define LEFT_TURN_LIGHT 150 , 250
+#define LEFT_TURN_LIGHT 125 , 220
 #define LEFT_TURN_STRONG 100 , 250
 #define LEFT_ROTATE_LIGHT -ROTATE_LIGHT , ROTATE_LIGHT
 #define LEFT_ROTATE_STRONG -ROTATE_STRONG , ROTATE_STRONG
@@ -82,34 +83,55 @@ void app_main(void)
         ESP_LOGI(main_name, "Main loop...");
         //vTaskDelay(250 / portTICK_PERIOD_MS);
 
-        
+        /*
+        pwm_drive(STRAIGHT);
+
+        vTaskDelay(3000 / portTICK_PERIOD_MS);
+
+        pwm_drive(RIGHT_ROTATE_STRONG);
+
+        vTaskDelay(3000 / portTICK_PERIOD_MS);
+
+        pwm_drive(LEFT_ROTATE_STRONG);
        
-        
+        */
+        pwm_drive(STRAIGHT);
+
         // Read IR-SENSOR in the front
         ir_adc_check_front();
 
-        if(ir_values_front[IR_D1] > CALIBRATION_BLACK_TAPE) 
-        {
-            pwm_drive(LEFT_TURN_STRONG);
+        while ((ir_values_front[IR_D1] < CALIBRATION_BLACK_TAPE) && (ir_values_front[IR_D8] < CALIBRATION_BLACK_TAPE))
+        {  
+            ir_adc_check_front();
 
-        } else if (ir_values_front[IR_D8] > CALIBRATION_BLACK_TAPE)
-        {
-            pwm_drive(RIGHT_TURN_STRONG);
+            if(ir_values_front[IR_D1] > CALIBRATION_BLACK_TAPE) 
+            {
+                pwm_drive(LEFT_TURN_STRONG);
 
-        } else if ((ir_values_front[IR_D4] > CALIBRATION_BLACK_TAPE) && (ir_values_front[IR_D5] > CALIBRATION_BLACK_TAPE))
-        {
-            pwm_drive(STRAIGHT);
+            } else if (ir_values_front[IR_D8] > CALIBRATION_BLACK_TAPE)
+            {
+                pwm_drive(RIGHT_TURN_STRONG);
 
-        } else if (ir_values_front[IR_D4] < CALIBRATION_BLACK_TAPE)
-        {
-            pwm_drive(RIGHT_TURN_LIGHT);
+            } else if ((ir_values_front[IR_D4] > CALIBRATION_BLACK_TAPE) && (ir_values_front[IR_D5] > CALIBRATION_BLACK_TAPE))
+            {
+                pwm_drive(STRAIGHT);
 
-        } else if (ir_values_front[IR_D5] < CALIBRATION_BLACK_TAPE)
-        {
-            pwm_drive(LEFT_TURN_LIGHT);
+            } else if (ir_values_front[IR_D3] < CALIBRATION_BLACK_TAPE)
+            {
+                pwm_drive(RIGHT_TURN_LIGHT);
+
+            } else if (ir_values_front[IR_D6] < CALIBRATION_BLACK_TAPE)
+            {
+                pwm_drive(LEFT_TURN_LIGHT);
+                
+            }
             
+            for(int i = 0; i < IR_FRONT_NUMBER_OF_PINS; i++) {
+                ESP_LOGI("IR_RESULTS_FRONT", "Val %d: %d", i, ir_values_front[i]); 
+            }
+            vTaskDelay(10 / portTICK_PERIOD_MS);
         }
-        
+        pwm_drive(STOP);
         
         for(int i = 0; i < IR_FRONT_NUMBER_OF_PINS; i++) {
 
