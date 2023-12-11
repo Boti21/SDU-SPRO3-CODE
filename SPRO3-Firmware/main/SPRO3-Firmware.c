@@ -25,17 +25,20 @@
 #define BORDER_VALUE
 
 #define BASE_SPEED 150
+#define ROTATE_LIGHT 90
+#define ROTATE_STRONG 150
+
 #define STRAIGHT BASE_SPEED, BASE_SPEED
 
-#define RIGHT_TURN_LIGHT 100 , 130
-#define RIGHT_TURN_STRONG 100 , 150
-#define RIGHT_ROTATE_LIGHT -75 , 75
-#define RIGHT_ROTATE_STRONG -150 , 150
+#define RIGHT_TURN_LIGHT 200 , 150
+#define RIGHT_TURN_STRONG 200 , 100
+#define RIGHT_ROTATE_LIGHT ROTATE_LIGHT , -ROTATE_LIGHT
+#define RIGHT_ROTATE_STRONG ROTATE_STRONG , -ROTATE_STRONG
 
-#define LEFT_TURN_LIGHT 130 , 100
-#define LEFT_TURN_STRONG 200 , -200
-#define LEFT_ROTATE_LIGHT 75 , -75
-#define LEFT_ROTATE_STRONG 150 , -150
+#define LEFT_TURN_LIGHT 150 , 200
+#define LEFT_TURN_STRONG 100 , 200
+#define LEFT_ROTATE_LIGHT -ROTATE_LIGHT , ROTATE_LIGHT
+#define LEFT_ROTATE_STRONG -ROTATE_STRONG , ROTATE_STRONG
 
 #define LOAD_CELL_GPIO ADC1_CHANNEL_4 // which analog is used, The channel depends on which GPIO we want to use
 
@@ -79,45 +82,44 @@ void app_main(void)
         ESP_LOGI(main_name, "Main loop...");
         //vTaskDelay(250 / portTICK_PERIOD_MS);
 
-        pwm_drive(STRAIGHT);
-
-        vTaskDelay(3000 / portTICK_PERIOD_MS);
-
-        pwm_drive(RIGHT_ROTATE_LIGHT);
         
-        vTaskDelay(500 / portTICK_PERIOD_MS);
-        
-        pwm_drive(RIGHT_ROTATE_STRONG);
-
-        vTaskDelay(3000 / portTICK_PERIOD_MS);
-
-        
-        pwm_drive(STRAIGHT);
-
-        vTaskDelay(3000 / portTICK_PERIOD_MS);
-
-        pwm_drive(LEFT_TURN_LIGHT);
-        
-        vTaskDelay(500 / portTICK_PERIOD_MS);
-        
-        pwm_drive(LEFT_TURN_STRONG);
-
-        vTaskDelay(3000 / portTICK_PERIOD_MS);
-        
-        pwm_drive(0, 0);
        
         
         // Read IR-SENSOR in the front
         ir_adc_check_front();
 
+        if(ir_values_front[IR_D1] > CALIBRATION_BLACK_TAPE) 
+        {
+            pwm_drive(LEFT_TURN_STRONG);
+
+        } else if (ir_values_front[IR_D8] > CALIBRATION_BLACK_TAPE)
+        {
+            pwm_drive(RIGHT_TURN_STRONG);
+
+        } else if ((ir_values_front[IR_D4] > CALIBRATION_BLACK_TAPE) && (ir_values_front[IR_D5] > CALIBRATION_BLACK_TAPE))
+        {
+            pwm_drive(STRAIGHT);
+
+        } else if (ir_values_front[IR_D4] < CALIBRATION_BLACK_TAPE)
+        {
+            pwm_drive(RIGHT_TURN_LIGHT);
+
+        } else if (ir_values_front[IR_D5] < CALIBRATION_BLACK_TAPE)
+        {
+            pwm_drive(LEFT_TURN_LIGHT);
+            
+        }
+        
+        
         for(int i = 0; i < IR_FRONT_NUMBER_OF_PINS; i++) {
 
             ESP_LOGI("IR_RESULTS_FRONT", "Val %d: %d", i, ir_values_front[i]);
         
         }
+        
 
         // Giving the operating system room to breath
-        vTaskDelay(10000 / portTICK_PERIOD_MS);
+        vTaskDelay(100 / portTICK_PERIOD_MS);
 
         
 

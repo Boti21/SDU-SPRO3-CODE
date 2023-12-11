@@ -42,6 +42,13 @@
 #define IR_FRONT_D8_GPIO ADC1_5 // GPIO_NUM_33
 #define IR_BACK_D4_GPIO ADC1_8 // GPIO_NUM_25
 #define IR_BACK_D5_GPIO ADC1_9 // GPIO_NUM_26
+
+#define IR_D1 0
+#define IR_D4 1
+#define IR_D5 2
+#define IR_D8 3
+
+
 #define LOAD_CELL_GPIO ADC2_0
 
 #define CORRECTION_NONE 0 // Could be changed obviously
