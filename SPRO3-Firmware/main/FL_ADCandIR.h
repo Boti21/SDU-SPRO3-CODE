@@ -47,8 +47,8 @@
 #define CORRECTION_NONE 0 // Could be changed obviously
 #define CORRECTION_LEFT -1 // Could be changed obviously
 #define CORRECTION_RIGHT 1 // Could be changed obviously
-#define CORRECTION_LIGHT 10 // No idea if this will be enough
-#define CORRECTION_HARD 50 // No idea if this will be enough
+#define CORRECTION_LIGHT 10 // Could be completely unnecessary
+#define CORRECTION_HARD 50 // Could be completely unnecessary
 
 #define IR_FRONT_LEFT_SENSOR 1
 #define IR_FRONT_RIGHT_SENSOR 2
