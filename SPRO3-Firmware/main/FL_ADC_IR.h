@@ -147,7 +147,7 @@ void ir_adc_check_front(void)
 
 void ir_adc_check_back(void)
 {
-    for(int i = 0; i < IR_FRONT_NUMBER_OF_PINS; i++)
+    for(int i = 0; i < IR_BACK_NUMBER_OF_PINS; i++)
     {
         adc_oneshot_read(adc1_handle, IR_CHANNELS_BACK[i], &ir_values_back[i]);
     }
