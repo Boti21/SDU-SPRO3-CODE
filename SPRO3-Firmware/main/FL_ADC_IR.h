@@ -154,6 +154,28 @@ void init_adc(void)
     // ESP_ERROR_CHECK(adc_oneshot_config_channel(adc1_handle, IR_FRONT_D3_GPIO, &config));
 }
 
+void init_multiplexer(void)
+{
+    /* Not needed bc of ADC 
+    gpio_reset_pin(GPIO_NUM_23);
+    gpio_intr_disable(GPIO_NUM_23);
+    gpio_set_direction(GPIO_NUM_23, GPIO_MODE_INPUT);
+    gpio_pulldown_en(GPIO_NUM_23);
+    
+    gpio_reset_pin(GPIO_NUM_23);
+    gpio_intr_disable(GPIO_NUM_23);
+    gpio_set_direction(GPIO_NUM_23, GPIO_MODE_INPUT);
+    gpio_pulldown_en(GPIO_NUM_23);
+    */
+
+    for(int i = 0; i < 6; i++) {
+        gpio_reset_pin(MULTIPLEXER_PINS[i]);
+        gpio_intr_disable(MULTIPLEXER_PINS[i]);
+        gpio_set_direction(MULTIPLEXER_PINS[i], GPIO_MODE_OUTPUT);
+        gpio_pulldown_en(MULTIPLEXER_PINS[i]);
+    }
+}
+
 /* Functions for the multiplexer */
 void dec_to_bin(int dec_num)
 {
@@ -168,6 +190,42 @@ void dec_to_bin(int dec_num)
         if(mask & dec_num) {
             multiplexer_adress[i] = 1;
         }
+    }
+}
+
+void set_multiplexer1_channel(int channel_num)
+{
+    dec_to_bin(channel_num);
+    
+    gpio_set_level(MULTIPLEXER1_A, multiplexer_adress[0]);
+    gpio_set_level(MULTIPLEXER1_B, multiplexer_adress[1]);
+    gpio_set_level(MULTIPLEXER1_C, multiplexer_adress[2]);
+}
+
+void set_multiplexer2_channel(int channel_num)
+{
+    dec_to_bin(channel_num);
+
+    gpio_set_level(MULTIPLEXER2_A, multiplexer_adress[0]);
+    gpio_set_level(MULTIPLEXER2_B, multiplexer_adress[1]);
+    gpio_set_level(MULTIPLEXER2_C, multiplexer_adress[2]);
+}
+
+void ir_adc_multiplexer_check_front(void) 
+{
+    for(int i = 0; i < 8; i++) {
+        set_multiplexer1_channel(i);
+
+        adc_oneshot_read(adc1_handle, ADC1_0, &ir_values_front[i]);
+    }
+}
+
+void ir_adc_multiplexer_check_back(void) 
+{
+    for(int i = 0; i < 8; i++) {
+        set_multiplexer2_channel(i);
+
+        adc_oneshot_read(adc1_handle, ADC1_3, &ir_values_back[i]);
     }
 }
 
@@ -265,25 +323,4 @@ ir_check_line_ret ir_check_line_front(void)
     return result;
 }
 
-void init_multiplexer(void)
-{
-    /* Not needed bc of ADC 
-    gpio_reset_pin(GPIO_NUM_23);
-    gpio_intr_disable(GPIO_NUM_23);
-    gpio_set_direction(GPIO_NUM_23, GPIO_MODE_INPUT);
-    gpio_pulldown_en(GPIO_NUM_23);
-    
-    gpio_reset_pin(GPIO_NUM_23);
-    gpio_intr_disable(GPIO_NUM_23);
-    gpio_set_direction(GPIO_NUM_23, GPIO_MODE_INPUT);
-    gpio_pulldown_en(GPIO_NUM_23);
-    */
-
-    for(int i = 0; i < 6; i++) {
-        gpio_reset_pin(MULTIPLEXER_PINS[i]);
-        gpio_intr_disable(MULTIPLEXER_PINS[i]);
-        gpio_set_direction(MULTIPLEXER_PINS[i], GPIO_MODE_OUTPUT);
-        gpio_pulldown_en(MULTIPLEXER_PINS[i]);
-    }
-}
 
