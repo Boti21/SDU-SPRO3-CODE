@@ -31,8 +31,8 @@
 #define ADC2_2 2 // GPIO_NUM_2
 #define ADC2_3 3 // GPIO_NUM_15
 
-#define IR_FRONT_NUMBER_OF_PINS 4
-#define IR_BACK_NUMBER_OF_PINS 2
+#define IR_FRONT_NUMBER_OF_PINS 8
+#define IR_BACK_NUMBER_OF_PINS 8
 
 #define IR_FRONT_D1_GPIO ADC1_0 // GPIO_NUM_36
 #define IR_FRONT_D3_GPIO ADC1_3 // GPIO_NUM_39
@@ -69,13 +69,13 @@
 /* Multiplexer macros */
 #define NUM_OF_ADDRESS_PINS 3
 
-#define MULTIPLEXER1_A GPIO_NUM_32
-#define MULTIPLEXER1_B GPIO_NUM_33
-#define MULTIPLEXER1_C GPIO_NUM_25
+#define MULTIPLEXER2_A GPIO_NUM_32  
+#define MULTIPLEXER2_B GPIO_NUM_23 
+#define MULTIPLEXER2_C GPIO_NUM_25
 
-#define MULTIPLEXER2_A GPIO_NUM_26
-#define MULTIPLEXER2_B GPIO_NUM_27
-#define MULTIPLEXER2_C GPIO_NUM_14
+#define MULTIPLEXER1_A GPIO_NUM_26
+#define MULTIPLEXER1_B GPIO_NUM_27
+#define MULTIPLEXER1_C GPIO_NUM_14
 
 adc_oneshot_unit_handle_t adc1_handle;
 
@@ -130,11 +130,12 @@ void init_adc(void)
         .bitwidth = ADC_BITWIDTH_DEFAULT, // Default bitwidth
         .atten = ADC_ATTEN_DB_11, // Input attenuated, range increase by 11 dB
     };
-    
+    /*
     for (int i = 0; i < IR_FRONT_NUMBER_OF_PINS; i++)
     {
         ESP_ERROR_CHECK(adc_oneshot_config_channel(adc1_handle, IR_CHANNELS_FRONT[i], &config)); // Error checking
     }
+    */
 
     
     // battery voltage reading => Vout = Dout*Vmax/Dmax
@@ -150,8 +151,8 @@ void init_adc(void)
     // adc_oneshot_read(adc1_handle, IR_CHANNELS[0], &adc_value); 
 
     /* Setup with multiplexer */
-    // ESP_ERROR_CHECK(adc_oneshot_config_channel(adc1_handle, IR_FRONT_D1_GPIO, &config));
-    // ESP_ERROR_CHECK(adc_oneshot_config_channel(adc1_handle, IR_FRONT_D3_GPIO, &config));
+    ESP_ERROR_CHECK(adc_oneshot_config_channel(adc1_handle, ADC1_0, &config));
+    ESP_ERROR_CHECK(adc_oneshot_config_channel(adc1_handle, ADC1_3, &config));
 }
 
 void init_multiplexer(void)
@@ -200,6 +201,8 @@ void set_multiplexer1_channel(int channel_num)
     gpio_set_level(MULTIPLEXER1_A, multiplexer_adress[0]);
     gpio_set_level(MULTIPLEXER1_B, multiplexer_adress[1]);
     gpio_set_level(MULTIPLEXER1_C, multiplexer_adress[2]);
+
+    ESP_LOGI("MP1_channel", "Ch: %d Pins: %d %d %d", channel_num, multiplexer_adress[2], multiplexer_adress[1], multiplexer_adress[0]);
 }
 
 void set_multiplexer2_channel(int channel_num)
@@ -209,6 +212,8 @@ void set_multiplexer2_channel(int channel_num)
     gpio_set_level(MULTIPLEXER2_A, multiplexer_adress[0]);
     gpio_set_level(MULTIPLEXER2_B, multiplexer_adress[1]);
     gpio_set_level(MULTIPLEXER2_C, multiplexer_adress[2]);
+
+    ESP_LOGI("MP2_channel", "Ch: %d Pins: %d %d %d", channel_num, multiplexer_adress[2], multiplexer_adress[1], multiplexer_adress[0]);
 }
 
 void ir_adc_multiplexer_check_front(void) 
@@ -217,6 +222,8 @@ void ir_adc_multiplexer_check_front(void)
         set_multiplexer1_channel(i);
 
         adc_oneshot_read(adc1_handle, ADC1_0, &ir_values_front[i]);
+        ESP_LOGI("IR_RESULTS_FRONT", "Val %d: %d", i, ir_values_front[i]);
+        vTaskDelay(2500 / portTICK_PERIOD_MS);
     }
 }
 
@@ -226,6 +233,8 @@ void ir_adc_multiplexer_check_back(void)
         set_multiplexer2_channel(i);
 
         adc_oneshot_read(adc1_handle, ADC1_3, &ir_values_back[i]);
+        ESP_LOGI("IR_RESULTS_BACK", "Val %d: %d", i, ir_values_back[i]);
+        vTaskDelay(2500 / portTICK_PERIOD_MS);
     }
 }
 
