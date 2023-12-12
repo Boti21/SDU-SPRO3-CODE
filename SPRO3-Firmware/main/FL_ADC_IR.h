@@ -50,13 +50,6 @@
 #define IR_D6 3
 #define IR_D8 3
 
-#define MULTIPLEXER1_A GPIO_NUM_32
-#define MULTIPLEXER1_B GPIO_NUM_33
-#define MULTIPLEXER1_C GPIO_NUM_25
-
-#define MULTIPLEXER2_A GPIO_NUM_26
-#define MULTIPLEXER2_B GPIO_NUM_27
-#define MULTIPLEXER2_C GPIO_NUM_14
 
 
 #define LOAD_CELL_GPIO ADC2_0
@@ -73,6 +66,17 @@
 #define IR_BACK_LEFT_SENSOR 0
 #define IR_BACK_RIGHT_SENSOR 1
 
+/* Multiplexer macros */
+#define NUM_OF_ADDRESS_PINS 3
+
+#define MULTIPLEXER1_A GPIO_NUM_32
+#define MULTIPLEXER1_B GPIO_NUM_33
+#define MULTIPLEXER1_C GPIO_NUM_25
+
+#define MULTIPLEXER2_A GPIO_NUM_26
+#define MULTIPLEXER2_B GPIO_NUM_27
+#define MULTIPLEXER2_C GPIO_NUM_14
+
 adc_oneshot_unit_handle_t adc1_handle;
 
 uint8_t IR_CHANNELS_FRONT[] = {IR_FRONT_D3_GPIO, IR_FRONT_D4_GPIO, IR_FRONT_D5_GPIO, IR_FRONT_D6_GPIO};
@@ -82,6 +86,7 @@ uint8_t IR_CHANNELS_BACK[] = {IR_BACK_D4_GPIO, IR_BACK_D5_GPIO};
 int ir_values_back[IR_BACK_NUMBER_OF_PINS];
 
 uint8_t MULTIPLEXER_PINS[] = {MULTIPLEXER1_A, MULTIPLEXER1_B, MULTIPLEXER1_C, MULTIPLEXER2_A, MULTIPLEXER2_B, MULTIPLEXER2_C};
+uint8_t multiplexer_adress[NUM_OF_ADDRESS_PINS] = {0};
 
 /* Data handling variables */
 unsigned int max_front = 0;
@@ -134,6 +139,23 @@ void init_adc(void)
     /* Setup with multiplexer */
     // ESP_ERROR_CHECK(adc_oneshot_config_channel(adc1_handle, IR_FRONT_D1_GPIO, &config));
     // ESP_ERROR_CHECK(adc_oneshot_config_channel(adc1_handle, IR_FRONT_D3_GPIO, &config));
+}
+
+/* Functions for the multiplexer */
+void dec_to_bin(int dec_num)
+{
+    for(int i = 0; i < NUM_OF_ADDRESS_PINS; i++) {
+        multiplexer_adress[i] = 0;
+    }
+    
+    for(int i = 0; i < NUM_OF_ADDRESS_PINS; i++) {
+        int mask = 0b001;
+        mask = mask << i;
+
+        if(mask & dec_num) {
+            multiplexer_adress[i] = 1;
+        }
+    }
 }
 
 /* Check each adc value of infrared sensor */
