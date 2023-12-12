@@ -212,7 +212,7 @@ void ir_adc_multiplexer_check_back(void)
     for(int i = 0; i < 8; i++) {
         set_multiplexer2_channel(i);
 
-        adc_oneshot_read(adc1_handle, ADC1_3, &ir_values_front[i]);
+        adc_oneshot_read(adc1_handle, ADC1_3, &ir_values_back[i]);
     }
 }
 
