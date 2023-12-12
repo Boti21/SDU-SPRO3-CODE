@@ -66,6 +66,7 @@ void app_main(void)
     init_fork_connect();
     strcpy(changing_text, "Hello");
     init_adc();
+    init_multiplexer();
     init_pwm(M_MOTOR, M_MOTOR_GPIO);
     init_pwm(L_MOTOR, L_MOTOR_GPIO);
     init_pwm(R_MOTOR, R_MOTOR_GPIO);
