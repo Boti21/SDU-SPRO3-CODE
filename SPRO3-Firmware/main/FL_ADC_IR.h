@@ -158,6 +158,24 @@ void dec_to_bin(int dec_num)
     }
 }
 
+void set_multiplexer1_channel(int channel_num)
+{
+    dec_to_bin(channel_num);
+    
+    gpio_set_level(MULTIPLEXER1_A, multiplexer_adress[0]);
+    gpio_set_level(MULTIPLEXER1_B, multiplexer_adress[1]);
+    gpio_set_level(MULTIPLEXER1_C, multiplexer_adress[2]);
+}
+
+void set_multiplexer1_channel(int channel_num)
+{
+    dec_to_bin(channel_num);
+
+    gpio_set_level(MULTIPLEXER2_A, multiplexer_adress[0]);
+    gpio_set_level(MULTIPLEXER2_B, multiplexer_adress[1]);
+    gpio_set_level(MULTIPLEXER2_C, multiplexer_adress[2]);
+}
+
 /* Check each adc value of infrared sensor */
 void ir_adc_check_front(void)
 {
