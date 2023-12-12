@@ -19,8 +19,8 @@
 
 
 // #define CONFIG_IDF_TARGET_ESP32S2
-#define ADC1_0 0 // GPIO_NUM_36
-#define ADC1_3 3 // GPIO_NUM_39
+#define ADC1_0 0 // GPIO_NUM_36 // Front ADC
+#define ADC1_3 3 // GPIO_NUM_39 // Back ADC
 #define ADC1_6 6 // GPIO_NUM_34
 #define ADC1_7 7 // GPIO_NUM_35
 #define ADC1_4 4 // GPIO_NUM_32
@@ -50,6 +50,14 @@
 #define IR_D6 3
 #define IR_D8 3
 
+#define MULTIPLEXER1_A GPIO_NUM_32
+#define MULTIPLEXER1_B GPIO_NUM_33
+#define MULTIPLEXER1_C GPIO_NUM_25
+
+#define MULTIPLEXER2_A GPIO_NUM_26
+#define MULTIPLEXER2_B GPIO_NUM_27
+#define MULTIPLEXER2_C GPIO_NUM_14
+
 
 #define LOAD_CELL_GPIO ADC2_0
 
@@ -72,6 +80,8 @@ int ir_values_front[IR_FRONT_NUMBER_OF_PINS];
 
 uint8_t IR_CHANNELS_BACK[] = {IR_BACK_D4_GPIO, IR_BACK_D5_GPIO};
 int ir_values_back[IR_BACK_NUMBER_OF_PINS];
+
+uint8_t MULTIPLEXER_PINS[] = {MULTIPLEXER1_A, MULTIPLEXER1_B, MULTIPLEXER1_C, MULTIPLEXER2_A, MULTIPLEXER2_B, MULTIPLEXER2_C};
 
 /* Data handling variables */
 unsigned int max_front = 0;
@@ -119,7 +129,11 @@ void init_adc(void)
         ESP_ERROR_CHECK(adc_oneshot_config_channel(adc1_handle, IR_CHANNELS_FRONT[i], &config)); // Error checking
     }
     /* Usage */
-    // adc_oneshot_read(adc1_handle, IR_CHANNELS[0], &adc_value);    
+    // adc_oneshot_read(adc1_handle, IR_CHANNELS[0], &adc_value); 
+
+    /* Setup with multiplexer */
+    // ESP_ERROR_CHECK(adc_oneshot_config_channel(adc1_handle, IR_FRONT_D1_GPIO, &config));
+    // ESP_ERROR_CHECK(adc_oneshot_config_channel(adc1_handle, IR_FRONT_D3_GPIO, &config));
 }
 
 /* Check each adc value of infrared sensor */
@@ -218,37 +232,23 @@ ir_check_line_ret ir_check_line_front(void)
 
 void init_multiplexer(void)
 {
+    /* Not needed bc of ADC 
     gpio_reset_pin(GPIO_NUM_23);
     gpio_intr_disable(GPIO_NUM_23);
     gpio_set_direction(GPIO_NUM_23, GPIO_MODE_INPUT);
     gpio_pulldown_en(GPIO_NUM_23);
-
-    gpio_reset_pin(GPIO_NUM_21);
-    gpio_intr_disable(GPIO_NUM_21);
-    gpio_set_direction(GPIO_NUM_21, GPIO_MODE_OUTPUT);
-    gpio_pulldown_en(GPIO_NUM_21);
-
-    gpio_reset_pin(GPIO_NUM_19);
-    gpio_intr_disable(GPIO_NUM_19);
-    gpio_set_direction(GPIO_NUM_19, GPIO_MODE_OUTPUT);
-    gpio_pulldown_en(GPIO_NUM_19);
-    //gpio_pullup_en(GPIO_NUM_23);
-
-    gpio_reset_pin(GPIO_NUM_18);
-    gpio_intr_disable(GPIO_NUM_18);
-    gpio_set_direction(GPIO_NUM_18, GPIO_MODE_OUTPUT);
-    gpio_pulldown_en(GPIO_NUM_18);
-
-    /*
-    gpio_config_t multiplexer_pin = {
-        .pin_bit_mask = 23,       
-        .mode = GPIO_MODE_INPUT,
-        .pull_up_en = GPIO_PULLUP_ENABLE,
-        .pull_down_en = GPIO_PULLDOWN_DISABLE,
-        .intr_type = GPIO_INTR_DISABLE,
-    };
-    gpio_config(&multiplexer_pin);
+    
+    gpio_reset_pin(GPIO_NUM_23);
+    gpio_intr_disable(GPIO_NUM_23);
+    gpio_set_direction(GPIO_NUM_23, GPIO_MODE_INPUT);
+    gpio_pulldown_en(GPIO_NUM_23);
     */
 
+    for(int i = 0; i < 6; i++) {
+        gpio_reset_pin(MULTIPLEXER_PINS[i]);
+        gpio_intr_disable(MULTIPLEXER_PINS[i]);
+        gpio_set_direction(MULTIPLEXER_PINS[i], GPIO_MODE_OUTPUT);
+        gpio_pulldown_en(MULTIPLEXER_PINS[i]);
+    }
 }
 
