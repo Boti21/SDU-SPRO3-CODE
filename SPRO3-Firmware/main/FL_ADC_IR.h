@@ -98,6 +98,8 @@ unsigned int max_back = 0;
 unsigned int min_back = 0;
 unsigned int dif_back = 0;
 unsigned int threshhold_back = 0;
+unsigned int read_battery_voltage = 0;
+float battery_voltage = 0;
 
 typedef struct {
     int correction_dir;
@@ -133,6 +135,17 @@ void init_adc(void)
     {
         ESP_ERROR_CHECK(adc_oneshot_config_channel(adc1_handle, IR_CHANNELS_FRONT[i], &config)); // Error checking
     }
+
+    
+    // battery voltage reading => Vout = Dout*Vmax/Dmax
+    adc_oneshot_config_channel(adc1_handle, ADC1_6 , &config);
+
+    adc_oneshot_read(adc1_handle, ADC1_6, &read_battery_voltage); // Dout = read_battery_voltage
+
+    battery_voltage = (float)read_battery_voltage * 2.4 / 4095.0;
+    
+    ESP_LOGI("BATTERY VOLTAGE:", "battery voltage: %f", battery_voltage);
+
     /* Usage */
     // adc_oneshot_read(adc1_handle, IR_CHANNELS[0], &adc_value); 
 
