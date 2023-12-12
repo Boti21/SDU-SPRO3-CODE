@@ -123,7 +123,7 @@ void init_adc(void)
         .bitwidth = ADC_BITWIDTH_DEFAULT, // Default bitwidth
         .atten = ADC_ATTEN_DB_11, // Input attenuated, range increase by 11 dB
     };
-    // Actual code:
+    
     for (int i = 0; i < IR_FRONT_NUMBER_OF_PINS; i++)
     {
         ESP_ERROR_CHECK(adc_oneshot_config_channel(adc1_handle, IR_CHANNELS_FRONT[i], &config)); // Error checking

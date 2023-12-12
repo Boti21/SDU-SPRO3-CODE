@@ -18,6 +18,7 @@
 #include "FL_drive.h"
 #include "FL_ADC_IR.h"
 #include "FL_threads.h"
+#include "FL_endstop.h"
 
 #define EVER ; ;
 
