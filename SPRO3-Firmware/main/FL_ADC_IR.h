@@ -141,6 +141,28 @@ void init_adc(void)
     // ESP_ERROR_CHECK(adc_oneshot_config_channel(adc1_handle, IR_FRONT_D3_GPIO, &config));
 }
 
+void init_multiplexer(void)
+{
+    /* Not needed bc of ADC 
+    gpio_reset_pin(GPIO_NUM_23);
+    gpio_intr_disable(GPIO_NUM_23);
+    gpio_set_direction(GPIO_NUM_23, GPIO_MODE_INPUT);
+    gpio_pulldown_en(GPIO_NUM_23);
+    
+    gpio_reset_pin(GPIO_NUM_23);
+    gpio_intr_disable(GPIO_NUM_23);
+    gpio_set_direction(GPIO_NUM_23, GPIO_MODE_INPUT);
+    gpio_pulldown_en(GPIO_NUM_23);
+    */
+
+    for(int i = 0; i < 6; i++) {
+        gpio_reset_pin(MULTIPLEXER_PINS[i]);
+        gpio_intr_disable(MULTIPLEXER_PINS[i]);
+        gpio_set_direction(MULTIPLEXER_PINS[i], GPIO_MODE_OUTPUT);
+        gpio_pulldown_en(MULTIPLEXER_PINS[i]);
+    }
+}
+
 /* Functions for the multiplexer */
 void dec_to_bin(int dec_num)
 {
@@ -174,6 +196,11 @@ void set_multiplexer1_channel(int channel_num)
     gpio_set_level(MULTIPLEXER2_A, multiplexer_adress[0]);
     gpio_set_level(MULTIPLEXER2_B, multiplexer_adress[1]);
     gpio_set_level(MULTIPLEXER2_C, multiplexer_adress[2]);
+}
+
+void ir_adc_multiplexer_check_front(void) 
+{
+
 }
 
 /* Check each adc value of infrared sensor */
@@ -270,25 +297,4 @@ ir_check_line_ret ir_check_line_front(void)
     return result;
 }
 
-void init_multiplexer(void)
-{
-    /* Not needed bc of ADC 
-    gpio_reset_pin(GPIO_NUM_23);
-    gpio_intr_disable(GPIO_NUM_23);
-    gpio_set_direction(GPIO_NUM_23, GPIO_MODE_INPUT);
-    gpio_pulldown_en(GPIO_NUM_23);
-    
-    gpio_reset_pin(GPIO_NUM_23);
-    gpio_intr_disable(GPIO_NUM_23);
-    gpio_set_direction(GPIO_NUM_23, GPIO_MODE_INPUT);
-    gpio_pulldown_en(GPIO_NUM_23);
-    */
-
-    for(int i = 0; i < 6; i++) {
-        gpio_reset_pin(MULTIPLEXER_PINS[i]);
-        gpio_intr_disable(MULTIPLEXER_PINS[i]);
-        gpio_set_direction(MULTIPLEXER_PINS[i], GPIO_MODE_OUTPUT);
-        gpio_pulldown_en(MULTIPLEXER_PINS[i]);
-    }
-}
 
