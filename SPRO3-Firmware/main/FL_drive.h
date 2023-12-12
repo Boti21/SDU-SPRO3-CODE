@@ -28,7 +28,7 @@
 #define L_MOTOR_BACKWARD GPIO_NUM_4
 
 // Note
-// Number 15 will always be high! - Even if codewise otherwise
+// Number 15 will always be high! - Even if code says otherwise
 
 #define BACKWARD 0
 #define FORWARD 1
