@@ -189,7 +189,7 @@ void set_multiplexer1_channel(int channel_num)
     gpio_set_level(MULTIPLEXER1_C, multiplexer_adress[2]);
 }
 
-void set_multiplexer1_channel(int channel_num)
+void set_multiplexer2_channel(int channel_num)
 {
     dec_to_bin(channel_num);
 
@@ -200,7 +200,20 @@ void set_multiplexer1_channel(int channel_num)
 
 void ir_adc_multiplexer_check_front(void) 
 {
+    for(int i = 0; i < 8; i++) {
+        set_multiplexer1_channel(i);
 
+        adc_oneshot_read(adc1_handle, ADC1_0, &ir_values_front[i]);
+    }
+}
+
+void ir_adc_multiplexer_check_back(void) 
+{
+    for(int i = 0; i < 8; i++) {
+        set_multiplexer2_channel(i);
+
+        adc_oneshot_read(adc1_handle, ADC1_3, &ir_values_front[i]);
+    }
 }
 
 /* Check each adc value of infrared sensor */
