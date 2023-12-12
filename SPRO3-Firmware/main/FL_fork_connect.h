@@ -40,11 +40,11 @@
 */
 #define EXAMPLE_ESP_WIFI_SSID      "fork_connect"
 #define EXAMPLE_ESP_WIFI_PASS      "forky_the_forklift"
-#define EXAMPLE_ESP_WIFI_CHANNEL   CONFIG_ESP_WIFI_CHANNEL
-#define EXAMPLE_MAX_STA_CONN       CONFIG_ESP_MAX_STA_CONN
+#define EXAMPLE_ESP_WIFI_CHANNEL   1
+#define EXAMPLE_MAX_STA_CONN       4
 
 static const char *TAG = "ForkConnect";
- 
+
 /* An HTTP GET handler */
 static esp_err_t forkconnect_handler(httpd_req_t *req)
 {
@@ -98,7 +98,7 @@ static const httpd_uri_t forkconnect = {
 <h1>Fork Connect - Your way to fork.</h1>\
 <p>Control your forklift from here:</p>\
 \
-<h2>Fork: Down!</h2>\
+<h2>Fork: Down.</h2>\
 \
 <button class=\"button button1\" onclick= \"window.location.href='/forkpage2'\" >Fork Up!</button>\
 \
@@ -359,7 +359,7 @@ void wifi_init_softap(void)
              EXAMPLE_ESP_WIFI_SSID, EXAMPLE_ESP_WIFI_PASS, EXAMPLE_ESP_WIFI_CHANNEL);
 }
 
-void app_main(void)
+void init_fork_connect(void)
 {
 
     static httpd_handle_t server = NULL;
@@ -384,7 +384,4 @@ void app_main(void)
     gpio_set_direction(LED, GPIO_MODE_OUTPUT);
     gpio_set_level(LED, 0);
 
-    for(;;) {
-        vTaskDelay(1000 / portTICK_PERIOD_MS);
-    }
 }

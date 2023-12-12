@@ -18,6 +18,7 @@
 #include "FL_drive.h"
 #include "FL_ADC_IR.h"
 #include "FL_threads.h"
+#include "FL_fork_connect.h"
 
 #define EVER ; ;
 
@@ -62,6 +63,7 @@ void app_main(void)
     // xTaskCreate(monitor_task, "monitor_task", CUSTOM_STACK_SIZE, NULL, 2, &monitor_handle);
 
     /* Init functions */
+    init_fork_connect();
     init_adc();
     init_pwm(M_MOTOR, M_MOTOR_GPIO);
     init_pwm(L_MOTOR, L_MOTOR_GPIO);
