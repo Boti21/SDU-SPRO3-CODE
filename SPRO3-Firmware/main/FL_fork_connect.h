@@ -45,16 +45,22 @@
 
 static const char *TAG = "ForkConnect";
 
+static char changing_text[20];
+
 /* An HTTP GET handler */
 static esp_err_t forkconnect_handler(httpd_req_t *req)
 {
-    esp_err_t error;
     ESP_LOGI(TAG, "ForkConnect");
 
     gpio_set_level(LED, 0);
+    char* resp_str = (char*) req->user_ctx;
+    char* final_resp_str = NULL;
+    asprintf(&final_resp_str, resp_str, changing_text);
 
-    const char *response = (const char *) req->user_ctx;
-    error = httpd_resp_send(req, response, strlen(response));
+    esp_err_t error = httpd_resp_send(req, final_resp_str, strlen(final_resp_str)); // Send the response
+
+    free(final_resp_str);
+
     if (error != ESP_OK)
     {
         ESP_LOGI(TAG, "Error %d while sending Response", error);
@@ -72,8 +78,7 @@ static const httpd_uri_t forkconnect = {
     .handler   = forkconnect_handler,
     /* Let's pass response string in user
      * context to demonstrate it's usage */
-    .user_ctx  = 
-"<!DOCTYPE html>\
+    .user_ctx  = "<!DOCTYPE html>\
 <html>\
 <head>\
 <style>\
@@ -98,9 +103,9 @@ static const httpd_uri_t forkconnect = {
 <h1>Fork Connect - Your way to fork.</h1>\
 <p>Control your forklift from here:</p>\
 \
-<h2>Fork: Down.</h2>\
+<h2>Fork: Down. And %s .</h2>\
 \
-<button class=\"button button1\" onclick= \"window.location.href='/forkpage2'\" >Fork Up!</button>\
+<button class=\"button button1\" onclick= \"window.location.href='/forkpage2'\" >Start</button>\
 \
 <form action=\"/get\">\
 str: <input type=\"text\" name=\"str\">\
@@ -110,21 +115,42 @@ str: <input type=\"text\" name=\"str\">\
 int: <input type=\"text\" name=\"int\">\
 <input type=\"submit\" value=\"Submit\">\
 </form><br>\
+<button class =\"button\" type=\"button\">\
+    <span>STOP</span>\
+<\button>\
 \
 </body>\
+<script>\
+setInterval(function() {\
+    var xhttp = new XMLHttpRequest();\
+    xhttp.onreadystatechange = function() {\
+        if (this.readyState == 4 && this.status == 200) {\
+            document.getElementById(\"forkconnect\").innerHTML = this.responseText;\
+        }\
+    };\
+    xhttp.open(\"GET\", \"/forkconnect\", true);\
+    xhttp.send();\
+}, 5000);\ 
+</script>\
 </html>\
 "
 };
+//<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,1,0" />
 
 static esp_err_t forkpage2_handler(httpd_req_t *req)
 {
-    esp_err_t error;
     ESP_LOGI(TAG, "ForkPage2");
 
     gpio_set_level(LED, 1);
 
-    const char *response = (const char *) req->user_ctx;
-    error = httpd_resp_send(req, response, strlen(response));
+    char* resp_str = (char*) req->user_ctx;
+    char* final_resp_str = NULL;
+    asprintf(&final_resp_str, resp_str, changing_text);
+
+    esp_err_t error = httpd_resp_send(req, final_resp_str, strlen(final_resp_str)); // Send the response
+
+    free(final_resp_str);
+
     if (error != ESP_OK)
     {
         ESP_LOGI(TAG, "Error %d while sending Response", error);
@@ -136,10 +162,11 @@ static esp_err_t forkpage2_handler(httpd_req_t *req)
     return error;
 }
 
+
 static const httpd_uri_t forkpage2 = {
     .uri       = "/forkpage2",
     .method    = HTTP_GET,
-    .handler   = forkconnect_handler,
+    .handler   = forkpage2_handler,
     /* Let's pass response string in user
      * context to demonstrate it's usage */
     .user_ctx  = 
@@ -168,12 +195,26 @@ static const httpd_uri_t forkpage2 = {
 <h1>Fork Connect - Your way to fork.</h1>\
 <p>Control your forklift from here:</p>\
 \
-<h2>Fork: Up!</h2>\
+<h2>Start %s </h2>\
 \
-<button class=\"button button1\" onclick= \"window.location.href='/forkconnect'\" >Fork down!</button>\
+<button class=\"button button1\" onclick= \"window.location.href='/forkconnect'\" >Stop</button>\
 </div>\
 \
+<nav>\
+<label class=\"logo\">Design</label>\
+</nav>\
 </body>\
+<script>\
+setInterval(function() {\
+    var xhttp = new XMLHttpRequest();\
+    xhttp.onreadystatechange = function() {\
+        if (this.readyState == 4 && this.status == 200) {\
+            document.getElementById(\"forkpage2\").innerHTML = this.responseText;\
+        }\
+    };\
+    xhttp.open(\"GET\", \"/forkconnect\", true);\
+    xhttp.send();\
+}, 5000);\ 
 </html>\
 "
 };
@@ -210,6 +251,7 @@ static esp_err_t forkconnect_input_handler(httpd_req_t *req)
             char param[32];
             if (httpd_query_key_value(buf, "str", param, sizeof(param)) == ESP_OK) {
                 ESP_LOGI(TAG, "The string value = %s", param);
+                strcpy(changing_text, param);
             }
             if (httpd_query_key_value(buf, "int", param, sizeof(param)) == ESP_OK) {
                 ESP_LOGI(TAG, "The int value = %s", param);
@@ -219,10 +261,11 @@ static esp_err_t forkconnect_input_handler(httpd_req_t *req)
     }
 
     // The response
-    /*
-    const char resp = ;
-    httpd_resp_send(req, resp, strlen(resp));
-    */
+    
+    httpd_resp_set_status(req, "302 Found"); // Set the status to 302
+    httpd_resp_set_hdr(req, "Location", "/forkconnect"); // Set the Location header to new URI to redirect
+    httpd_resp_send(req, NULL, 0); // Send the response
+    
     return ESP_OK;
 }
 
@@ -391,6 +434,8 @@ void wifi_init_softap(void)
 void init_fork_connect(void)
 {
 
+    strcpy(changing_text, "undifined");
+
     static httpd_handle_t server = NULL;
 
     //Initialize NVS
@@ -412,5 +457,6 @@ void init_fork_connect(void)
     gpio_reset_pin(LED);
     gpio_set_direction(LED, GPIO_MODE_OUTPUT);
     gpio_set_level(LED, 0);
+
 
 }

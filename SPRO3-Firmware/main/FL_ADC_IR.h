@@ -98,7 +98,7 @@ unsigned int max_back = 0;
 unsigned int min_back = 0;
 unsigned int dif_back = 0;
 unsigned int threshhold_back = 0;
-unsigned int read_battery_voltage = 0;
+int read_battery_voltage = 0;
 float battery_voltage = 0;
 
 typedef struct {

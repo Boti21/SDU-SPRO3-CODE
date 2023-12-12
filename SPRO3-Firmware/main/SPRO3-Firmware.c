@@ -64,6 +64,7 @@ void app_main(void)
 
     /* Init functions */
     init_fork_connect();
+    strcpy(changing_text, "Hello");
     init_adc();
     init_pwm(M_MOTOR, M_MOTOR_GPIO);
     init_pwm(L_MOTOR, L_MOTOR_GPIO);
@@ -86,6 +87,7 @@ void app_main(void)
         
         ESP_LOGI(main_name, "Main loop...");
         //vTaskDelay(250 / portTICK_PERIOD_MS);
+        
 
         /*
         pwm_drive(STRAIGHT);
