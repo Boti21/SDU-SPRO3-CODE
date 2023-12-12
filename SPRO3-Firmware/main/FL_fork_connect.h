@@ -115,6 +115,7 @@ int: <input type=\"text\" name=\"int\">\
 </html>\
 "
 };
+
 static esp_err_t forkpage2_handler(httpd_req_t *req)
 {
     esp_err_t error;
@@ -232,6 +233,33 @@ static const httpd_uri_t forkconnect_input = {
     .user_ctx  = NULL
 };
 
+static esp_err_t root_handler(httpd_req_t *req)
+{
+    esp_err_t error;
+    ESP_LOGI(TAG, "Root handler.");
+
+    // gpio_set_level(LED, 1);
+
+    const char *response = (const char *) req->user_ctx;
+    error = httpd_resp_send(req, response, strlen(response));
+    if (error != ESP_OK)
+    {
+        ESP_LOGI(TAG, "Error %d while sending Response", error);
+    }
+    else 
+    {
+        ESP_LOGI(TAG, "Response sent Successfully");
+    }
+
+    return error;
+}
+
+static const httpd_uri_t root = {
+    .uri       = "/",
+    .method    = HTTP_GET,
+    .handler   = root_handler,
+    .user_ctx  = "Redirect to home page... enter http://192.168.4.1/forkconnect"
+};
 
 
 // 404 Error handler
@@ -255,6 +283,7 @@ static httpd_handle_t start_webserver(void)
     if (httpd_start(&server, &config) == ESP_OK) {
         // Set URI handlers
         ESP_LOGI(TAG, "Registering URI handlers");
+        httpd_register_uri_handler(server, &root);
         httpd_register_uri_handler(server, &forkconnect);
         httpd_register_uri_handler(server, &forkpage2);
         httpd_register_uri_handler(server, &forkconnect_input);
