@@ -218,13 +218,37 @@ ir_check_line_ret ir_check_line_front(void)
 
 void init_multiplexer(void)
 {
+    gpio_reset_pin(GPIO_NUM_23);
+    gpio_intr_disable(GPIO_NUM_23);
+    gpio_set_direction(GPIO_NUM_23, GPIO_MODE_INPUT);
+    gpio_pulldown_en(GPIO_NUM_23);
+
+    gpio_reset_pin(GPIO_NUM_21);
+    gpio_intr_disable(GPIO_NUM_21);
+    gpio_set_direction(GPIO_NUM_21, GPIO_MODE_OUTPUT);
+    gpio_pulldown_en(GPIO_NUM_21);
+
+    gpio_reset_pin(GPIO_NUM_19);
+    gpio_intr_disable(GPIO_NUM_19);
+    gpio_set_direction(GPIO_NUM_19, GPIO_MODE_OUTPUT);
+    gpio_pulldown_en(GPIO_NUM_19);
+    //gpio_pullup_en(GPIO_NUM_23);
+
+    gpio_reset_pin(GPIO_NUM_18);
+    gpio_intr_disable(GPIO_NUM_18);
+    gpio_set_direction(GPIO_NUM_18, GPIO_MODE_OUTPUT);
+    gpio_pulldown_en(GPIO_NUM_18);
+
+    /*
     gpio_config_t multiplexer_pin = {
-        .pin_bit_mask = 15,       
+        .pin_bit_mask = 23,       
         .mode = GPIO_MODE_INPUT,
         .pull_up_en = GPIO_PULLUP_ENABLE,
         .pull_down_en = GPIO_PULLDOWN_DISABLE,
         .intr_type = GPIO_INTR_DISABLE,
     };
     gpio_config(&multiplexer_pin);
+    */
+
 }
 
