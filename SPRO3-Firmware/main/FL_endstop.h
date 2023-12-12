@@ -28,3 +28,13 @@ void init_endstop(void)
     gpio_set_direction(ENDSTOP_DOWN, GPIO_MODE_INPUT);
     gpio_pulldown_en(ENDSTOP_DOWN);
 }
+
+int check_endstop_up(void)
+{
+    return gpio_get_level(ENDSTOP_UP);
+}
+
+int check_endstop_down(void)
+{
+    return gpio_get_level(ENDSTOP_DOWN);
+}

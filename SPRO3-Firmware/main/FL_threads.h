@@ -24,6 +24,8 @@
 #include "FL_ADC_IR.h"
 #endif
 
+#include "FL_endstop.h"
+
 /* Misc macros */
 #define CUSTOM_STACK_SIZE 2048
 
@@ -39,7 +41,11 @@ TaskHandle_t monitor_handle = NULL;
 void monitor_task(void* pvParameters) {
     for(;;) {
         // Functions which check for battery voltage and collision detection (and communication)
-        ir_adc_check_back();
+        if(check_endstop_up() == 1) {
+            // Endstop reached
+        } else if(check_endstop_down() == 1) {
+            // Endstop reached
+        }
     }
 }
 

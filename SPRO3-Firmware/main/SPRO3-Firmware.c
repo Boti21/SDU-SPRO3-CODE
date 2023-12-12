@@ -18,7 +18,6 @@
 #include "FL_drive.h"
 #include "FL_ADC_IR.h"
 #include "FL_threads.h"
-#include "FL_endstop.h"
 
 #define EVER ; ;
 
@@ -43,7 +42,8 @@
 #define LEFT_ROTATE_LIGHT -ROTATE_LIGHT , ROTATE_LIGHT
 #define LEFT_ROTATE_STRONG -ROTATE_STRONG , ROTATE_STRONG
 
-#define LOAD_CELL_GPIO ADC1_CHANNEL_4 // which analog is used, The channel depends on which GPIO we want to use
+// Temporarily outcommented bc of build error
+// #define LOAD_CELL_GPIO ADC1_CHANNEL_4 // which analog is used, The channel depends on which GPIO we want to use
 
 
 void app_main(void)
