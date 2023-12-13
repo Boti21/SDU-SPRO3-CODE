@@ -33,8 +33,6 @@ gptimer_handle_t timer = NULL;
 
 double distance_obs;
 
-double distance_ultrasonic(void);
-
 
 void init_ultrasonic(void)
 {
