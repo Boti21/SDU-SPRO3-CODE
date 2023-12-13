@@ -206,7 +206,7 @@ void set_multiplexer1_channel(int channel_num)
     gpio_set_level(MULTIPLEXER1_B, multiplexer_adress[1]);
     gpio_set_level(MULTIPLEXER1_C, multiplexer_adress[2]);
 
-    ESP_LOGI("MP1_channel", "Ch: %d Pins: %d %d %d", channel_num, multiplexer_adress[2], multiplexer_adress[1], multiplexer_adress[0]);
+    // ESP_LOGI("MP1_channel", "Ch: %d Pins: %d %d %d", channel_num, multiplexer_adress[2], multiplexer_adress[1], multiplexer_adress[0]);
 }
 
 void set_multiplexer2_channel(int channel_num)
@@ -217,7 +217,7 @@ void set_multiplexer2_channel(int channel_num)
     gpio_set_level(MULTIPLEXER2_B, multiplexer_adress[1]);
     gpio_set_level(MULTIPLEXER2_C, multiplexer_adress[2]);
 
-    ESP_LOGI("MP2_channel", "Ch: %d Pins: %d %d %d", channel_num, multiplexer_adress[2], multiplexer_adress[1], multiplexer_adress[0]);
+    // ESP_LOGI("MP2_channel", "Ch: %d Pins: %d %d %d", channel_num, multiplexer_adress[2], multiplexer_adress[1], multiplexer_adress[0]);
 }
 
 void ir_adc_multiplexer_check_front(void) 
@@ -239,7 +239,7 @@ void ir_adc_multiplexer_check_back(void)
 
         adc_oneshot_read(adc1_handle, ADC1_3, &ir_values_back[i]);
         ESP_LOGI("IR_RESULTS_BACK", "Val %d: %d", i, ir_values_back[i]);
-        vTaskDelay(2500 / portTICK_PERIOD_MS);
+        vTaskDelay(10 / portTICK_PERIOD_MS);
     }
 }
 

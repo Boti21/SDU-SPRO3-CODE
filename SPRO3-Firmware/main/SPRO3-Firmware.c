@@ -106,7 +106,8 @@ void app_main(void)
 
         // Read IR-SENSOR in the front and the back
         ir_adc_multiplexer_check_front();
-        //ir_adc_multiplexer_check_back();
+        vTaskDelay(2500 / portTICK_PERIOD_MS);
+        ir_adc_multiplexer_check_back();
         /*
         while (!((ir_values_front[IR_D3] > CALIBRATION_BLACK_TAPE) && (ir_values_front[IR_D6] > CALIBRATION_BLACK_TAPE)))
         {  

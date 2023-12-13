@@ -63,7 +63,7 @@ void monitor_task(void* pvParameters) {
             // Not sure how to continue, mayba just go STRAIGHT but what if its in turn
             // also possible to just not have recovery or do it via the website
             if(ultrasonic_toggle == 1) {
-                pwm_drive(STRAIGHT);
+               // pwm_drive(STRAIGHT);
             }
         }
     }
