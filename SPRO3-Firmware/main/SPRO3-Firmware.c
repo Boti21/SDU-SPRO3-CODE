@@ -63,7 +63,7 @@ void app_main(void)
     // xTaskCreate(monitor_task, "monitor_task", CUSTOM_STACK_SIZE, NULL, 2, &monitor_handle);
 
     /* Init functions */
-    init_fork_connect();
+    //init_fork_connect();
     strcpy(changing_text, "Hello");
     init_adc();
     init_multiplexer();
@@ -106,7 +106,7 @@ void app_main(void)
 
         // Read IR-SENSOR in the front and the back
         ir_adc_multiplexer_check_front();
-        ir_adc_multiplexer_check_back();
+        //ir_adc_multiplexer_check_back();
         /*
         while (!((ir_values_front[IR_D3] > CALIBRATION_BLACK_TAPE) && (ir_values_front[IR_D6] > CALIBRATION_BLACK_TAPE)))
         {  
@@ -142,7 +142,7 @@ void app_main(void)
 
         //pwm_drive(RIGHT_ROTATE_STRONG);
 
-        vTaskDelay(1000 / portTICK_PERIOD_MS);
+        vTaskDelay(3000 / portTICK_PERIOD_MS);
         
         /*
         for(int i = 0; i < IR_FRONT_NUMBER_OF_PINS; i++) {

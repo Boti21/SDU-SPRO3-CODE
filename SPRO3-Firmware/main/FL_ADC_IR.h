@@ -72,7 +72,7 @@
 #define MULTIPLEXER2_A GPIO_NUM_32  
 #define MULTIPLEXER2_B GPIO_NUM_23 
 #define MULTIPLEXER2_C GPIO_NUM_25
-
+ 
 #define MULTIPLEXER1_A GPIO_NUM_26
 #define MULTIPLEXER1_B GPIO_NUM_27
 #define MULTIPLEXER1_C GPIO_NUM_14
@@ -130,6 +130,9 @@ void init_adc(void)
         .bitwidth = ADC_BITWIDTH_DEFAULT, // Default bitwidth
         .atten = ADC_ATTEN_DB_11, // Input attenuated, range increase by 11 dB
     };
+    /* Setup with multiplexer */
+    ESP_ERROR_CHECK(adc_oneshot_config_channel(adc1_handle, ADC1_0, &config));
+    ESP_ERROR_CHECK(adc_oneshot_config_channel(adc1_handle, ADC1_3, &config));
     /*
     for (int i = 0; i < IR_FRONT_NUMBER_OF_PINS; i++)
     {
@@ -150,9 +153,6 @@ void init_adc(void)
     /* Usage */
     // adc_oneshot_read(adc1_handle, IR_CHANNELS[0], &adc_value); 
 
-    /* Setup with multiplexer */
-    ESP_ERROR_CHECK(adc_oneshot_config_channel(adc1_handle, ADC1_0, &config));
-    ESP_ERROR_CHECK(adc_oneshot_config_channel(adc1_handle, ADC1_3, &config));
 }
 
 void init_multiplexer(void)
@@ -197,6 +197,10 @@ void dec_to_bin(int dec_num)
 void set_multiplexer1_channel(int channel_num)
 {
     dec_to_bin(channel_num);
+
+    gpio_set_level(MULTIPLEXER1_A, 0);
+    gpio_set_level(MULTIPLEXER1_B, 0);
+    gpio_set_level(MULTIPLEXER1_C, 0);
     
     gpio_set_level(MULTIPLEXER1_A, multiplexer_adress[0]);
     gpio_set_level(MULTIPLEXER1_B, multiplexer_adress[1]);
@@ -217,13 +221,14 @@ void set_multiplexer2_channel(int channel_num)
 }
 
 void ir_adc_multiplexer_check_front(void) 
-{
+{   
+        //set_multiplexer1_channel(3);
     for(int i = 0; i < 8; i++) {
         set_multiplexer1_channel(i);
 
         adc_oneshot_read(adc1_handle, ADC1_0, &ir_values_front[i]);
         ESP_LOGI("IR_RESULTS_FRONT", "Val %d: %d", i, ir_values_front[i]);
-        vTaskDelay(2500 / portTICK_PERIOD_MS);
+        vTaskDelay(10 / portTICK_PERIOD_MS);
     }
 }
 
