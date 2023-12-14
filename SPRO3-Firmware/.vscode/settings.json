@@ -1,6 +1,6 @@
 {
     "idf.flashType": "UART",
-    "idf.portWin": "COM11",
+    "idf.portWin": "COM3",
     "idf.adapterTargetName": "esp32",
     "files.associations": {
         "*.cake": "plaintext",
@@ -22,7 +22,9 @@
         "ratio": "c",
         "cinttypes": "c",
         "cstdlib": "c",
-        "fl_adcandir.h": "c"
+        "fl_adcandir.h": "c",
+        "fl_ultrasonic.h": "c",
+        "fstream": "c"
     },
-    "C_Cpp.default.compilerPath": "C:\\MinGW\\bin\\gcc.exe"
+    "C_Cpp.default.compilerPath": "C:\\Users\\botib\\.espressif\\tools\\xtensa-esp32-elf\\esp-12.2.0_20230208\\xtensa-esp32-elf\\bin\\xtensa-esp32-elf-gcc.exe"
 }
