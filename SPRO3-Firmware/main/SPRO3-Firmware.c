@@ -65,7 +65,7 @@ void app_main(void)
 
     for (EVER) {
         
-        ESP_LOGI(main_name, "Main loop...");
+        //ESP_LOGI(main_name, "Main loop...");
         //vTaskDelay(250 / portTICK_PERIOD_MS);
         
 
@@ -85,8 +85,9 @@ void app_main(void)
 
         // Read IR-SENSOR in the front and the back
         ir_adc_multiplexer_check_front();
-        vTaskDelay(2500 / portTICK_PERIOD_MS);
-        ir_adc_multiplexer_check_back();
+        //ESP_LOGI(main_name, "\n");
+        //vTaskDelay(2500 / portTICK_PERIOD_MS);
+        //ir_adc_multiplexer_check_back();
         /*
         while (!((ir_values_front[IR_D3] > CALIBRATION_BLACK_TAPE) && (ir_values_front[IR_D6] > CALIBRATION_BLACK_TAPE)))
         {  
@@ -118,11 +119,11 @@ void app_main(void)
             ir_adc_check_front();
         }
         */
-        pwm_drive(STOP);
+        //pwm_drive(STOP);
 
         //pwm_drive(RIGHT_ROTATE_STRONG);
 
-        vTaskDelay(3000 / portTICK_PERIOD_MS);
+        vTaskDelay(300 / portTICK_PERIOD_MS);
         
         /*
         for(int i = 0; i < IR_FRONT_NUMBER_OF_PINS; i++) {
@@ -141,7 +142,7 @@ void app_main(void)
         
 
         // Giving the operating system room to breath
-        vTaskDelay(1000 / portTICK_PERIOD_MS);
+        //vTaskDelay(1000 / portTICK_PERIOD_MS);
 
         
 

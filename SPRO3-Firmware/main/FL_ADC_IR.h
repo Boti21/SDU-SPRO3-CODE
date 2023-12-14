@@ -194,6 +194,17 @@ void dec_to_bin(int dec_num)
     }
 }
 
+/*
+D1 working (3-0)
+D2 working (3-0)
+D3 working (3-0)
+D4 working (3-0)
+D5 working (5-0)
+D6 working
+D7 not really
+D8 not wokring
+*/
+
 void set_multiplexer1_channel(int channel_num)
 {
     dec_to_bin(channel_num);
@@ -221,13 +232,14 @@ void set_multiplexer2_channel(int channel_num)
 }
 
 void ir_adc_multiplexer_check_front(void) 
-{   
-        //set_multiplexer1_channel(3);
+{
+    printf("\n");
     for(int i = 0; i < 8; i++) {
         set_multiplexer1_channel(i);
 
-        adc_oneshot_read(adc1_handle, ADC1_0, &ir_values_front[i]);
-        ESP_LOGI("IR_RESULTS_FRONT", "Val %d: %d", i, ir_values_front[i]);
+        ESP_ERROR_CHECK(adc_oneshot_read(adc1_handle, ADC1_0, &ir_values_front[i]));
+        // ESP_LOGI("IR_RESULTS_FRONT", "Val %d: %d", i, ir_values_front[i]);
+        printf("%04d  ", ir_values_front[i]);
         vTaskDelay(10 / portTICK_PERIOD_MS);
     }
 }
