@@ -45,6 +45,8 @@
 #define R_MOTOR_BACKWARD GPIO_NUM_23
 #define L_MOTOR_FORWARD GPIO_NUM_2
 #define L_MOTOR_BACKWARD GPIO_NUM_4
+#define M_MOTOR_FORWARD GPIO_NUM_12
+#define M_MOTOR_BACKWARD GPIO_NUM_16
 
 // Note
 // Number 15 will always be high! - Even if code says otherwise
