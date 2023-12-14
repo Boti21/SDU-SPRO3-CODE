@@ -6,6 +6,5 @@
 .vscode
 *.txt
 build
-sdkconfig
 .editorconfig
 .vscode

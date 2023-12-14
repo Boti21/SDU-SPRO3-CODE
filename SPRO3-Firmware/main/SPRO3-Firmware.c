@@ -22,27 +22,6 @@
 
 #define EVER ; ;
 
-#define CALIBRATION_BLACK_TAPE 2000
-#define CALIBRATION_FLOOR
-#define BORDER_VALUE
-
-#define BASE_SPEED 150
-#define ROTATE_LIGHT 90
-#define ROTATE_STRONG 150
-
-#define STRAIGHT BASE_SPEED , BASE_SPEED
-#define STOP 0 , 0
-
-#define RIGHT_TURN_LIGHT 175 , 125
-#define RIGHT_TURN_STRONG 175 , 100
-#define RIGHT_ROTATE_LIGHT ROTATE_LIGHT , -ROTATE_LIGHT
-#define RIGHT_ROTATE_STRONG ROTATE_STRONG , -ROTATE_STRONG
-
-#define LEFT_TURN_LIGHT 125 , 175
-#define LEFT_TURN_STRONG 100 , 175
-#define LEFT_ROTATE_LIGHT -ROTATE_LIGHT , ROTATE_LIGHT
-#define LEFT_ROTATE_STRONG -ROTATE_STRONG , ROTATE_STRONG
-
 // Temporarily outcommented bc of build error
 // #define LOAD_CELL_GPIO ADC1_CHANNEL_4 // which analog is used, The channel depends on which GPIO we want to use
 

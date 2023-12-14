@@ -1,0 +1,8 @@
+!main/oled.c
+
+.vscode
+*.txt
+build
+!sdkconfig
+.editorconfig
+.vscode
