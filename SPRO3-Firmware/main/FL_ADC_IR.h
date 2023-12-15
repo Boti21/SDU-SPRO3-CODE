@@ -19,8 +19,8 @@
 
 
 // #define CONFIG_IDF_TARGET_ESP32S2
-#define ADC1_0 0 // GPIO_NUM_36 // Front ADC
-#define ADC1_3 3 // GPIO_NUM_39 // Back ADC
+#define ADC1_0 0 // GPIO_NUM_36 // Back ADC // prev front
+#define ADC1_3 3 // GPIO_NUM_39 // Front ADC
 #define ADC1_6 6 // GPIO_NUM_34
 #define ADC1_7 7 // GPIO_NUM_35
 #define ADC1_4 4 // GPIO_NUM_32
@@ -44,11 +44,13 @@
 #define IR_BACK_D5_GPIO ADC1_9 // GPIO_NUM_26
 
 #define IR_D1 0
-#define IR_D3 0
-#define IR_D4 1
-#define IR_D5 2
-#define IR_D6 3
-#define IR_D8 3
+#define IR_D2 1
+#define IR_D3 2
+#define IR_D4 3
+#define IR_D5 4
+#define IR_D6 5
+#define IR_D7 6
+#define IR_D8 7
 
 
 
@@ -235,29 +237,29 @@ void set_multiplexer2_channel(int channel_num)
     // ESP_LOGI("MP2_channel", "Ch: %d Pins: %d %d %d", channel_num, multiplexer_adress[2], multiplexer_adress[1], multiplexer_adress[0]);
 }
 
-void ir_adc_multiplexer_check_front(void) 
+void ir_adc_multiplexer_check_back(void) // prev front
 {
-    //printf("Front:\n");
+    printf("Front:\n");
     for(int i = 0; i < 8; i++) {
         set_multiplexer1_channel(i);
         vTaskDelay(12 / portTICK_PERIOD_MS);
 
-        ESP_ERROR_CHECK(adc_oneshot_read(adc1_handle, ADC1_0, &ir_values_front[i]));
+        ESP_ERROR_CHECK(adc_oneshot_read(adc1_handle, ADC1_0, &ir_values_back[i]));
         // ESP_LOGI("IR_RESULTS_FRONT", "Val %d: %d", i, ir_values_front[i]);
-        //printf("%04d  ", ir_values_front[i]);
+        printf("%04d  ", ir_values_front[i]);
     }
-    //printf("\n");
+    printf("\n");
     
 }
 
-void ir_adc_multiplexer_check_back(void) 
+void ir_adc_multiplexer_check_front(void)  // prev back
 {
     printf("Back:\n");
     for(int i = 0; i < 8; i++) {
         set_multiplexer2_channel(i);
         vTaskDelay(12 / portTICK_PERIOD_MS);
 
-        adc_oneshot_read(adc1_handle, ADC1_3, &ir_values_back[i]);
+        adc_oneshot_read(adc1_handle, ADC1_3, &ir_values_front[i]);
         // ESP_LOGI("IR_RESULTS_BACK", "Val %d: %d", i, ir_values_back[i]);
         printf("%04d  ", ir_values_back[i]);
     }

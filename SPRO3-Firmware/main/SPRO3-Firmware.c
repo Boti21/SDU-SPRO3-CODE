@@ -64,19 +64,9 @@ void app_main(void)
     init_ultrasonic();
     
     //init_display();
-
-    /*
-    // Testing
-    int adc_value = 0;
-    gpio_reset_pin(2);
-    gpio_set_direction(2, GPIO_MODE_OUTPUT);
-    gpio_set_direction(5, GPIO_MODE_OUTPUT);
-    gpio_set_level(2, 1);
-    */
-
-
     //display_weight(1234);
     //display_voltage(3456);
+    
     vTaskDelay(4000 / portTICK_PERIOD_MS);
     pwm_drive(STRAIGHT);
 
@@ -84,7 +74,7 @@ void app_main(void)
         
         //display_weight(1234);
         
-        //ESP_LOGI(main_name, "Main loop...");
+        ESP_LOGI(main_name, "Main loop...");
         //vTaskDelay(250 / portTICK_PERIOD_MS);
         
 
@@ -104,24 +94,24 @@ void app_main(void)
 
         // Read IR-SENSOR in the front and the back
         ir_adc_multiplexer_check_front();
-        vTaskDelay(10 / portTICK_PERIOD_MS);
+        //vTaskDelay(10 / portTICK_PERIOD_MS);
         ir_adc_multiplexer_check_back();
-        vTaskDelay(1000 / portTICK_PERIOD_MS);
+        //vTaskDelay(1000 / portTICK_PERIOD_MS);
 
         ir_sensor_put_web();
         
         //ESP_LOGI(main_name, "\n");
         //vTaskDelay(2500 / portTICK_PERIOD_MS);
         //ir_adc_multiplexer_check_back();
-        /*
-        while (!((ir_values_front[IR_D3] > CALIBRATION_BLACK_TAPE) && (ir_values_front[IR_D6] > CALIBRATION_BLACK_TAPE)))
+        
+        while (!((ir_values_front[IR_D1] > CALIBRATION_BLACK_TAPE) && (ir_values_front[IR_D8] > CALIBRATION_BLACK_TAPE))) // While the outer sensors are not on black at the same time
         {  
 
-            if(ir_values_front[IR_D3] > CALIBRATION_BLACK_TAPE) 
+            if(ir_values_front[IR_D1] > CALIBRATION_BLACK_TAPE) 
             {
                 pwm_drive(LEFT_TURN_STRONG);
 
-            } else if (ir_values_front[IR_D6] > CALIBRATION_BLACK_TAPE)
+            } else if (ir_values_front[IR_D8] > CALIBRATION_BLACK_TAPE)
             {
                 pwm_drive(RIGHT_TURN_STRONG);
 
@@ -129,21 +119,23 @@ void app_main(void)
             {
                 pwm_drive(STRAIGHT);
 
-            } else if (ir_values_front[IR_D4] < CALIBRATION_BLACK_TAPE)
+            } else if (ir_values_front[IR_D3] < CALIBRATION_BLACK_TAPE)
             {
                 pwm_drive(RIGHT_TURN_LIGHT);
 
-            } else if (ir_values_front[IR_D5] < CALIBRATION_BLACK_TAPE)
+            } else if (ir_values_front[IR_D7] < CALIBRATION_BLACK_TAPE)
             {
                 pwm_drive(LEFT_TURN_LIGHT);
                 
-            }
+            } else
+            pwm_drive(STRAIGHT);
             
             vTaskDelay(10 / portTICK_PERIOD_MS);
-            
-            ir_adc_check_front();
+            ir_adc_multiplexer_check_front();
+            //vTaskDelay(10 / portTICK_PERIOD_MS);
+            ir_adc_multiplexer_check_back();
         }
-        */
+        
         //pwm_drive(STOP);
 
         //pwm_drive(RIGHT_ROTATE_STRONG);
