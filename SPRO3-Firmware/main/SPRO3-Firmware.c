@@ -20,6 +20,10 @@
 #include "FL_threads.h"
 #include "FL_fork_connect.h"
 
+#ifndef FL_DISPLAY_H
+#include "FL_display.h"
+#endif
+
 #define EVER ; ;
 
 // Temporarily outcommented bc of build error
@@ -53,6 +57,8 @@ void app_main(void)
 
     init_direction_change();
     
+    init_display();
+    
     /*
     // Testing
     int adc_value = 0;
@@ -64,6 +70,8 @@ void app_main(void)
 
 
     for (EVER) {
+
+        display_weight(1234);
         
         //ESP_LOGI(main_name, "Main loop...");
         //vTaskDelay(250 / portTICK_PERIOD_MS);

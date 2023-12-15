@@ -26,6 +26,10 @@
 
 #include "FL_endstop.h"
 
+#ifndef FL_DISPLAY_H
+#include "FL_display.h"
+#endif
+
 /* Misc macros */
 #define CUSTOM_STACK_SIZE 2048
 
@@ -43,7 +47,14 @@ uint8_t ultrasonic_toggle = 0;
 
 // Functions which check for battery voltage and collision detection (and communication)
 void monitor_task(void* pvParameters) {
+    // This has to be called once
+    init_display();
+
     for(;;) {
+        // Weight measurement
+        // get weight somewhere
+        display_weight(1234);
+
         // Endstops
         if(check_endstop_up() == 1) {
             // Endstop reached
