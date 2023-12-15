@@ -42,7 +42,7 @@ void app_main(void)
     // xTaskCreate(monitor_task, "monitor_task", CUSTOM_STACK_SIZE, NULL, 2, &monitor_handle);
 
     /* Init functions */
-    //init_fork_connect();
+    init_fork_connect();
     strcpy(changing_text, "Hello");
     init_adc();
     init_multiplexer();
