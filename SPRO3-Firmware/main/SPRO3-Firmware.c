@@ -1,3 +1,4 @@
+// Note: If more pin are needed - use just three pinis for multiplexer addressing
 #include <stdio.h>
 
 #include "freertos/FreeRTOS.h"
