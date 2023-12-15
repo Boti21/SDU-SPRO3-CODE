@@ -59,7 +59,7 @@ void app_main(void)
     init_direction_change();
     
     init_display();
-    
+
     /*
     // Testing
     int adc_value = 0;
@@ -70,9 +70,10 @@ void app_main(void)
     */
 
 
+        display_weight(1234);
+        display_voltage(3456);
     for (EVER) {
 
-        display_weight(1234);
         
         //ESP_LOGI(main_name, "Main loop...");
         //vTaskDelay(250 / portTICK_PERIOD_MS);
