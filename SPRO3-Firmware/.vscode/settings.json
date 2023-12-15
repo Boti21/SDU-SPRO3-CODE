@@ -24,7 +24,8 @@
         "cstdlib": "c",
         "fl_adcandir.h": "c",
         "fl_ultrasonic.h": "c",
-        "fstream": "c"
+        "fstream": "c",
+        "fl_display.h": "c"
     },
     "C_Cpp.default.compilerPath": "C:\\MinGW\\bin\\gcc.exe"
 }

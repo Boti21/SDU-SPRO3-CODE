@@ -49,12 +49,12 @@ uint8_t ultrasonic_toggle = 0;
 // Functions which check for battery voltage and collision detection (and communication)
 void monitor_task(void* pvParameters) {
     // This has to be called once
-    init_display();
+   // init_display();
 
     for(;;) {
         // Weight measurement
         // get weight somewhere
-        display_weight(1234);
+       // display_weight(1234);
 
         // Endstops
         if(check_endstop_up() == 1) {

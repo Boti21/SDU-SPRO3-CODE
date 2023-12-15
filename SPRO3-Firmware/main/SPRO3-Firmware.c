@@ -58,7 +58,7 @@ void app_main(void)
 
     init_direction_change();
     
-    init_display();
+    //init_display();
     
     /*
     // Testing
@@ -72,7 +72,7 @@ void app_main(void)
 
     for (EVER) {
 
-        display_weight(1234);
+        //display_weight(1234);
         
         //ESP_LOGI(main_name, "Main loop...");
         //vTaskDelay(250 / portTICK_PERIOD_MS);

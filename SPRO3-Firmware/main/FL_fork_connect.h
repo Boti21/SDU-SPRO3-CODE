@@ -57,8 +57,11 @@ static esp_err_t forkconnect_handler(httpd_req_t *req)
     gpio_set_level(LED, 0);
     char* resp_str = (char*) req->user_ctx;
     char* final_resp_str = NULL;
-    asprintf(&final_resp_str, resp_str, changing_text);
 
+    xSemaphoreTake(web_mutex, portMAX_DELAY);
+    asprintf(&final_resp_str, resp_str, changing_text);
+    xSemaphoreGive(web_mutex);
+    
     esp_err_t error = httpd_resp_send(req, final_resp_str, strlen(final_resp_str)); // Send the response
 
     free(final_resp_str);

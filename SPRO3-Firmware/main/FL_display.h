@@ -8,10 +8,11 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "esp_log.h"
-
+/*
 #include "ssd1306.h"
 #include "fonts.h"
-
+*/
+/*
 void init_display(void)
 {
 	SSD1306_Init();
@@ -42,3 +43,4 @@ void display_weight(int weight_in_grams)
 	SSD1306_Puts(print, &Font_16x26, SSD1306_COLOR_WHITE);
 	SSD1306_UpdateScreen();
 }
+*/

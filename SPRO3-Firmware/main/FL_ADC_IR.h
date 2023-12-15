@@ -88,6 +88,9 @@ int ir_values_back[IR_BACK_NUMBER_OF_PINS];
 uint8_t MULTIPLEXER_PINS[] = {MULTIPLEXER1_A, MULTIPLEXER1_B, MULTIPLEXER1_C, MULTIPLEXER2_A, MULTIPLEXER2_B, MULTIPLEXER2_C};
 uint8_t multiplexer_adress[NUM_OF_ADDRESS_PINS] = {0};
 
+char sensor_readings_string[100]; // Adjust the size as needed
+
+
 /* Data handling variables */
 unsigned int max_front = 0;
 unsigned int min_front = 0;
@@ -234,16 +237,21 @@ void set_multiplexer2_channel(int channel_num)
 
 void ir_adc_multiplexer_check_front(void) 
 {
-    printf("Front:\n");
+    //printf("Front:\n");
     for(int i = 0; i < 8; i++) {
         set_multiplexer1_channel(i);
         vTaskDelay(12 / portTICK_PERIOD_MS);
 
         ESP_ERROR_CHECK(adc_oneshot_read(adc1_handle, ADC1_0, &ir_values_front[i]));
         // ESP_LOGI("IR_RESULTS_FRONT", "Val %d: %d", i, ir_values_front[i]);
-        printf("%04d  ", ir_values_front[i]);
+        //printf("%04d  ", ir_values_front[i]);
     }
-    printf("\n");
+    //printf("\n");
+
+    sprintf(sensor_readings_string, "Back: %04d %04d %04d %04d %04d %04d %04d %04d", 
+            ir_values_back[0], ir_values_back[1], ir_values_back[2], ir_values_back[3], 
+            ir_values_back[4], ir_values_back[5], ir_values_back[6], ir_values_back[7]);
+
 }
 
 void ir_adc_multiplexer_check_back(void) 
