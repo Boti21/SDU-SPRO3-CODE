@@ -24,10 +24,10 @@
 // Ultrasonic Macros
 #define TRIG_PIN 
 #define ECHO_PIN 
-#define TRIG_PIN_1 1
-#define ECHO_PIN_1 1
-#define TRIG_PIN_2 1
-#define ECHO_PIN_2 1
+#define TRIG_PIN_1 15
+#define ECHO_PIN_1 15
+#define TRIG_PIN_2 15
+#define ECHO_PIN_2 15
 
 #define SOUND_SPEED_IN_US_PER_CM 58.0 // Speed of sound in microseconds per cm
 

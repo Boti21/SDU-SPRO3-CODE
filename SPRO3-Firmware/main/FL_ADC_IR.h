@@ -277,11 +277,10 @@ void ir_sensor_put_web(void)
 
 xSemaphoreGive(web_mutex);
 
-
-
 }
 
-/* Check each adc value of infrared sensor */
+
+// Check each adc value of infrared sensor 
 void ir_adc_check_front(void)
 {
     for(int i = 0; i < IR_FRONT_NUMBER_OF_PINS; i++)
@@ -297,6 +296,7 @@ void ir_adc_check_back(void)
         adc_oneshot_read(adc1_handle, IR_CHANNELS_BACK[i], &ir_values_back[i]);
     }
 }
+
 
 void ir_max_front(void) {
     for(int i = 0; i < IR_FRONT_NUMBER_OF_PINS; i++) {

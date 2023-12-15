@@ -39,10 +39,10 @@
 #define R_MOTOR 2 // Right motor (facing the same way as the fork)
 #define M_MOTOR_GPIO 5 // TBD
 #define L_MOTOR_GPIO 19 // TBD
-#define R_MOTOR_GPIO 18 // TBD
+#define R_MOTOR_GPIO 18 // TBD 
 
 #define R_MOTOR_FORWARD GPIO_NUM_17
-#define R_MOTOR_BACKWARD GPIO_NUM_23
+#define R_MOTOR_BACKWARD GPIO_NUM_0 // prev 23
 #define L_MOTOR_FORWARD GPIO_NUM_2
 #define L_MOTOR_BACKWARD GPIO_NUM_4
 #define M_MOTOR_FORWARD GPIO_NUM_12
@@ -54,6 +54,11 @@
 #define BACKWARD 0
 #define FORWARD 1
 
+void pwm_set(int motor, int duty){
+    ledc_set_duty(LEDC_LOW_SPEED_MODE, motor, duty);  
+    ledc_update_duty(LEDC_LOW_SPEED_MODE, motor); 
+    ledc_timer_resume(LEDC_LOW_SPEED_MODE, motor);
+}
 
 void init_pwm(int motor, int GPIO)
 {
@@ -80,16 +85,12 @@ void init_pwm(int motor, int GPIO)
     ledc_channel_config(&ledc_channel);
     //ledc_timer_pause(0,motor);
 
+    pwm_set(motor, 0);
    // gpio_set_direction(GPIO, GPIO_MODE_OUTPUT);
 }
 
 
 
-void pwm_set(int motor, int duty){
-    ledc_set_duty(LEDC_LOW_SPEED_MODE, motor, duty);  
-    ledc_update_duty(LEDC_LOW_SPEED_MODE, motor); 
-    ledc_timer_resume(LEDC_LOW_SPEED_MODE, motor);
-}
 
 void pwm_stop(int motor){
 

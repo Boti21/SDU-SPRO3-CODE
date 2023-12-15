@@ -51,16 +51,18 @@ void app_main(void)
     /* Init functions */
     init_fork_connect();
     //strcpy(changing_text, "Hello");
+    
     init_adc();
     init_multiplexer();
+    
     init_pwm(M_MOTOR, M_MOTOR_GPIO);
     init_pwm(L_MOTOR, L_MOTOR_GPIO);
     init_pwm(R_MOTOR, R_MOTOR_GPIO);
-    init_ultrasonic();
-
     init_direction_change();
     
-    init_display();
+    init_ultrasonic();
+    
+    //init_display();
 
     /*
     // Testing
@@ -72,10 +74,13 @@ void app_main(void)
     */
 
 
-        display_weight(1234);
-        display_voltage(3456);
-    for (EVER) {
+    //display_weight(1234);
+    //display_voltage(3456);
+    vTaskDelay(4000 / portTICK_PERIOD_MS);
+    pwm_drive(STRAIGHT);
 
+    for (EVER) {
+        
         //display_weight(1234);
         
         //ESP_LOGI(main_name, "Main loop...");

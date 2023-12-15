@@ -31,7 +31,7 @@
 
 // Includes for hardware interface
 #include "driver/gpio.h"
-#define LED GPIO_NUM_4
+#define LED GPIO_NUM_15
 
 #include "FL_webfrontend.h"
 
@@ -56,7 +56,7 @@ static esp_err_t forkconnect_handler(httpd_req_t *req)
 {
     ESP_LOGI(TAG, "ForkConnect");
 
-    gpio_set_level(LED, 0);
+    //gpio_set_level(LED, 0);
     char* resp_str = (char*) req->user_ctx;
     char* final_resp_str = NULL;
 
@@ -246,6 +246,8 @@ static const httpd_uri_t forkconnect_start = {
 
 static esp_err_t forkconnect_stop_handler(httpd_req_t *req) 
 {
+
+    pwm_drive(STOP);
     xEventGroupSetBits(FL_events, STOP_BUTTON_PRESS);
     httpd_resp_set_status(req, "302 Found"); // Set the status to 302
     httpd_resp_set_hdr(req, "Location", "/forkconnect"); // Set the Location header to new URI to redirect
@@ -316,6 +318,7 @@ static httpd_handle_t start_webserver(void)
         httpd_register_uri_handler(server, &forkpage2);
         httpd_register_uri_handler(server, &forkconnect_input);
         httpd_register_uri_handler(server, &forkconnect_start);
+        httpd_register_uri_handler(server, &forkconnect_stop);
         
         
         return server;
@@ -439,10 +442,11 @@ void init_fork_connect(void)
     
     ESP_ERROR_CHECK(esp_event_handler_register(IP_EVENT, IP_EVENT_AP_STAIPASSIGNED, &connect_handler, &server));
     // ESP_ERROR_CHECK(esp_event_handler_register(WIFI_EVENT, WIFI_EVENT_STA_DISCONNECTED, &disconnect_handler, &server));
-    
+    /*
     gpio_reset_pin(LED);
     gpio_set_direction(LED, GPIO_MODE_OUTPUT);
     gpio_set_level(LED, 0);
+    */
 
 
 }

@@ -112,10 +112,11 @@ void test_task2(void *pvParameters)
         xSemaphoreTake(screen_mutex, portMAX_DELAY); // Critical region started
         ESP_LOGI(test_task_name2, "task2");
         xSemaphoreGive(screen_mutex); // Critical region ended
-
+        /*
         gpio_set_level(2, 1);
         vTaskDelay(150);
         gpio_set_level(2, 0);
         vTaskDelay(150);
+        */
     }
 }
