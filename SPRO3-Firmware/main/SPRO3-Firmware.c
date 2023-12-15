@@ -130,10 +130,17 @@ void app_main(void)
             } else
             pwm_drive(STRAIGHT);
             
-            vTaskDelay(10 / portTICK_PERIOD_MS);
+            vTaskDelay(5000 / portTICK_PERIOD_MS);
             ir_adc_multiplexer_check_front();
+            
+            printf("Front:\n");
+            isolate_line(ir_values_front);
             //vTaskDelay(10 / portTICK_PERIOD_MS);
+            printf("\n");
             ir_adc_multiplexer_check_back();
+            printf("Back:\n");
+            isolate_line(ir_values_back);
+            
         }
         
         //pwm_drive(STOP);

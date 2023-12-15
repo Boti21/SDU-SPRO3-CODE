@@ -239,14 +239,14 @@ void set_multiplexer2_channel(int channel_num)
 
 void ir_adc_multiplexer_check_back(void) // prev front
 {
-    printf("Front:\n");
+    printf("Back:\n");
     for(int i = 0; i < 8; i++) {
         set_multiplexer1_channel(i);
         vTaskDelay(12 / portTICK_PERIOD_MS);
 
         ESP_ERROR_CHECK(adc_oneshot_read(adc1_handle, ADC1_0, &ir_values_back[i]));
         // ESP_LOGI("IR_RESULTS_FRONT", "Val %d: %d", i, ir_values_front[i]);
-        printf("%04d  ", ir_values_front[i]);
+        printf("%04d  ", ir_values_back[i]);
     }
     printf("\n");
     
@@ -254,14 +254,14 @@ void ir_adc_multiplexer_check_back(void) // prev front
 
 void ir_adc_multiplexer_check_front(void)  // prev back
 {
-    printf("Back:\n");
+    printf("Front:\n");
     for(int i = 0; i < 8; i++) {
         set_multiplexer2_channel(i);
         vTaskDelay(12 / portTICK_PERIOD_MS);
 
         adc_oneshot_read(adc1_handle, ADC1_3, &ir_values_front[i]);
         // ESP_LOGI("IR_RESULTS_BACK", "Val %d: %d", i, ir_values_back[i]);
-        printf("%04d  ", ir_values_back[i]);
+        printf("%04d  ", ir_values_front[i]);
     }
     printf("\n");
 }
@@ -377,4 +377,20 @@ ir_check_line_ret ir_check_line_front(void)
     return result;
 }
 
+void isolate_line(int* sensor_values)
+{   
+    
+    for(int i = 0; i < 8; i++)
+    {
+        if (sensor_values[i] > CALIBRATION_BLACK_TAPE)
+        {
+            printf("   1  ");
+        } else
+            printf("   0  ");
+        
+    } 
+    
+    vTaskDelay(12 / portTICK_PERIOD_MS);    
+    printf("\n");
+}
 
