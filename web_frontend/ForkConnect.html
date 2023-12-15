@@ -164,7 +164,19 @@
             <p> Updates of the forklift:</p>
             </div>
               
-    </section>  
+    </section> 
+    <script>
+        setInterval(function() {
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    document.getElementById("/forkconnect").innerHTML = this.responseText;
+                }
+            };
+            xhttp.open("GET", "/forkconnect", true);
+            xhttp.send();
+        }, 5000);
+        </script> 
 
 </body>
 </html>

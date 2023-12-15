@@ -33,6 +33,8 @@
 #include "driver/gpio.h"
 #define LED GPIO_NUM_4
 
+#include "FL_webfrontend.h"
+
 /* The examples use WiFi configuration that you can set via project configuration menu.
 
    If you'd rather not, just change the below entries to strings with
@@ -78,62 +80,7 @@ static const httpd_uri_t forkconnect = {
     .handler   = forkconnect_handler,
     /* Let's pass response string in user
      * context to demonstrate it's usage */
-    .user_ctx  = "<!DOCTYPE html>\
-<html>\
-<head>\
-<style>\
-.button {\
-  border: none;\
-  color: white;\
-  padding: 15px 32px;\
-  text-align: center;\
-  text-decoration: none;\
-  display: inline-block;\
-  font-size: 16px;\
-  margin: 4px 2px;\
-  cursor: pointer;\
-}\
-\
-.button1 {background-color: #04AA6D;} /* Green */\
-\
-</style>\
-</head>\
-<body>\
-\
-<h1>Fork Connect - Your way to fork.</h1>\
-<p>Control your forklift from here:</p>\
-\
-<h2>Fork: Down. And %s .</h2>\
-\
-<button class=\"button button1\" onclick= \"window.location.href='/forkpage2'\" >Start</button>\
-\
-<form action=\"/get\">\
-str: <input type=\"text\" name=\"str\">\
-<input type=\"submit\" value=\"Submit\">\
-</form><br>\
-<form action=\"/get\">\
-int: <input type=\"text\" name=\"int\">\
-<input type=\"submit\" value=\"Submit\">\
-</form><br>\
-<button class =\"button\" type=\"button\">\
-    <span>STOP</span>\
-<\button>\
-\
-</body>\
-<script>\
-setInterval(function() {\
-    var xhttp = new XMLHttpRequest();\
-    xhttp.onreadystatechange = function() {\
-        if (this.readyState == 4 && this.status == 200) {\
-            document.getElementById(\"forkconnect\").innerHTML = this.responseText;\
-        }\
-    };\
-    xhttp.open(\"GET\", \"/forkconnect\", true);\
-    xhttp.send();\
-}, 5000);\ 
-</script>\
-</html>\
-"
+    .user_ctx  = FORKCONNECThtml
 };
 //<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,1,0" />
 
