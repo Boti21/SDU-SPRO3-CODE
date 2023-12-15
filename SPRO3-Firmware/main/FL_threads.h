@@ -33,9 +33,16 @@
 /* Misc macros */
 #define CUSTOM_STACK_SIZE 2048
 
+#define START_BUTTON_PRESS (1 << 0)
+#define STOP_BUTTON_PRESS (1 << 1)
+
 /* Semaphores and Mutexes */
 SemaphoreHandle_t screen_mutex;
 SemaphoreHandle_t web_mutex;
+
+/* Events */
+
+EventGroupHandle_t FL_events;
 
 /* Tasks */
 TaskHandle_t test_handle = NULL;
@@ -49,12 +56,12 @@ uint8_t ultrasonic_toggle = 0;
 // Functions which check for battery voltage and collision detection (and communication)
 void monitor_task(void* pvParameters) {
     // This has to be called once
-    init_display();
+   // init_display();
 
     for(;;) {
         // Weight measurement
         // get weight somewhere
-        display_weight(1234);
+       // display_weight(1234);
 
         // Endstops
         if(check_endstop_up() == 1) {

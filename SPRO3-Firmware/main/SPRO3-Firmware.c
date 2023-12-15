@@ -3,6 +3,7 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "freertos/semphr.h"
+#include "freertos/event_groups.h"
 
 #include "driver/gpio.h"
 #include "driver/gptimer.h"
@@ -35,6 +36,7 @@ void app_main(void)
     /* Initializing mutexes and semaphores */
     screen_mutex = xSemaphoreCreateMutex();
     web_mutex = xSemaphoreCreateMutex();
+    FL_events = xEventGroupCreate();
 
 
     /* Little boot up message ;) */ // <-- very Boti comment  // still not sure if that is good
@@ -74,6 +76,7 @@ void app_main(void)
         display_voltage(3456);
     for (EVER) {
 
+        //display_weight(1234);
         
         //ESP_LOGI(main_name, "Main loop...");
         //vTaskDelay(250 / portTICK_PERIOD_MS);
@@ -95,9 +98,11 @@ void app_main(void)
 
         // Read IR-SENSOR in the front and the back
         ir_adc_multiplexer_check_front();
-        vTaskDelay(200 / portTICK_PERIOD_MS);
+        vTaskDelay(10 / portTICK_PERIOD_MS);
         ir_adc_multiplexer_check_back();
-        vTaskDelay(10000 / portTICK_PERIOD_MS);
+        vTaskDelay(1000 / portTICK_PERIOD_MS);
+
+        ir_sensor_put_web();
         
         //ESP_LOGI(main_name, "\n");
         //vTaskDelay(2500 / portTICK_PERIOD_MS);

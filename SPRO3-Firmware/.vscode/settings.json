@@ -1,6 +1,6 @@
 {
     "idf.flashType": "UART",
-    "idf.portWin": "COM5",
+    "idf.portWin": "COM6",
     "idf.adapterTargetName": "esp32",
     "files.associations": {
         "*.cake": "plaintext",
@@ -24,7 +24,8 @@
         "cstdlib": "c",
         "fl_adcandir.h": "c",
         "fl_ultrasonic.h": "c",
-        "fstream": "c"
+        "fstream": "c",
+        "fl_display.h": "c"
     },
     "C_Cpp.default.compilerPath": "C:\\MinGW\\bin\\gcc.exe"
 }

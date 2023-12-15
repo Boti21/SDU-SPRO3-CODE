@@ -49,6 +49,8 @@ static const char *TAG = "ForkConnect";
 
 static char changing_text[20];
 
+extern SemaphoreHandle_t web_mutex;
+
 /* An HTTP GET handler */
 static esp_err_t forkconnect_handler(httpd_req_t *req)
 {
@@ -57,7 +59,10 @@ static esp_err_t forkconnect_handler(httpd_req_t *req)
     gpio_set_level(LED, 0);
     char* resp_str = (char*) req->user_ctx;
     char* final_resp_str = NULL;
-    asprintf(&final_resp_str, resp_str, changing_text);
+
+    xSemaphoreTake(web_mutex, portMAX_DELAY);
+    asprintf(&final_resp_str, resp_str, sensor_readings_string);
+    xSemaphoreGive(web_mutex);
 
     esp_err_t error = httpd_resp_send(req, final_resp_str, strlen(final_resp_str)); // Send the response
 
@@ -87,8 +92,6 @@ static const httpd_uri_t forkconnect = {
 static esp_err_t forkpage2_handler(httpd_req_t *req)
 {
     ESP_LOGI(TAG, "ForkPage2");
-
-    gpio_set_level(LED, 1);
 
     char* resp_str = (char*) req->user_ctx;
     char* final_resp_str = NULL;
@@ -216,10 +219,45 @@ static esp_err_t forkconnect_input_handler(httpd_req_t *req)
     return ESP_OK;
 }
 
+
 static const httpd_uri_t forkconnect_input = {
     .uri       = "/get",
     .method    = HTTP_GET,
     .handler   = forkconnect_input_handler,
+    .user_ctx  = NULL
+};
+
+static esp_err_t forkconnect_start_handler(httpd_req_t *req) 
+{
+    xEventGroupSetBits(FL_events, START_BUTTON_PRESS);
+    httpd_resp_set_status(req, "302 Found"); // Set the status to 302
+    httpd_resp_set_hdr(req, "Location", "/forkconnect"); // Set the Location header to new URI to redirect
+    httpd_resp_send(req, NULL, 0); // Send the response
+    
+    return ESP_OK;
+}
+
+static const httpd_uri_t forkconnect_start = {
+    .uri       = "/start",
+    .method    = HTTP_GET,
+    .handler   = forkconnect_start_handler,
+    .user_ctx  = NULL
+};
+
+static esp_err_t forkconnect_stop_handler(httpd_req_t *req) 
+{
+    xEventGroupSetBits(FL_events, STOP_BUTTON_PRESS);
+    httpd_resp_set_status(req, "302 Found"); // Set the status to 302
+    httpd_resp_set_hdr(req, "Location", "/forkconnect"); // Set the Location header to new URI to redirect
+    httpd_resp_send(req, NULL, 0); // Send the response
+    
+    return ESP_OK;
+}
+
+static const httpd_uri_t forkconnect_stop = {
+    .uri       = "/stop",
+    .method    = HTTP_GET,
+    .handler   = forkconnect_stop_handler,
     .user_ctx  = NULL
 };
 
@@ -277,6 +315,7 @@ static httpd_handle_t start_webserver(void)
         httpd_register_uri_handler(server, &forkconnect);
         httpd_register_uri_handler(server, &forkpage2);
         httpd_register_uri_handler(server, &forkconnect_input);
+        httpd_register_uri_handler(server, &forkconnect_start);
         
         
         return server;
