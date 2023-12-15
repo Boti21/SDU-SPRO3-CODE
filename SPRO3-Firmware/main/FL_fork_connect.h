@@ -244,6 +244,23 @@ static const httpd_uri_t forkconnect_start = {
     .user_ctx  = NULL
 };
 
+static esp_err_t forkconnect_stop_handler(httpd_req_t *req) 
+{
+    xEventGroupSetBits(FL_events, STOP_BUTTON_PRESS);
+    httpd_resp_set_status(req, "302 Found"); // Set the status to 302
+    httpd_resp_set_hdr(req, "Location", "/forkconnect"); // Set the Location header to new URI to redirect
+    httpd_resp_send(req, NULL, 0); // Send the response
+    
+    return ESP_OK;
+}
+
+static const httpd_uri_t forkconnect_stop = {
+    .uri       = "/stop",
+    .method    = HTTP_GET,
+    .handler   = forkconnect_stop_handler,
+    .user_ctx  = NULL
+};
+
 static esp_err_t root_handler(httpd_req_t *req)
 {
     esp_err_t error;

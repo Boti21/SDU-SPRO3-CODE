@@ -34,6 +34,7 @@
 #define CUSTOM_STACK_SIZE 2048
 
 #define START_BUTTON_PRESS (1 << 0)
+#define STOP_BUTTON_PRESS (1 << 1)
 
 /* Semaphores and Mutexes */
 SemaphoreHandle_t screen_mutex;
