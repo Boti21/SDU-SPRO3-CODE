@@ -49,6 +49,8 @@ static const char *TAG = "ForkConnect";
 
 static char changing_text[20];
 
+extern SemaphoreHandle_t web_mutex;
+
 /* An HTTP GET handler */
 static esp_err_t forkconnect_handler(httpd_req_t *req)
 {
@@ -59,9 +61,9 @@ static esp_err_t forkconnect_handler(httpd_req_t *req)
     char* final_resp_str = NULL;
 
     xSemaphoreTake(web_mutex, portMAX_DELAY);
-    asprintf(&final_resp_str, resp_str, changing_text);
+    asprintf(&final_resp_str, resp_str, sensor_readings_string);
     xSemaphoreGive(web_mutex);
-    
+
     esp_err_t error = httpd_resp_send(req, final_resp_str, strlen(final_resp_str)); // Send the response
 
     free(final_resp_str);

@@ -94,9 +94,11 @@ void app_main(void)
 
         // Read IR-SENSOR in the front and the back
         ir_adc_multiplexer_check_front();
-        vTaskDelay(200 / portTICK_PERIOD_MS);
+        vTaskDelay(10 / portTICK_PERIOD_MS);
         ir_adc_multiplexer_check_back();
-        vTaskDelay(10000 / portTICK_PERIOD_MS);
+        vTaskDelay(1000 / portTICK_PERIOD_MS);
+
+        ir_sensor_put_web();
         
         //ESP_LOGI(main_name, "\n");
         //vTaskDelay(2500 / portTICK_PERIOD_MS);

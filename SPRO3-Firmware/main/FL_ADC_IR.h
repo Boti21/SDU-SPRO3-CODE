@@ -89,7 +89,7 @@ uint8_t MULTIPLEXER_PINS[] = {MULTIPLEXER1_A, MULTIPLEXER1_B, MULTIPLEXER1_C, MU
 uint8_t multiplexer_adress[NUM_OF_ADDRESS_PINS] = {0};
 
 char sensor_readings_string[100]; // Adjust the size as needed
-
+extern SemaphoreHandle_t web_mutex;
 
 /* Data handling variables */
 unsigned int max_front = 0;
@@ -247,11 +247,7 @@ void ir_adc_multiplexer_check_front(void)
         //printf("%04d  ", ir_values_front[i]);
     }
     //printf("\n");
-
-    sprintf(sensor_readings_string, "Back: %04d %04d %04d %04d %04d %04d %04d %04d", 
-            ir_values_back[0], ir_values_back[1], ir_values_back[2], ir_values_back[3], 
-            ir_values_back[4], ir_values_back[5], ir_values_back[6], ir_values_back[7]);
-
+    
 }
 
 void ir_adc_multiplexer_check_back(void) 
@@ -266,6 +262,23 @@ void ir_adc_multiplexer_check_back(void)
         printf("%04d  ", ir_values_back[i]);
     }
     printf("\n");
+}
+
+void ir_sensor_put_web(void)
+{
+
+ xSemaphoreTake(web_mutex, portMAX_DELAY);
+ 
+ sprintf(sensor_readings_string, "Front: %04d %04d %04d %04d %04d %04d %04d %04d\nBack: %04d %04d %04d %04d %04d %04d %04d %04d", 
+        ir_values_front[0], ir_values_front[1], ir_values_front[2], ir_values_front[3], 
+        ir_values_front[4], ir_values_front[5], ir_values_front[6], ir_values_front[7], 
+        ir_values_back[0], ir_values_back[1], ir_values_back[2], ir_values_back[3], 
+        ir_values_back[4], ir_values_back[5], ir_values_back[6], ir_values_back[7]);
+
+xSemaphoreGive(web_mutex);
+
+
+
 }
 
 /* Check each adc value of infrared sensor */
