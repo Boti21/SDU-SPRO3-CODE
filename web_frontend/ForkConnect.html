@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>Forklift connect</title>
+        <style>
+            
+             h1 {
+                color:black;
+                font-style: italic;
+                font-size: 30px;
+                text-decoration: underline;
+            
+             }
+
+            * {
+                box-sizing: border-box;
+                margin:0;
+                padding:0;
+                font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+            }
+
+            nav{
+                 height:80px;
+                 background-color: coral;
+                 display: flex;
+                 justify-content: space-between;
+                 align-items: center;
+                    padding: 0rem calc((100vw - 1300px) / 2);
+            }
+
+            .logo{
+                color: white;
+                font-size: rem;
+                font-weight: bold;
+                font-style: italic;
+                padding: 0 2 rem;
+            }
+
+            nav a {
+                text-decoration: wavy;
+                color:white;
+                padding: 0 1.5rem;
+                font-weight: bold;
+                text-transform: uppercase;
+            }
+
+            .hero{
+                background-color:rgba(166, 216, 216, 0.927);
+            }
+
+            .hero-container{
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                height: 95vh;
+                padding: 3rem calc((100vw - 1300px) / 2);
+
+            }
+
+            .column-left{
+                display: flex;
+                flex-direction:column;
+                justify-content: center;
+                align-items: flex-start;
+                color:black;
+                padding: 0rem 2rem;
+            }
+
+            .column-left h1{
+                margin-bottom: 1rem;
+                font-size: 3rem;   
+            }
+
+            .column-left p {
+                margin-bottom: 2rem;
+                font-size: 1.5rem;
+                        line-height: 1.5;   
+                    }
+
+            .button1 {
+                padding: 1rem 3rem;
+                font-size: 1rem;
+                text-align: center;
+                font-weight: bold;
+                border:none;
+                color:azure;
+                background-color: red;
+                cursor:pointer;
+                border-radius: 50px;
+                position:relative;
+
+            }
+
+            .button2 {
+                padding: 1rem 3rem;
+                font-size: 1rem;
+                text-align: center;
+                font-weight: bold;
+                border:none;
+                color:azure;
+                background-color: green;
+                cursor:pointer;
+                border-radius: 50px;
+                position:relative;
+            }
+
+            button:hover {
+                background-color: white;
+                color: black;
+
+            }
+
+            .column-right{
+            display:flex;
+            justify-content: center;
+            align-items: center;
+            padding: 0rem 2rem;
+            }
+
+            label {
+            font-size: 25px; /* Adjust the size as needed */
+            font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif; /* Use Arial or a similar font */
+            }
+            
+
+            </style>
+            
+            
+</head>
+<body>
+
+    <nav> 
+        <div class="logo"> FORK CONNECT </div> 
+        <div class="nav-items">
+            <a>Home</a>
+            <a>About</a>
+            <a>Contact</a>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="hero-container">
+            <div class="column-left">
+                <h1>Connect to the forklift!</h1>
+                <p> You can start or stop the forklift pressing the buttons:</p>
+                <button class="button button1">START </button>
+                <button class="button button2">STOP </button>
+
+                <p> You can choose a pallet and place it one of our fields:</p>
+                <label for="dropdown1"> Choose pallet:</label>
+            <select id="dropdown1">
+                <option value="option1"> pallet 1</option>
+                <option value="option2"> pallet 2</option>
+            </select>
+
+            <label for="dropdown2"> Choose field:</label>
+            <select id="dropdown2">
+                <option value="choiceA"> Field A</option>
+                <option value="ChoiceB"> Field B</option>
+            </select>
+
+            <p> Updates of the forklift:</p>
+            </div>
+              
+    </section>  
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
