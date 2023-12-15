@@ -30,6 +30,7 @@ void app_main(void)
 {
     /* Initializing mutexes and semaphores */
     screen_mutex = xSemaphoreCreateMutex();
+    web_mutex = xSemaphoreCreateMutex();
 
 
     /* Little boot up message ;) */ // <-- very Boti comment  // still not sure if that is good

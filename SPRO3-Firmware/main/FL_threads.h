@@ -31,6 +31,7 @@
 
 /* Semaphores and Mutexes */
 SemaphoreHandle_t screen_mutex;
+SemaphoreHandle_t web_mutex;
 
 /* Tasks */
 TaskHandle_t test_handle = NULL;
