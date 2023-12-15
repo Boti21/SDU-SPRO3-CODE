@@ -50,13 +50,13 @@ void app_main(void)
 
     /* Init functions */
     init_fork_connect();
-    strcpy(changing_text, "Hello");
+    //strcpy(changing_text, "Hello");
     init_adc();
     init_multiplexer();
     init_pwm(M_MOTOR, M_MOTOR_GPIO);
     init_pwm(L_MOTOR, L_MOTOR_GPIO);
     init_pwm(R_MOTOR, R_MOTOR_GPIO);
-    //init_ultrasonic();
+    init_ultrasonic();
 
     init_direction_change();
     

@@ -73,11 +73,11 @@ void monitor_task(void* pvParameters) {
         }
 
         // Ultrasonic
-        if(distance_ultrasonic() < 15 /* && Not turning right now or something, so the pallet doesn't trigger it */) {
+        if(distance_ultrasonic_1() < 15 /* && Not turning right now or something, so the pallet doesn't trigger it */) {
             // Distance to object less than 15 cm
             pwm_drive(STOP);
             ultrasonic_toggle = 1;
-        } else if(distance_ultrasonic() >= 15) {
+        } else if(distance_ultrasonic_1() >= 15) {
             // Not sure how to continue, mayba just go STRAIGHT but what if its in turn
             // also possible to just not have recovery or do it via the website
             if(ultrasonic_toggle == 1) {
