@@ -9,9 +9,10 @@
 #include "freertos/task.h"
 #include "esp_log.h"
 
-/*
-#include "ssd1306.h"
-#include "fonts.h"
+#include "ssd1306.c"
+#include "fonts.c"
+//#include "ssd1306.h"
+//#include "fonts.h"
 
 #define WEIGHT_PRINT 7
 #define VOLTAGE_PRINT 6
@@ -83,4 +84,4 @@ void display_voltage(int v_in_mvolts)
 	}
 	SSD1306_UpdateScreen();
 }
-*/
+
