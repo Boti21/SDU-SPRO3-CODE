@@ -3,6 +3,7 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "freertos/semphr.h"
+#include "freertos/event_groups.h"
 
 #include "driver/gpio.h"
 #include "driver/gptimer.h"
@@ -35,6 +36,7 @@ void app_main(void)
     /* Initializing mutexes and semaphores */
     screen_mutex = xSemaphoreCreateMutex();
     web_mutex = xSemaphoreCreateMutex();
+    FL_events = xEventGroupCreate();
 
 
     /* Little boot up message ;) */ // <-- very Boti comment  // still not sure if that is good

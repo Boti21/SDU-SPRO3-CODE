@@ -33,9 +33,15 @@
 /* Misc macros */
 #define CUSTOM_STACK_SIZE 2048
 
+#define START_BUTTON_PRESS (1 << 0)
+
 /* Semaphores and Mutexes */
 SemaphoreHandle_t screen_mutex;
 SemaphoreHandle_t web_mutex;
+
+/* Events */
+
+EventGroupHandle_t FL_events;
 
 /* Tasks */
 TaskHandle_t test_handle = NULL;
