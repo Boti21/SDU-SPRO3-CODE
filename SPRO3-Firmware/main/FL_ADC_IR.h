@@ -104,7 +104,10 @@ unsigned int min_back = 0;
 unsigned int dif_back = 0;
 unsigned int threshhold_back = 0;
 int read_battery_voltage = 0;
+
+
 float battery_voltage = 0;
+float loadcell_voltage = 0;
 
 typedef struct {
     int correction_dir;
@@ -136,24 +139,16 @@ void init_adc(void)
         .atten = ADC_ATTEN_DB_11, // Input attenuated, range increase by 11 dB
     };
     /* Setup with multiplexer */
-    ESP_ERROR_CHECK(adc_oneshot_config_channel(adc1_handle, ADC1_0, &config));
-    ESP_ERROR_CHECK(adc_oneshot_config_channel(adc1_handle, ADC1_3, &config));
+    ESP_ERROR_CHECK(adc_oneshot_config_channel(adc1_handle, ADC1_0, &config)); // Multiplexers
+    ESP_ERROR_CHECK(adc_oneshot_config_channel(adc1_handle, ADC1_3, &config)); 
+    ESP_ERROR_CHECK(adc_oneshot_config_channel(adc1_handle, ADC1_6, &config)); // Battery
+    ESP_ERROR_CHECK(adc_oneshot_config_channel(adc1_handle, ADC1_7, &config)); // Loadcell
     /*
     for (int i = 0; i < IR_FRONT_NUMBER_OF_PINS; i++)
     {
         ESP_ERROR_CHECK(adc_oneshot_config_channel(adc1_handle, IR_CHANNELS_FRONT[i], &config)); // Error checking
     }
     */
-
-    
-    // battery voltage reading => Vout = Dout*Vmax/Dmax
-    adc_oneshot_config_channel(adc1_handle, ADC1_6 , &config);
-
-    adc_oneshot_read(adc1_handle, ADC1_6, &read_battery_voltage); // Dout = read_battery_voltage
-
-    battery_voltage = (float)read_battery_voltage * 2.4 / 4095.0;
-    
-    ESP_LOGI("BATTERY VOLTAGE:", "battery voltage: %f", battery_voltage);
 
     /* Usage */
     // adc_oneshot_read(adc1_handle, IR_CHANNELS[0], &adc_value); 
@@ -256,7 +251,7 @@ void ir_adc_multiplexer_check_front(void)  // prev back
 {
     printf("Front:\n");
     for(int i = 0; i < 8; i++) {
-        set_multiplexer2_channel(i);
+        set_multiplexer2_channel(7 - i); // To achieve that D1 is to the left in the array
         vTaskDelay(12 / portTICK_PERIOD_MS);
 
         adc_oneshot_read(adc1_handle, ADC1_3, &ir_values_front[i]);
@@ -394,3 +389,26 @@ void isolate_line(int* sensor_values)
     printf("\n");
 }
 
+void loadcell_read()
+{
+    int loadcell_ADC;
+    adc_oneshot_read(adc1_handle, ADC1_7, &loadcell_ADC);
+    
+    loadcell_voltage = (float)loadcell_ADC * 2.4 / 4095.0;
+    
+    ESP_LOGI("LOADCELL:", "loadcell voltage: %f", loadcell_voltage);
+
+}
+
+
+void battery_read()
+{
+    // battery voltage reading => Vout = Dout*Vmax/Dmax
+
+    adc_oneshot_read(adc1_handle, ADC1_6, &read_battery_voltage); // Dout = read_battery_voltage
+
+    battery_voltage = (float)read_battery_voltage * 2.4 / 4095.0;
+    
+    ESP_LOGI("BATTERY VOLTAGE:", "Battery Voltage: %f", battery_voltage);
+
+}

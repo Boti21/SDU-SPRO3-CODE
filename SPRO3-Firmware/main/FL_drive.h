@@ -14,6 +14,14 @@
 #include "esp_err.h"
 
 #define CALIBRATION_BLACK_TAPE 2000
+#define CALIBRATION_FLOOR_D1_BACK
+#define CALIBRATION_FLOOR_D2_BACK
+#define CALIBRATION_FLOOR_D3_BACK
+#define CALIBRATION_BLACK_D4_FRONT 2000
+#define CALIBRATION_BLACK_D5_FRONT 500
+#define CALIBRATION_FLOOR_D6_BACK
+#define CALIBRATION_FLOOR_D7_BACK
+#define CALIBRATION_FLOOR_D8_BACK
 #define CALIBRATION_FLOOR
 #define BORDER_VALUE
 
@@ -45,7 +53,7 @@
 #define R_MOTOR_BACKWARD GPIO_NUM_0 // prev 23
 #define L_MOTOR_FORWARD GPIO_NUM_2
 #define L_MOTOR_BACKWARD GPIO_NUM_4
-#define M_MOTOR_FORWARD GPIO_NUM_12
+#define M_MOTOR_FORWARD GPIO_NUM_13
 #define M_MOTOR_BACKWARD GPIO_NUM_16
 
 // Note
@@ -53,6 +61,8 @@
 
 #define BACKWARD 0
 #define FORWARD 1
+#define DOWNWARD 0
+#define UPWARD 1
 
 void pwm_set(int motor, int duty){
     ledc_set_duty(LEDC_LOW_SPEED_MODE, motor, duty);  
@@ -100,16 +110,27 @@ void pwm_stop(int motor){
 
 void init_direction_change(void)
 {
+    gpio_reset_pin(L_MOTOR_FORWARD);
+    gpio_reset_pin(R_MOTOR_FORWARD);
+    gpio_reset_pin(M_MOTOR_FORWARD);
+    gpio_reset_pin(L_MOTOR_BACKWARD);
+    gpio_reset_pin(R_MOTOR_BACKWARD);
+    gpio_reset_pin(M_MOTOR_BACKWARD);
+
     gpio_set_direction(L_MOTOR_FORWARD, GPIO_MODE_OUTPUT);
     gpio_set_direction(R_MOTOR_FORWARD, GPIO_MODE_OUTPUT);
+    gpio_set_direction(M_MOTOR_FORWARD, GPIO_MODE_OUTPUT);
     gpio_set_direction(L_MOTOR_BACKWARD, GPIO_MODE_OUTPUT);
     gpio_set_direction(R_MOTOR_BACKWARD, GPIO_MODE_OUTPUT);
+    gpio_set_direction(M_MOTOR_BACKWARD, GPIO_MODE_OUTPUT);
 
     gpio_set_level(L_MOTOR_FORWARD, 1);
     gpio_set_level(R_MOTOR_FORWARD, 1);
+    gpio_set_level(M_MOTOR_FORWARD, 1);
 
     gpio_set_level(L_MOTOR_BACKWARD, 0);
     gpio_set_level(R_MOTOR_BACKWARD, 0);
+    gpio_set_level(M_MOTOR_BACKWARD, 0);
 }
 
 void direction_set(int motor, int direction)
@@ -138,6 +159,18 @@ void direction_set(int motor, int direction)
         {
             gpio_set_level(R_MOTOR_FORWARD, 0);
             gpio_set_level(R_MOTOR_BACKWARD, 1);
+        }
+    } else if (motor == M_MOTOR) 
+    {
+        if (direction == FORWARD)
+        {
+            gpio_set_level(M_MOTOR_FORWARD, 1);
+            gpio_set_level(M_MOTOR_BACKWARD, 0);
+        }
+        else
+        {
+            gpio_set_level(M_MOTOR_FORWARD, 0);
+            gpio_set_level(M_MOTOR_BACKWARD, 1);
         }
     }
 }

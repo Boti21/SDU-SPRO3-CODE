@@ -39,6 +39,7 @@ void app_main(void)
     web_mutex = xSemaphoreCreateMutex();
     FL_events = xEventGroupCreate();
 
+    bool flip = false;
 
     /* Little boot up message ;) */ // <-- very Boti comment  // still not sure if that is good
     char *main_name = pcTaskGetName(NULL);     // A way to get the name of the current task
@@ -70,12 +71,20 @@ void app_main(void)
     vTaskDelay(4000 / portTICK_PERIOD_MS);
     pwm_drive(STRAIGHT);
 
-    for (EVER) {
+    
+    direction_set(M_MOTOR, UPWARD);
+    //pwm_set(M_MOTOR, 255);
+
+    for (EVER) 
+    {
         
         //display_weight(1234);
         
         ESP_LOGI(main_name, "Main loop...");
         //vTaskDelay(250 / portTICK_PERIOD_MS);
+
+        battery_read();
+        loadcell_read();
         
 
         /*
@@ -104,43 +113,53 @@ void app_main(void)
         //vTaskDelay(2500 / portTICK_PERIOD_MS);
         //ir_adc_multiplexer_check_back();
         
-        while (!((ir_values_front[IR_D1] > CALIBRATION_BLACK_TAPE) && (ir_values_front[IR_D8] > CALIBRATION_BLACK_TAPE))) // While the outer sensors are not on black at the same time
+        while (!((ir_values_back[IR_D1] > CALIBRATION_BLACK_TAPE) && (ir_values_back[IR_D8] > CALIBRATION_BLACK_TAPE))) // While the outer sensors are not on black at the same time
         {  
 
-            if(ir_values_front[IR_D1] > CALIBRATION_BLACK_TAPE) 
+            if(ir_values_back[IR_D1] > CALIBRATION_BLACK_TAPE) 
             {
                 pwm_drive(LEFT_TURN_STRONG);
 
-            } else if (ir_values_front[IR_D8] > CALIBRATION_BLACK_TAPE)
+            } else if (ir_values_back[IR_D8] > CALIBRATION_BLACK_TAPE)
             {
                 pwm_drive(RIGHT_TURN_STRONG);
 
-            } else if ((ir_values_front[IR_D4] > CALIBRATION_BLACK_TAPE) && (ir_values_front[IR_D5] > CALIBRATION_BLACK_TAPE))
+            } else if ((ir_values_front[IR_D4] > CALIBRATION_BLACK_D4_FRONT) && (ir_values_front[IR_D5] > CALIBRATION_BLACK_D5_FRONT) && (ir_values_back[IR_D4] > CALIBRATION_BLACK_TAPE) && (ir_values_back[IR_D5] > CALIBRATION_BLACK_TAPE))
             {
                 pwm_drive(STRAIGHT);
 
-            } else if (ir_values_front[IR_D3] < CALIBRATION_BLACK_TAPE)
+            } else if (ir_values_front[IR_D4] < CALIBRATION_BLACK_TAPE)
             {
                 pwm_drive(RIGHT_TURN_LIGHT);
 
-            } else if (ir_values_front[IR_D7] < CALIBRATION_BLACK_TAPE)
+            } else if (ir_values_front[IR_D5] < CALIBRATION_BLACK_TAPE)
             {
                 pwm_drive(LEFT_TURN_LIGHT);
                 
             } else
             pwm_drive(STRAIGHT);
             
-            vTaskDelay(5000 / portTICK_PERIOD_MS);
+            
+            vTaskDelay(10 / portTICK_PERIOD_MS);
             ir_adc_multiplexer_check_front();
             
-            printf("Front:\n");
+            printf("\nFront:\n");
             isolate_line(ir_values_front);
             //vTaskDelay(10 / portTICK_PERIOD_MS);
             printf("\n");
             ir_adc_multiplexer_check_back();
-            printf("Back:\n");
+            printf("\nBack:\n");
             isolate_line(ir_values_back);
             
+        }
+        
+        if(check_endstop_up() == 1) {
+            // Endstop reached
+            direction_set(M_MOTOR, DOWNWARD);
+        }
+        else if (check_endstop_down == 1)
+        {
+            direction_set(M_MOTOR, UPWARD);
         }
         
         //pwm_drive(STOP);
