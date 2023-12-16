@@ -88,8 +88,7 @@ void app_main(void)
         //vTaskDelay(1000 / portTICK_PERIOD_MS);
 
         ir_sensor_put_web();
-        while (1)
-        {
+
             if((ir_values_front[IR_D4] > CALIBRATION_BLACK_D4_FRONT) && (ir_values_front[IR_D5] > CALIBRATION_BLACK_D5_FRONT))
             {
                 pwm_drive(STRAIGHT);
@@ -102,7 +101,6 @@ void app_main(void)
                 pwm_drive(RIGHT_TURN_LIGHT);
             }
 
-        }
     
        if ((ir_values_back[IR_D1] > CALIBRATION_BLACK_TAPE)){
 
