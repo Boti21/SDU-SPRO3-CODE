@@ -39,6 +39,7 @@
 /* Semaphores and Mutexes */
 SemaphoreHandle_t screen_mutex;
 SemaphoreHandle_t web_mutex;
+SemaphoreHandle_t ir_monitor_mutex;
 
 /* Events */
 
@@ -66,7 +67,7 @@ void monitor_task(void* pvParameters) {
        vTaskDelay(10 / portTICK_PERIOD_MS); // Maybe the oled is not fast
 
        // Battery
-       display_voltage(read_battery_voltage());
+       display_voltage(battery_read());
 
         // Endstops
         if(check_endstop_up() == 1) {
@@ -123,5 +124,19 @@ void test_task2(void *pvParameters)
         gpio_set_level(2, 0);
         vTaskDelay(150);
         */
+    }
+}
+
+
+void ir_sensor_monitor(void* pvParameters)
+{
+    char *task_name = pcTaskGetName(NULL);     // A way to get the name of the current task
+    ESP_LOGI(task_name, "IR_sensor thread started..."); // The way to print something to the terminal
+
+    for(;;)
+    {
+        ir_adc_multiplexer_check_front_thread();
+        ir_adc_multiplexer_check_back_thread();
+        vTaskDelay(10 / portTICK_PERIOD_MS);
     }
 }

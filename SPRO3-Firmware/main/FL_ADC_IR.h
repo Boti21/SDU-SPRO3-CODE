@@ -134,6 +134,7 @@ intersection_t grid_intersection = NO_INTERSECTION;
 
 // Use this to check the intersection variable
 SemaphoreHandle_t intersection_mutex = NULL;
+extern SemaphoreHandle_t ir_monitor_mutex;
 
 void init_adc(void)
 {
@@ -243,6 +244,41 @@ void set_multiplexer2_channel(int channel_num)
     // ESP_LOGI("MP2_channel", "Ch: %d Pins: %d %d %d", channel_num, multiplexer_adress[2], multiplexer_adress[1], multiplexer_adress[0]);
 }
 
+void ir_adc_multiplexer_check_back_thread(void) // prev front
+{
+    //printf("Back:\n");
+    for(int i = 0; i < 8; i++) {
+        set_multiplexer1_channel(i);
+        vTaskDelay(2 / portTICK_PERIOD_MS);
+        
+        xSemaphoreTake(ir_monitor_mutex, portMAX_DELAY);
+        ESP_ERROR_CHECK(adc_oneshot_read(adc1_handle, ADC1_0, &ir_values_back[i]));
+        xSemaphoreGive(ir_monitor_mutex);
+
+        
+        vTaskDelay(3 / portTICK_PERIOD_MS);
+        
+    }
+    
+    
+}
+
+void ir_adc_multiplexer_check_front_thread(void)  // prev back
+{
+    //printf("Front:\n");
+    for(int i = 0; i < 8; i++) {
+        set_multiplexer2_channel(7 - i); // To achieve that D1 is to the left in the array
+        vTaskDelay(2 / portTICK_PERIOD_MS);
+
+        xSemaphoreTake(ir_monitor_mutex, portMAX_DELAY);
+        adc_oneshot_read(adc1_handle, ADC1_3, &ir_values_front[i]);
+        xSemaphoreGive(ir_monitor_mutex);
+        
+        vTaskDelay(3 / portTICK_PERIOD_MS);
+        
+    }
+    
+}
 void ir_adc_multiplexer_check_back(void) // prev front
 {
     //printf("Back:\n");

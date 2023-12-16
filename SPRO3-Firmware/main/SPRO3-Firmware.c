@@ -38,6 +38,7 @@ void app_main(void)
     /* Initializing mutexes and semaphores */
     screen_mutex = xSemaphoreCreateMutex();
     web_mutex = xSemaphoreCreateMutex();
+    ir_monitor_mutex = xSemaphoreCreateMutex();
     FL_events = xEventGroupCreate();
 
 
@@ -66,9 +67,16 @@ void app_main(void)
     
     init_ultrasonic();
     
-    //init_display();
+    init_display();
     //display_weight(1234);
     //display_voltage(3456);
+    xTaskCreatePinnedToCore (ir_sensor_monitor, //Function to implement the task
+                            "ir_sensor_monitor", //Name of the task
+                            3000, //Stack size in words
+                            NULL, //Task input parameter
+                            60, //Priority of the task
+                            NULL, //Task handle.
+                            1); //Core where the task should run
     
     vTaskDelay(1000 / portTICK_PERIOD_MS);
     pwm_drive(STRAIGHT);
@@ -80,18 +88,23 @@ void app_main(void)
     for (EVER) 
     {        
         ESP_LOGI(main_name, "Main loop...");
-
-        battery_read();
-        loadcell_read();
-       
+ 
         // Read IR-SENSOR in the front and the back
-        ir_adc_multiplexer_check_front();
+        //ir_adc_multiplexer_check_front();
         //vTaskDelay(10 / portTICK_PERIOD_MS);
-        ir_adc_multiplexer_check_back();
-        while(!((ir_values_front[IR_D1] > 1000) && (ir_values_front[IR_D8] > 1000)))
+        //ir_adc_multiplexer_check_back();
+
+        while(!((ir_values_front[IR_D1] > 2000) && (ir_values_front[IR_D8] > 1000)))
         {   
             line_follower:
 
+            //display_weight(loadcell_read());
+
+            //vTaskDelay(10 / portTICK_PERIOD_MS); // Maybe the oled is not fast
+
+            // Battery
+            //display_voltage(battery_read());
+            xSemaphoreTake(ir_monitor_mutex, portMAX_DELAY);
 
             if((ir_values_back[IR_D4] > CALIBRATION_BLACK_TAPE) || (ir_values_back[IR_D5] > CALIBRATION_BLACK_TAPE))
             {
@@ -111,16 +124,19 @@ void app_main(void)
 
             ir_sensor_put_web();
 
+            xSemaphoreGive(ir_monitor_mutex);
+
             vTaskDelay(10 / portTICK_PERIOD_MS);
             
-            ir_adc_multiplexer_check_front();
-            ir_adc_multiplexer_check_back();
         }
+
         while(!((ir_values_back[IR_D4] > CALIBRATION_BLACK_TAPE) || (ir_values_back[IR_D5] > CALIBRATION_BLACK_TAPE)))
         {
+            //ir_adc_multiplexer_check_front();
+            //ir_adc_multiplexer_check_back();
             strcpy(turn_decision, "Intersection");
             ir_sensor_put_web();
-            pwm_drive(RIGHT_ROTATE_STRONG);
+            pwm_drive(RIGHT_ROTATE_LIGHT);
             vTaskDelay(10 / portTICK_PERIOD_MS);
         }
 
