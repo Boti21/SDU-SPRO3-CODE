@@ -29,6 +29,7 @@ void display_weight(int weight_in_grams)
 	char print[WEIGHT_PRINT] = {0};
 	char weight[3] = {0};
 	uint8_t counter = 0;
+	int temp_weight = weight_in_grams;
 
 	weight_in_grams /= 10;
 	while(weight_in_grams) {
@@ -38,6 +39,10 @@ void display_weight(int weight_in_grams)
 	}
 	//ESP_LOGI("display_weight", "%c %c %c \n", weight[2], weight[1], weight[0]);
 
+	if(temp_weight < 1000) {
+	    weight[2] = 48;
+	}
+
 	print[0] = weight[2];
 	print[1] = '.';
 	print[2] = weight[1];
@@ -45,8 +50,6 @@ void display_weight(int weight_in_grams)
 	print[4] = ' ';
 	print[5] = 'k';
 	print[6] = 'g';
-
-	SSD1306_UpdateScreen();
 
 	SSD1306_GotoXY(0, 6);
 	for(int i = 0; i < WEIGHT_PRINT; i++) {
@@ -75,8 +78,6 @@ void display_voltage(int v_in_mvolts)
 	print[3] = volts[0];
 	print[4] = ' ';
 	print[5] = 'V';
-
-	SSD1306_UpdateScreen();
 
 	SSD1306_GotoXY(0, 36);
 	for(int i = 0; i < VOLTAGE_PRINT; i++) {
