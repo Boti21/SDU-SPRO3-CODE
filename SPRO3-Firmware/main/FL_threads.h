@@ -61,7 +61,12 @@ void monitor_task(void* pvParameters) {
     for(;;) {
         // Weight measurement
         // get weight somewhere
-       // display_weight(1234);
+       display_weight(loadcell_read());
+
+       vTaskDelay(10 / portTICK_PERIOD_MS); // Maybe the oled is not fast
+
+       // Battery
+       display_voltage(read_battery_voltage());
 
         // Endstops
         if(check_endstop_up() == 1) {
