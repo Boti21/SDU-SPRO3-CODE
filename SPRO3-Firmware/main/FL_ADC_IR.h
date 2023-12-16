@@ -3,6 +3,7 @@
 #endif
 
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
@@ -53,7 +54,9 @@
 #define IR_D8 7
 
 #define LOAD_CELL_SLOPE 2625 // Slope of ideal line
-#define LOAD_CELL_OFFSET -1050 // Offset of ideal line
+#define LOAD_CELL_OFFSET -1000 // Offset of ideal line, slightly changed for more accurate results
+#define LOAD_CELL_VALUES_NUM 10
+#define LOAD_CELL_GPIO ADC2_0
 
 /* Load cell ideal line
 0.6 for 525 g
@@ -66,8 +69,6 @@ b = -1050
 
 y = 2625 * x - 1050
 */
-
-#define LOAD_CELL_GPIO ADC2_0
 
 #define CORRECTION_NONE 0 // Could be changed obviously
 #define CORRECTION_LEFT -1 // Could be changed obviously
@@ -120,7 +121,7 @@ unsigned int dif_back = 0;
 unsigned int threshhold_back = 0;
 int read_battery_voltage = 0;
 
-int loadcell_grams[10] = {0};
+int loadcell_grams[LOAD_CELL_VALUES_NUM] = {0};
 
 typedef struct {
     int correction_dir;
@@ -452,6 +453,35 @@ int loadcell_read()
     ESP_LOGI("LOADCELL:", "loadcell grams: %d", (int)((loadcell_voltage * LOAD_CELL_SLOPE) + LOAD_CELL_OFFSET));
 
     return (int)((loadcell_voltage * LOAD_CELL_SLOPE) + LOAD_CELL_OFFSET);
+}
+
+int array_avg(int* load_cell_values, int num_of_values)
+{
+    int sum = 0;
+    for(int i = 0; i < num_of_values; i++)
+    {
+        sum = sum + load_cell_values[i];
+    }
+
+    return sum;
+}
+
+void array_shifter(int* array, int value, int array_size)
+{
+    int* temp_array = (int*)malloc(((sizeof(int) * array_size) - 1));
+    for(int i = 0; i < array_size - 1; i++)
+    {
+        temp_array[i] = array[i];
+    }
+
+    array[0] = value;
+
+    for(int i = 0; i < array_size - 1; i++)
+    {
+        array[i + 1] = temp_array[i];
+    }
+
+    free(temp_array); // Always remember to free dynamically allocated memory
 }
 
 int battery_read()
