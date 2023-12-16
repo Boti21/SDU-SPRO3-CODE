@@ -397,9 +397,7 @@ void loadcell_read()
     loadcell_voltage = (float)loadcell_ADC * 2.4 / 4095.0;
     
     ESP_LOGI("LOADCELL:", "loadcell voltage: %f", loadcell_voltage);
-
 }
-
 
 void battery_read()
 {
