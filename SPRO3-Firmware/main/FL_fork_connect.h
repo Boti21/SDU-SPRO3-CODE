@@ -257,10 +257,9 @@ static esp_err_t drop_handler(httpd_req_t *req)
         remaining -= ret;
     }
 
-    /* Send a simple response */
-    const char* resp = "Form data received";
-    httpd_resp_send(req, resp, strlen(resp));
-
+    httpd_resp_set_status(req, "302 Found"); // Set the status to 302
+    httpd_resp_set_hdr(req, "Location", "/forkconnect"); // Set the Location header to new URI to redirect
+    httpd_resp_send(req, NULL, 0); // Send the response
     return ESP_OK;
 }
 
@@ -360,8 +359,8 @@ static httpd_handle_t start_webserver(void)
         ESP_LOGI(TAG, "Registering URI handlers");
         httpd_register_uri_handler(server, &root);
         httpd_register_uri_handler(server, &forkconnect);
-        httpd_register_uri_handler(server, &forkpage2);
-        httpd_register_uri_handler(server, &forkconnect_input);
+        //httpd_register_uri_handler(server, &forkpage2);
+        //httpd_register_uri_handler(server, &forkconnect_input);
         httpd_register_uri_handler(server, &forkconnect_start);
         httpd_register_uri_handler(server, &forkconnect_stop);
         httpd_register_uri_handler(server, &forkconnect_drop);

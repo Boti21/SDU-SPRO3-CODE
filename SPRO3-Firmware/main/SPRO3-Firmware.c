@@ -76,7 +76,7 @@ void app_main(void)
                             60, //Priority of the task
                             NULL, //Task handle.
                             APP_CPU_NUM); //Core where the task should run
-
+    
     xTaskCreatePinnedToCore(loadcell_monitor,
                             "load_cell_monitor",
                             3000,
@@ -84,6 +84,7 @@ void app_main(void)
                             tskIDLE_PRIORITY,
                             NULL,
                             PRO_CPU_NUM);
+    
     
     vTaskDelay(1000 / portTICK_PERIOD_MS);
     pwm_drive(STRAIGHT);
@@ -101,7 +102,7 @@ void app_main(void)
         //vTaskDelay(10 / portTICK_PERIOD_MS);
         //ir_adc_multiplexer_check_back();
 
-        while(!((ir_values_front[IR_D1] > 2000) && (ir_values_front[IR_D8] > 1000)))
+        while(!((ir_values_front[IR_D1] > 2000) && (ir_values_front[IR_D8] > 700)))
         {   
             line_follower:
 
