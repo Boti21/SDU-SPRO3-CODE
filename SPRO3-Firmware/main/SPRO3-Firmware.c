@@ -98,6 +98,8 @@ void app_main(void)
         {   
             line_follower:
 
+            loadcell_read();
+            vTaskDelay(1000 / portTICK_PERIOD_MS);
             //display_weight(loadcell_read());
 
             //vTaskDelay(10 / portTICK_PERIOD_MS); // Maybe the oled is not fast

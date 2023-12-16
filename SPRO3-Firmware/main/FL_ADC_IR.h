@@ -107,6 +107,7 @@ char sensor_readings_string[150]; // Adjust the size as needed
 extern SemaphoreHandle_t web_mutex;
 extern char turn_decision[];
 
+
 /* Data handling variables */
 unsigned int max_front = 0;
 unsigned int min_front = 0;
@@ -119,6 +120,7 @@ unsigned int dif_back = 0;
 unsigned int threshhold_back = 0;
 int read_battery_voltage = 0;
 
+int loadcell_grams[10] = {0};
 
 typedef struct {
     int correction_dir;
@@ -444,11 +446,12 @@ int loadcell_read()
     int loadcell_ADC;
     adc_oneshot_read(adc1_handle, ADC1_7, &loadcell_ADC);
     
-    loadcell_voltage = ((float)loadcell_ADC * 2.4 / 4095.0) * 1000;
+    loadcell_voltage = ((float)loadcell_ADC * 2.4 / 4095.0);
     
     ESP_LOGI("LOADCELL:", "loadcell voltage: %f", loadcell_voltage);
+    ESP_LOGI("LOADCELL:", "loadcell grams: %d", (int)((loadcell_voltage * LOAD_CELL_SLOPE) + LOAD_CELL_OFFSET));
 
-    return (loadcell_voltage * LOAD_CELL_SLOPE) + LOAD_CELL_OFFSET;
+    return (int)((loadcell_voltage * LOAD_CELL_SLOPE) + LOAD_CELL_OFFSET);
 }
 
 int battery_read()
