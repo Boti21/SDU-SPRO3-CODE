@@ -227,6 +227,50 @@ static const httpd_uri_t forkconnect_input = {
     .user_ctx  = NULL
 };
 
+void handle_form_data(char* data) {
+    char* field = strtok(data, "&");
+    while (field != NULL) {
+        char* key = strtok(field, "=");
+        char* value = strtok(NULL, "=");
+        printf("Field: %s, Value: %s\n", key, value);
+        field = strtok(NULL, "&");
+    }
+}
+
+static esp_err_t drop_handler(httpd_req_t *req)
+{
+    char buf[1024];
+    int ret, remaining = req->content_len;
+
+    while (remaining > 0) {
+        /* Read the data for the request */
+        if ((ret = httpd_req_recv(req, buf, MIN(remaining, sizeof(buf)))) <= 0) {
+            if (ret == HTTPD_SOCK_ERR_TIMEOUT) {
+                continue;
+            }
+            return ESP_FAIL;
+        }
+
+        /* Process the received data */
+        handle_form_data(buf);
+
+        remaining -= ret;
+    }
+
+    httpd_resp_set_status(req, "302 Found"); // Set the status to 302
+    httpd_resp_set_hdr(req, "Location", "/forkconnect"); // Set the Location header to new URI to redirect
+    httpd_resp_send(req, NULL, 0); // Send the response
+    return ESP_OK;
+}
+
+
+static const httpd_uri_t forkconnect_drop = {
+    .uri       = "/drop",
+    .method    = HTTP_POST,
+    .handler   = drop_handler,
+    .user_ctx  = NULL
+};
+
 static esp_err_t forkconnect_start_handler(httpd_req_t *req) 
 {
     xEventGroupSetBits(FL_events, START_BUTTON_PRESS);
@@ -315,10 +359,11 @@ static httpd_handle_t start_webserver(void)
         ESP_LOGI(TAG, "Registering URI handlers");
         httpd_register_uri_handler(server, &root);
         httpd_register_uri_handler(server, &forkconnect);
-        httpd_register_uri_handler(server, &forkpage2);
-        httpd_register_uri_handler(server, &forkconnect_input);
+        //httpd_register_uri_handler(server, &forkpage2);
+        //httpd_register_uri_handler(server, &forkconnect_input);
         httpd_register_uri_handler(server, &forkconnect_start);
         httpd_register_uri_handler(server, &forkconnect_stop);
+        httpd_register_uri_handler(server, &forkconnect_drop);
         
         
         return server;

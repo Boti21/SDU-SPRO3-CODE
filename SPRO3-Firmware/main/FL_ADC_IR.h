@@ -54,7 +54,7 @@
 #define IR_D8 7
 
 #define LOAD_CELL_SLOPE 2625 // Slope of ideal line
-#define LOAD_CELL_OFFSET -1000 // Offset of ideal line, slightly changed for more accurate results
+#define LOAD_CELL_OFFSET -1050 // Offset of ideal line, slightly changed for more accurate results
 #define LOAD_CELL_VALUES_NUM 10
 #define LOAD_CELL_GPIO ADC2_0
 
@@ -255,7 +255,7 @@ void ir_adc_multiplexer_check_back_thread(void) // prev front
         vTaskDelay(2 / portTICK_PERIOD_MS);
         
         xSemaphoreTake(ir_monitor_mutex, portMAX_DELAY);
-        ESP_ERROR_CHECK(adc_oneshot_read(adc1_handle, ADC1_0, &ir_values_back[i]));
+        adc_oneshot_read(adc1_handle, ADC1_0, &ir_values_back[i]);
         xSemaphoreGive(ir_monitor_mutex);
 
         
@@ -288,7 +288,7 @@ void ir_adc_multiplexer_check_back(void) // prev front
     for(int i = 0; i < 8; i++) {
         set_multiplexer1_channel(i);
 
-        ESP_ERROR_CHECK(adc_oneshot_read(adc1_handle, ADC1_0, &ir_values_back[i]));
+        adc_oneshot_read(adc1_handle, ADC1_0, &ir_values_back[i]);
         vTaskDelay(12 / portTICK_PERIOD_MS);
 
         // ESP_LOGI("IR_RESULTS_FRONT", "Val %d: %d", i, ir_values_front[i]);
