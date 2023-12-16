@@ -52,7 +52,20 @@
 #define IR_D7 6
 #define IR_D8 7
 
+#define LOAD_CELL_SLOPE 2625 // Slope of ideal line
+#define LOAD_CELL_OFFSET -1050 // Offset of ideal line
 
+/* Load cell ideal line
+0.6 for 525 g
+y = m*x + b
+0 = m * 0.4 + b
+525 = m * 0.6 + b
+
+m = 2625
+b = -1050
+
+y = 2625 * x - 1050
+*/
 
 #define LOAD_CELL_GPIO ADC2_0
 
@@ -106,9 +119,6 @@ unsigned int dif_back = 0;
 unsigned int threshhold_back = 0;
 int read_battery_voltage = 0;
 
-
-float battery_voltage = 0;
-float loadcell_voltage = 0;
 
 typedef struct {
     int correction_dir;
@@ -392,26 +402,30 @@ void isolate_line(int* sensor_values)
     printf("\n");
 }
 
-void loadcell_read()
+int loadcell_read()
 {
+    float loadcell_voltage = 0;
     int loadcell_ADC;
     adc_oneshot_read(adc1_handle, ADC1_7, &loadcell_ADC);
     
-    loadcell_voltage = (float)loadcell_ADC * 2.4 / 4095.0;
+    loadcell_voltage = ((float)loadcell_ADC * 2.4 / 4095.0) * 1000;
     
     ESP_LOGI("LOADCELL:", "loadcell voltage: %f", loadcell_voltage);
 
+    return (loadcell_voltage * LOAD_CELL_SLOPE) + LOAD_CELL_OFFSET;
 }
 
-
-void battery_read()
+int battery_read()
 {
     // battery voltage reading => Vout = Dout*Vmax/Dmax
 
+    float battery_voltage = 0;
+
     adc_oneshot_read(adc1_handle, ADC1_6, &read_battery_voltage); // Dout = read_battery_voltage
 
-    battery_voltage = (float)read_battery_voltage * 2.4 / 4095.0;
+    battery_voltage = ((float)read_battery_voltage * 2.4 / 4095.0) * 1000;
     
     ESP_LOGI("BATTERY VOLTAGE:", "Battery Voltage: %f", battery_voltage);
 
+    return (int)battery_voltage;
 }
