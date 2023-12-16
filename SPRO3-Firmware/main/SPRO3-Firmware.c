@@ -31,6 +31,7 @@
 // Temporarily outcommented bc of build error
 // #define LOAD_CELL_GPIO ADC1_CHANNEL_4 // which analog is used, The channel depends on which GPIO we want to use
 
+char turn_decision[20];
 
 void app_main(void)
 {
@@ -52,6 +53,8 @@ void app_main(void)
     /* Init functions */
     init_fork_connect();
     //strcpy(changing_text, "Hello");
+
+    strcpy(turn_decision, "Undefined");
     
     init_adc();
     init_multiplexer();
@@ -67,7 +70,7 @@ void app_main(void)
     //display_weight(1234);
     //display_voltage(3456);
     
-    vTaskDelay(4000 / portTICK_PERIOD_MS);
+    vTaskDelay(1000 / portTICK_PERIOD_MS);
     pwm_drive(STRAIGHT);
 
     
@@ -85,40 +88,58 @@ void app_main(void)
         ir_adc_multiplexer_check_front();
         //vTaskDelay(10 / portTICK_PERIOD_MS);
         ir_adc_multiplexer_check_back();
-        //vTaskDelay(1000 / portTICK_PERIOD_MS);
+        while(!((ir_values_front[IR_D1] > 1000) && (ir_values_front[IR_D8] > 1000)))
+        {   
+            line_follower:
 
-        ir_sensor_put_web();
 
-            if((ir_values_front[IR_D4] > CALIBRATION_BLACK_D4_FRONT) && (ir_values_front[IR_D5] > CALIBRATION_BLACK_D5_FRONT))
+            if((ir_values_back[IR_D4] > CALIBRATION_BLACK_TAPE) || (ir_values_back[IR_D5] > CALIBRATION_BLACK_TAPE))
             {
+                strcpy(turn_decision, "Straight");
                 pwm_drive(STRAIGHT);
-            }else if ((ir_values_front[IR_D4] > CALIBRATION_BLACK_D4_FRONT))
+                
+            }else if ((ir_values_back[IR_D3] > CALIBRATION_BLACK_TAPE))
             {
-                pwm_drive(LEFT_TURN_STRONG);
+                strcpy(turn_decision, "Right Light");
+                pwm_drive(RIGHT_TURN_LIGHT);
             }
-            else if ((ir_values_front[IR_D5] > CALIBRATION_BLACK_D5_FRONT))
+            else if ((ir_values_back[IR_D6] > CALIBRATION_BLACK_TAPE))
             {
-                pwm_drive(RIGHT_TURN_STRONG);
+                strcpy(turn_decision, "Left Light");
+                pwm_drive(LEFT_TURN_LIGHT);
             }
+
+            ir_sensor_put_web();
+
+            vTaskDelay(10 / portTICK_PERIOD_MS);
+            
+            ir_adc_multiplexer_check_front();
+            ir_adc_multiplexer_check_back();
+        }
+        while(!((ir_values_back[IR_D4] > CALIBRATION_BLACK_TAPE) || (ir_values_back[IR_D5] > CALIBRATION_BLACK_TAPE)))
+        {
+            strcpy(turn_decision, "Intersection");
+            ir_sensor_put_web();
+            pwm_drive(RIGHT_ROTATE_STRONG);
+            vTaskDelay(10 / portTICK_PERIOD_MS);
+        }
+
+        goto line_follower;
 
     
-       if ((ir_values_back[IR_D1] > CALIBRATION_BLACK_TAPE)){
-
-       }
         //ESP_LOGI(main_name, "\n");
         //vTaskDelay(2500 / portTICK_PERIOD_MS);
         //ir_adc_multiplexer_check_back();
         
         vTaskDelay(1 / portTICK_PERIOD_MS);
-        ir_adc_multiplexer_check_front();
         
-        printf("\nFront:\n");
-        isolate_line(ir_values_front);
+        //printf("\nFront:\n");
+        //isolate_line(ir_values_front);
         //vTaskDelay(10 / portTICK_PERIOD_MS);
-        printf("\n");
-        ir_adc_multiplexer_check_back();
-        printf("\nBack:\n");
-        isolate_line(ir_values_back);
+        //printf("\n");
+        //printf("\nBack:\n");
+        //isolate_line(ir_values_back);
+        
             
     }
         
