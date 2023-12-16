@@ -78,29 +78,11 @@ void app_main(void)
     for (EVER) 
     {
         
-        //display_weight(1234);
-        
         ESP_LOGI(main_name, "Main loop...");
-        //vTaskDelay(250 / portTICK_PERIOD_MS);
 
         battery_read();
         loadcell_read();
-        
-
-        /*
-        pwm_drive(STRAIGHT);
-
-        vTaskDelay(3000 / portTICK_PERIOD_MS);
-
-        pwm_drive(RIGHT_ROTATE_STRONG);
-
-        vTaskDelay(3000 / portTICK_PERIOD_MS);
-
-        pwm_drive(LEFT_ROTATE_STRONG);
        
-        */
-        //pwm_drive(STRAIGHT);
-
         // Read IR-SENSOR in the front and the back
         ir_adc_multiplexer_check_front();
         //vTaskDelay(10 / portTICK_PERIOD_MS);
@@ -113,33 +95,6 @@ void app_main(void)
         //vTaskDelay(2500 / portTICK_PERIOD_MS);
         //ir_adc_multiplexer_check_back();
         
-        while (!((ir_values_back[IR_D1] > CALIBRATION_BLACK_TAPE) && (ir_values_back[IR_D8] > CALIBRATION_BLACK_TAPE))) // While the outer sensors are not on black at the same time
-        {  
-
-            if(ir_values_back[IR_D1] > CALIBRATION_BLACK_TAPE) 
-            {
-                pwm_drive(LEFT_TURN_STRONG);
-
-            } else if (ir_values_back[IR_D8] > CALIBRATION_BLACK_TAPE)
-            {
-                pwm_drive(RIGHT_TURN_STRONG);
-
-            } else if ((ir_values_front[IR_D4] > CALIBRATION_BLACK_D4_FRONT) && (ir_values_front[IR_D5] > CALIBRATION_BLACK_D5_FRONT) && (ir_values_back[IR_D4] > CALIBRATION_BLACK_TAPE) && (ir_values_back[IR_D5] > CALIBRATION_BLACK_TAPE))
-            {
-                pwm_drive(STRAIGHT);
-
-            } else if (ir_values_front[IR_D4] < CALIBRATION_BLACK_TAPE)
-            {
-                pwm_drive(RIGHT_TURN_LIGHT);
-
-            } else if (ir_values_front[IR_D5] < CALIBRATION_BLACK_TAPE)
-            {
-                pwm_drive(LEFT_TURN_LIGHT);
-                
-            } else
-            pwm_drive(STRAIGHT);
-            
-            
             vTaskDelay(10 / portTICK_PERIOD_MS);
             ir_adc_multiplexer_check_front();
             
@@ -161,27 +116,8 @@ void app_main(void)
         {
             direction_set(M_MOTOR, UPWARD);
         }
-        
-        //pwm_drive(STOP);
-
-        //pwm_drive(RIGHT_ROTATE_STRONG);
 
         vTaskDelay(300 / portTICK_PERIOD_MS);
-        
-        /*
-        for(int i = 0; i < IR_FRONT_NUMBER_OF_PINS; i++) {
-
-            ESP_LOGI("IR_RESULTS_FRONT", "Val %d: %d", i, ir_values_front[i]);
-        
-        }
-        
-        
-        for(int i = 0; i < IR_FRONT_NUMBER_OF_PINS; i++) {
-
-            ESP_LOGI("IR_RESULTS_BACK", "Val %d: %d", i, ir_values_back[i]);
-        
-        }
-        */
         
 
         // Giving the operating system room to breath
