@@ -40,9 +40,9 @@
 SemaphoreHandle_t screen_mutex;
 SemaphoreHandle_t web_mutex;
 SemaphoreHandle_t ir_monitor_mutex;
+SemaphoreHandle_t load_cell_monitor_mutex;
 
 /* Events */
-
 EventGroupHandle_t FL_events;
 
 /* Tasks */
@@ -70,10 +70,10 @@ void monitor_task(void* pvParameters) {
        display_voltage(battery_read());
 
         // Endstops
-        if(check_endstop_up() == 1) {
+        if((int)check_endstop_up() == 1) {
             // Endstop reached
             pwm_stop(M_MOTOR);
-        } else if(check_endstop_down() == 1) {
+        } else if((int)check_endstop_down() == 1) {
             // Endstop reached
             pwm_stop(M_MOTOR);
         }
@@ -138,5 +138,19 @@ void ir_sensor_monitor(void* pvParameters)
         ir_adc_multiplexer_check_front_thread();
         ir_adc_multiplexer_check_back_thread();
         vTaskDelay(10 / portTICK_PERIOD_MS);
+    }
+}
+
+void loadcell_monitor(void* pvParameters)
+{
+    char *task_name = pcTaskGetName(NULL);
+    ESP_LOGI(task_name, "Load cell monitor thread started...");
+
+    for(;;)
+    {
+        array_shifter(loadcell_grams, loadcell_read(), LOAD_CELL_VALUES_NUM);
+        display_weight(array_avg(loadcell_grams, LOAD_CELL_VALUES_NUM));
+
+        vTaskDelay(100 / portTICK_PERIOD_MS);
     }
 }

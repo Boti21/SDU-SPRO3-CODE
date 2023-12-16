@@ -39,6 +39,7 @@ void app_main(void)
     screen_mutex = xSemaphoreCreateMutex();
     web_mutex = xSemaphoreCreateMutex();
     ir_monitor_mutex = xSemaphoreCreateMutex();
+    load_cell_monitor_mutex = xSemaphoreCreateMutex();
     FL_events = xEventGroupCreate();
 
 
@@ -59,24 +60,30 @@ void app_main(void)
     
     init_adc();
     init_multiplexer();
+    init_ultrasonic();
+    init_display();
     
     init_pwm(M_MOTOR, M_MOTOR_GPIO);
     init_pwm(L_MOTOR, L_MOTOR_GPIO);
     init_pwm(R_MOTOR, R_MOTOR_GPIO);
     init_direction_change();
     
-    init_ultrasonic();
-    
-    init_display();
-    //display_weight(1234);
-    //display_voltage(3456);
+
     xTaskCreatePinnedToCore (ir_sensor_monitor, //Function to implement the task
                             "ir_sensor_monitor", //Name of the task
                             3000, //Stack size in words
                             NULL, //Task input parameter
                             60, //Priority of the task
                             NULL, //Task handle.
-                            1); //Core where the task should run
+                            APP_CPU_NUM); //Core where the task should run
+
+    xTaskCreatePinnedToCore(loadcell_monitor,
+                            "load_cell_monitor",
+                            3000,
+                            NULL,
+                            tskIDLE_PRIORITY,
+                            NULL,
+                            PRO_CPU_NUM);
     
     vTaskDelay(1000 / portTICK_PERIOD_MS);
     pwm_drive(STRAIGHT);
