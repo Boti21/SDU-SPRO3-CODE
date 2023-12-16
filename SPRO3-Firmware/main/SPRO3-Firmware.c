@@ -39,7 +39,6 @@ void app_main(void)
     web_mutex = xSemaphoreCreateMutex();
     FL_events = xEventGroupCreate();
 
-    bool flip = false;
 
     /* Little boot up message ;) */ // <-- very Boti comment  // still not sure if that is good
     char *main_name = pcTaskGetName(NULL);     // A way to get the name of the current task
@@ -76,8 +75,7 @@ void app_main(void)
     //pwm_set(M_MOTOR, 255);
 
     for (EVER) 
-    {
-        
+    {        
         ESP_LOGI(main_name, "Main loop...");
 
         battery_read();
@@ -90,7 +88,25 @@ void app_main(void)
         //vTaskDelay(1000 / portTICK_PERIOD_MS);
 
         ir_sensor_put_web();
-        
+        while (1)
+        {
+            if((ir_values_front[IR_D4] > CALIBRATION_BLACK_D4_FRONT) && (ir_values_front[IR_D5] > CALIBRATION_BLACK_D5_FRONT))
+            {
+                pwm_drive(STRAIGHT);
+            }else if ((ir_values_front[IR_D4] > CALIBRATION_BLACK_D4_FRONT))
+            {
+                pwm_drive(LEFT_TURN_LIGHT);
+            }
+            else if ((ir_values_front[IR_D5] > CALIBRATION_BLACK_D5_FRONT))
+            {
+                pwm_drive(RIGHT_TURN_LIGHT);
+            }
+
+        }
+    
+       if ((ir_values_back[IR_D1] > CALIBRATION_BLACK_TAPE)){
+
+       }
         //ESP_LOGI(main_name, "\n");
         //vTaskDelay(2500 / portTICK_PERIOD_MS);
         //ir_adc_multiplexer_check_back();
@@ -117,33 +133,7 @@ void app_main(void)
             direction_set(M_MOTOR, UPWARD);
         }
 
-        vTaskDelay(300 / portTICK_PERIOD_MS);
-        
-
         // Giving the operating system room to breath
-        //vTaskDelay(1000 / portTICK_PERIOD_MS);
+        vTaskDelay(30 / portTICK_PERIOD_MS);        
 
-        
-
-    }
 }
-
-
-
-
-
-
-//vTaskDelay(5000 / portTICK_PERIOD_MS);
-        /*
-        pwm_stop(M_MOTOR);
-        pwm_stop(L_MOTOR);
-        pwm_stop(R_MOTOR);
-        vTaskDelay(500 / portTICK_PERIOD_MS);
-        */
-
-/* Example of using a mutex
-xSemaphoreTake(screen_mutex, portMAX_DELAY);
-ESP_LOGI(main_name, "this is a task");
-xSemaphoreGive(screen_mutex);
-*/
-        
