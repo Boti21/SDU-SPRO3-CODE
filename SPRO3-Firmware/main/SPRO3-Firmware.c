@@ -94,11 +94,11 @@ void app_main(void)
                 pwm_drive(STRAIGHT);
             }else if ((ir_values_front[IR_D4] > CALIBRATION_BLACK_D4_FRONT))
             {
-                pwm_drive(LEFT_TURN_LIGHT);
+                pwm_drive(LEFT_TURN_STRONG);
             }
             else if ((ir_values_front[IR_D5] > CALIBRATION_BLACK_D5_FRONT))
             {
-                pwm_drive(RIGHT_TURN_LIGHT);
+                pwm_drive(RIGHT_TURN_STRONG);
             }
 
     
@@ -109,18 +109,18 @@ void app_main(void)
         //vTaskDelay(2500 / portTICK_PERIOD_MS);
         //ir_adc_multiplexer_check_back();
         
-            vTaskDelay(10 / portTICK_PERIOD_MS);
-            ir_adc_multiplexer_check_front();
+        vTaskDelay(1 / portTICK_PERIOD_MS);
+        ir_adc_multiplexer_check_front();
+        
+        printf("\nFront:\n");
+        isolate_line(ir_values_front);
+        //vTaskDelay(10 / portTICK_PERIOD_MS);
+        printf("\n");
+        ir_adc_multiplexer_check_back();
+        printf("\nBack:\n");
+        isolate_line(ir_values_back);
             
-            printf("\nFront:\n");
-            isolate_line(ir_values_front);
-            //vTaskDelay(10 / portTICK_PERIOD_MS);
-            printf("\n");
-            ir_adc_multiplexer_check_back();
-            printf("\nBack:\n");
-            isolate_line(ir_values_back);
-            
-        }
+    }
         
         if(check_endstop_up() == 1) {
             // Endstop reached
