@@ -89,45 +89,27 @@ void app_main(void)
     vTaskDelay(1000 / portTICK_PERIOD_MS);
     pwm_drive(STRAIGHT);
 
-    
     direction_set(M_MOTOR, UPWARD);
     //pwm_set(M_MOTOR, 255);
 
     for (EVER) 
     {        
         ESP_LOGI(main_name, "Main loop...");
- 
-        // Read IR-SENSOR in the front and the back
-        //ir_adc_multiplexer_check_front();
-        //vTaskDelay(10 / portTICK_PERIOD_MS);
-        //ir_adc_multiplexer_check_back();
+
         turns = 0;
         
-        while (turns < 8)
+        while(turns < 8)
         {
-            /* code */
-        
-
             while(!((ir_values_front[IR_D1] > 2000) && (ir_values_front[IR_D8] > 700)))
             {   
-                // line_follower:
-
-                loadcell_read();
-                //vTaskDelay(1000 / portTICK_PERIOD_MS);
-                //display_weight(loadcell_read());
-
-                //vTaskDelay(10 / portTICK_PERIOD_MS); // Maybe the oled is not fast
-
-                // Battery
-                //display_voltage(battery_read());
                 xSemaphoreTake(ir_monitor_mutex, portMAX_DELAY);
 
                 if((ir_values_back[IR_D4] > CALIBRATION_BLACK_TAPE) || (ir_values_back[IR_D5] > CALIBRATION_BLACK_TAPE))
                 {
                     strcpy(turn_decision, "Straight");
                     pwm_drive(STRAIGHT);
-                    
-                }else if ((ir_values_back[IR_D3] > CALIBRATION_BLACK_TAPE))
+                }
+                else if ((ir_values_back[IR_D3] > CALIBRATION_BLACK_TAPE))
                 {
                     strcpy(turn_decision, "Right Light");
                     pwm_drive(RIGHT_TURN_LIGHT);
@@ -141,28 +123,34 @@ void app_main(void)
                 ir_sensor_put_web();
 
                 xSemaphoreGive(ir_monitor_mutex);
-
                 vTaskDelay(10 / portTICK_PERIOD_MS);
-                
             }
 
+
             if(decision[turns] == LEFT)
+            {
                 pwm_drive(LEFT_ROTATE_LIGHT);
+            }
             else
+            {
                 pwm_drive(RIGHT_ROTATE_LIGHT);
-                
+            }
+
             vTaskDelay(250 / portTICK_PERIOD_MS);
 
             while(!((ir_values_back[IR_D4] > CALIBRATION_BLACK_TAPE) || (ir_values_back[IR_D5] > CALIBRATION_BLACK_TAPE)))
             {
-                //ir_adc_multiplexer_check_front();
-                //ir_adc_multiplexer_check_back();
                 strcpy(turn_decision, "Intersection");
                 ir_sensor_put_web();
+
                 if(decision[turns] == LEFT)
+                {
                     pwm_drive(LEFT_ROTATE_LIGHT);
+                }
                 else
+                {
                     pwm_drive(RIGHT_ROTATE_LIGHT);
+                }
                     
                 vTaskDelay(10 / portTICK_PERIOD_MS);
             } 
@@ -170,38 +158,12 @@ void app_main(void)
             pwm_drive(STRAIGHT);
             vTaskDelay(250 / portTICK_PERIOD_MS);
 
-            turns++;    
+            turns++;
         }
-
-        //goto line_follower;
-
-    
-        //ESP_LOGI(main_name, "\n");
-        //vTaskDelay(2500 / portTICK_PERIOD_MS);
-        //ir_adc_multiplexer_check_back();
         
-        vTaskDelay(1 / portTICK_PERIOD_MS);
-        
-        //printf("\nFront:\n");
-        //isolate_line(ir_values_front);
-        //vTaskDelay(10 / portTICK_PERIOD_MS);
-        //printf("\n");
-        //printf("\nBack:\n");
-        //isolate_line(ir_values_back);
-        
-            
+        vTaskDelay(1 / portTICK_PERIOD_MS);  
     }
         
-        if(check_endstop_up() == 1) {
-            // Endstop reached
-            direction_set(M_MOTOR, DOWNWARD);
-        }
-        else if (check_endstop_down == 1)
-        {
-            direction_set(M_MOTOR, UPWARD);
-        }
-
-        // Giving the operating system room to breath
-        vTaskDelay(30 / portTICK_PERIOD_MS);        
-
+    // Giving the operating system room to breath
+    vTaskDelay(30 / portTICK_PERIOD_MS);        
 }
