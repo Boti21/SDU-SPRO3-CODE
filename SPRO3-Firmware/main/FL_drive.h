@@ -25,20 +25,20 @@
 #define CALIBRATION_FLOOR
 #define BORDER_VALUE
 
-#define BASE_SPEED_L 125
-#define BASE_SPEED_R 125
-#define ROTATE_LIGHT 125
+#define BASE_SPEED_L 150
+#define BASE_SPEED_R 150
+#define ROTATE_LIGHT 165
 #define ROTATE_STRONG 150
 
 #define STRAIGHT BASE_SPEED_L , BASE_SPEED_R
 #define STOP 0 , 0
 
-#define RIGHT_TURN_LIGHT 125 , 95
+#define RIGHT_TURN_LIGHT 130 , 105
 #define RIGHT_TURN_STRONG 200 , 80
 #define RIGHT_ROTATE_LIGHT ROTATE_LIGHT , -ROTATE_LIGHT
 #define RIGHT_ROTATE_STRONG ROTATE_STRONG , -ROTATE_STRONG
 
-#define LEFT_TURN_LIGHT 95 , 125
+#define LEFT_TURN_LIGHT 105 , 130
 #define LEFT_TURN_STRONG 80 , 200
 #define LEFT_ROTATE_LIGHT -ROTATE_LIGHT , ROTATE_LIGHT
 #define LEFT_ROTATE_STRONG -ROTATE_STRONG , ROTATE_STRONG
@@ -64,6 +64,12 @@
 #define FORWARD 1
 #define DOWNWARD 0
 #define UPWARD 1
+
+#define LEFT -1
+#define RIGHT 1
+
+int turns = 0;
+int decision[] = {LEFT, LEFT, RIGHT, RIGHT, RIGHT, RIGHT, LEFT, LEFT};
 
 void pwm_set(int motor, int duty){
     ledc_set_duty(LEDC_LOW_SPEED_MODE, motor, duty);  

@@ -101,56 +101,79 @@ void app_main(void)
         //ir_adc_multiplexer_check_front();
         //vTaskDelay(10 / portTICK_PERIOD_MS);
         //ir_adc_multiplexer_check_back();
-
-        while(!((ir_values_front[IR_D1] > 2000) && (ir_values_front[IR_D8] > 700)))
-        {   
-            line_follower:
-
-            loadcell_read();
-            vTaskDelay(1000 / portTICK_PERIOD_MS);
-            //display_weight(loadcell_read());
-
-            //vTaskDelay(10 / portTICK_PERIOD_MS); // Maybe the oled is not fast
-
-            // Battery
-            //display_voltage(battery_read());
-            xSemaphoreTake(ir_monitor_mutex, portMAX_DELAY);
-
-            if((ir_values_back[IR_D4] > CALIBRATION_BLACK_TAPE) || (ir_values_back[IR_D5] > CALIBRATION_BLACK_TAPE))
-            {
-                strcpy(turn_decision, "Straight");
-                pwm_drive(STRAIGHT);
-                
-            }else if ((ir_values_back[IR_D3] > CALIBRATION_BLACK_TAPE))
-            {
-                strcpy(turn_decision, "Right Light");
-                pwm_drive(RIGHT_TURN_LIGHT);
-            }
-            else if ((ir_values_back[IR_D6] > CALIBRATION_BLACK_TAPE))
-            {
-                strcpy(turn_decision, "Left Light");
-                pwm_drive(LEFT_TURN_LIGHT);
-            }
-
-            ir_sensor_put_web();
-
-            xSemaphoreGive(ir_monitor_mutex);
-
-            vTaskDelay(10 / portTICK_PERIOD_MS);
-            
-        }
-
-        while(!((ir_values_back[IR_D4] > CALIBRATION_BLACK_TAPE) || (ir_values_back[IR_D5] > CALIBRATION_BLACK_TAPE)))
+        turns = 0;
+        
+        while (turns < 8)
         {
-            //ir_adc_multiplexer_check_front();
-            //ir_adc_multiplexer_check_back();
-            strcpy(turn_decision, "Intersection");
-            ir_sensor_put_web();
-            pwm_drive(RIGHT_ROTATE_LIGHT);
-            vTaskDelay(10 / portTICK_PERIOD_MS);
+            /* code */
+        
+
+            while(!((ir_values_front[IR_D1] > 2000) && (ir_values_front[IR_D8] > 700)))
+            {   
+                // line_follower:
+
+                loadcell_read();
+                //vTaskDelay(1000 / portTICK_PERIOD_MS);
+                //display_weight(loadcell_read());
+
+                //vTaskDelay(10 / portTICK_PERIOD_MS); // Maybe the oled is not fast
+
+                // Battery
+                //display_voltage(battery_read());
+                xSemaphoreTake(ir_monitor_mutex, portMAX_DELAY);
+
+                if((ir_values_back[IR_D4] > CALIBRATION_BLACK_TAPE) || (ir_values_back[IR_D5] > CALIBRATION_BLACK_TAPE))
+                {
+                    strcpy(turn_decision, "Straight");
+                    pwm_drive(STRAIGHT);
+                    
+                }else if ((ir_values_back[IR_D3] > CALIBRATION_BLACK_TAPE))
+                {
+                    strcpy(turn_decision, "Right Light");
+                    pwm_drive(RIGHT_TURN_LIGHT);
+                }
+                else if ((ir_values_back[IR_D6] > CALIBRATION_BLACK_TAPE))
+                {
+                    strcpy(turn_decision, "Left Light");
+                    pwm_drive(LEFT_TURN_LIGHT);
+                }
+
+                ir_sensor_put_web();
+
+                xSemaphoreGive(ir_monitor_mutex);
+
+                vTaskDelay(10 / portTICK_PERIOD_MS);
+                
+            }
+
+            if(decision[turns] == LEFT)
+                pwm_drive(LEFT_ROTATE_LIGHT);
+            else
+                pwm_drive(RIGHT_ROTATE_LIGHT);
+                
+            vTaskDelay(250 / portTICK_PERIOD_MS);
+
+            while(!((ir_values_back[IR_D4] > CALIBRATION_BLACK_TAPE) || (ir_values_back[IR_D5] > CALIBRATION_BLACK_TAPE)))
+            {
+                //ir_adc_multiplexer_check_front();
+                //ir_adc_multiplexer_check_back();
+                strcpy(turn_decision, "Intersection");
+                ir_sensor_put_web();
+                if(decision[turns] == LEFT)
+                    pwm_drive(LEFT_ROTATE_LIGHT);
+                else
+                    pwm_drive(RIGHT_ROTATE_LIGHT);
+                    
+                vTaskDelay(10 / portTICK_PERIOD_MS);
+            } 
+
+            pwm_drive(STRAIGHT);
+            vTaskDelay(250 / portTICK_PERIOD_MS);
+
+            turns++;    
         }
 
-        goto line_follower;
+        //goto line_follower;
 
     
         //ESP_LOGI(main_name, "\n");
