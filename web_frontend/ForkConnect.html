@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
         <meta charset="UTF-8">
-        <meta http-equiv="refresh" content="3">
+        <meta http-equiv="refresh" content="7">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
         <title>Forklift connect</title>
@@ -87,7 +87,7 @@
                 font-weight: bold;
                 border:none;
                 color:azure;
-                background-color: red;
+                background-color: green;
                 cursor:pointer;
                 border-radius: 50px;
                 position:relative;
@@ -101,7 +101,7 @@
                 font-weight: bold;
                 border:none;
                 color:azure;
-                background-color: green;
+                background-color: red;
                 cursor:pointer;
                 border-radius: 50px;
                 position:relative;
@@ -154,17 +154,21 @@
             <p> You can choose a pallet and place it one of our fields:</p>
             
             <form action="/drop" method="post">
-
-                <label for="dropdown1"> Choose pallet:</label>
+                
+                <label for="dropdown1"> Choose floor:</label>
                 <select id="dropdown1" name="dropdown1">
-                    <option value="option1"> pallet 1</option>
-                    <option value="option2"> pallet 2</option>
+                    <option value="FloorOne"> Floor One</option>
+                    <option value="FloorTwo"> Floor Two</option>
                 </select>
-
-                <label for="dropdown2"> Choose field:</label>
+                <input type="submit" value="Submit">
+                
+            </form>
+                
+            <form action="/drop" method="post">
+                <label for="dropdown2"> Choose side:</label>
                 <select id="dropdown2" name="dropdown2">
-                    <option value="choiceA"> Field A</option>
-                    <option value="ChoiceB"> Field B</option>
+                    <option value="left"> Left </option>
+                    <option value="right"> Right </option>
                 </select>
 
                 <input type="submit" value="Submit">
