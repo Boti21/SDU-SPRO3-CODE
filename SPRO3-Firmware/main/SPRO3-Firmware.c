@@ -17,10 +17,11 @@
 
 // ForkLift includes
 #include "FL_ultrasonic.h"
-#include "FL_drive.h"
 #include "FL_ADC_IR.h"
+#include "FL_drive.h"
 #include "FL_threads.h"
 #include "FL_fork_connect.h"
+
 
 #ifndef FL_DISPLAY_H
 #include "FL_display.h"
@@ -61,12 +62,20 @@ void app_main(void)
     init_adc();
     init_multiplexer();
     init_ultrasonic();
-    init_display();
+    //init_display();
     
     init_pwm(M_MOTOR, M_MOTOR_GPIO);
     init_pwm(L_MOTOR, L_MOTOR_GPIO);
     init_pwm(R_MOTOR, R_MOTOR_GPIO);
     init_direction_change();
+    
+    init_endstop();
+    
+    drive_down_fork();
+    direction_set(M_MOTOR, UPWARD);
+    pwm_set(M_MOTOR, 250);
+    vTaskDelay(5000 / portTICK_PERIOD_MS);
+    pwm_set(M_MOTOR, 0);
     
 
     xTaskCreatePinnedToCore (ir_sensor_monitor, //Function to implement the task
@@ -76,7 +85,7 @@ void app_main(void)
                             60, //Priority of the task
                             NULL, //Task handle.
                             APP_CPU_NUM); //Core where the task should run
-    
+    /*
     xTaskCreatePinnedToCore(loadcell_monitor,
                             "load_cell_monitor",
                             3000,
@@ -85,19 +94,21 @@ void app_main(void)
                             NULL,
                             PRO_CPU_NUM);
     
+    */
     
     vTaskDelay(1000 / portTICK_PERIOD_MS);
-    pwm_drive(STRAIGHT);
+    //pwm_drive(STRAIGHT);
 
-    direction_set(M_MOTOR, UPWARD);
-    //pwm_set(M_MOTOR, 255);
 
     for (EVER) 
     {        
         ESP_LOGI(main_name, "Main loop...");
-
-        turns = 0;
         
+        drop_pallet(3, 3);
+        
+        vTaskDelay(10 / portTICK_PERIOD_MS);
+        /*
+        turns = 0;
         while(turns < 8)
         {
             while(!((ir_values_front[IR_D1] > 2000) && (ir_values_front[IR_D8] > 700)))
@@ -160,6 +171,7 @@ void app_main(void)
 
             turns++;
         }
+        */
         
         vTaskDelay(1 / portTICK_PERIOD_MS);  
     }

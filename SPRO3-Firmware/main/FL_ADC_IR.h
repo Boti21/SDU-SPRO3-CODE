@@ -44,14 +44,6 @@
 #define IR_BACK_D4_GPIO ADC1_8 // GPIO_NUM_25
 #define IR_BACK_D5_GPIO ADC1_9 // GPIO_NUM_26
 
-#define IR_D1 0
-#define IR_D2 1
-#define IR_D3 2
-#define IR_D4 3
-#define IR_D5 4
-#define IR_D6 5
-#define IR_D7 6
-#define IR_D8 7
 
 #define LOAD_CELL_SLOPE 2625 // Slope of ideal line
 #define LOAD_CELL_OFFSET -1050 // Offset of ideal line, slightly changed for more accurate results
@@ -252,7 +244,7 @@ void ir_adc_multiplexer_check_back_thread(void) // prev front
     //printf("Back:\n");
     for(int i = 0; i < 8; i++) {
         set_multiplexer1_channel(i);
-        vTaskDelay(2 / portTICK_PERIOD_MS);
+        vTaskDelay(3 / portTICK_PERIOD_MS);
         
         xSemaphoreTake(ir_monitor_mutex, portMAX_DELAY);
         adc_oneshot_read(adc1_handle, ADC1_0, &ir_values_back[i]);
@@ -271,7 +263,7 @@ void ir_adc_multiplexer_check_front_thread(void)  // prev back
     //printf("Front:\n");
     for(int i = 0; i < 8; i++) {
         set_multiplexer2_channel(7 - i); // To achieve that D1 is to the left in the array
-        vTaskDelay(2 / portTICK_PERIOD_MS);
+        vTaskDelay(3 / portTICK_PERIOD_MS);
 
         xSemaphoreTake(ir_monitor_mutex, portMAX_DELAY);
         adc_oneshot_read(adc1_handle, ADC1_3, &ir_values_front[i]);
@@ -429,7 +421,7 @@ void isolate_line(int* sensor_values)
     
     for(int i = 0; i < 8; i++)
     {
-        if (sensor_values[i] > CALIBRATION_BLACK_TAPE)
+        if (sensor_values[i] > 2000)
         {
             printf("   1  ");
         } else

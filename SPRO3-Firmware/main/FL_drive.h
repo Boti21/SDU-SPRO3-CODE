@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
@@ -13,6 +14,8 @@
 #include "esp_log.h"
 #include "esp_err.h"
 
+//#include "FL_endstop.h"
+
 #define CALIBRATION_BLACK_TAPE 2000
 #define CALIBRATION_FLOOR_D1_BACK
 #define CALIBRATION_FLOOR_D2_BACK
@@ -25,20 +28,32 @@
 #define CALIBRATION_FLOOR
 #define BORDER_VALUE
 
+#define IR_D1 0
+#define IR_D2 1
+#define IR_D3 2
+#define IR_D4 3
+#define IR_D5 4
+#define IR_D6 5
+#define IR_D7 6
+#define IR_D8 7
+
 #define BASE_SPEED_L 150
 #define BASE_SPEED_R 150
 #define ROTATE_LIGHT 165
 #define ROTATE_STRONG 150
 
 #define STRAIGHT BASE_SPEED_L , BASE_SPEED_R
+#define REVERSE -BASE_SPEED_L , -BASE_SPEED_R
 #define STOP 0 , 0
 
 #define RIGHT_TURN_LIGHT 130 , 105
+#define RIGHT_TURN_LIGHT_REV -130 , -105
 #define RIGHT_TURN_STRONG 200 , 80
 #define RIGHT_ROTATE_LIGHT ROTATE_LIGHT , -ROTATE_LIGHT
 #define RIGHT_ROTATE_STRONG ROTATE_STRONG , -ROTATE_STRONG
 
 #define LEFT_TURN_LIGHT 105 , 130
+#define LEFT_TURN_LIGHT_REV -105 , -130
 #define LEFT_TURN_STRONG 80 , 200
 #define LEFT_ROTATE_LIGHT -ROTATE_LIGHT , ROTATE_LIGHT
 #define LEFT_ROTATE_STRONG -ROTATE_STRONG , ROTATE_STRONG
@@ -66,10 +81,22 @@
 #define UPWARD 1
 
 #define LEFT -1
+#define STEP 0
 #define RIGHT 1
+#define END 2
+
+
+#define ENDSTOP_UP GPIO_NUM_15
+#define ENDSTOP_DOWN GPIO_NUM_22
+
 
 int turns = 0;
-int decision[] = {LEFT, LEFT, RIGHT, RIGHT, RIGHT, RIGHT, LEFT, LEFT};
+int decision[10] = {END};
+
+int X_c = 1; // Entry point X
+int Y_c = 1; // Entry point Y
+int X_t = 1;
+int Y_t = 1;
 
 void pwm_set(int motor, int duty){
     ledc_set_duty(LEDC_LOW_SPEED_MODE, motor, duty);  
@@ -182,6 +209,29 @@ void direction_set(int motor, int direction)
     }
 }
 
+void init_endstop(void)
+{
+    gpio_reset_pin(ENDSTOP_UP);
+    gpio_intr_disable(ENDSTOP_UP);
+    gpio_set_direction(ENDSTOP_UP, GPIO_MODE_INPUT);
+    gpio_pullup_en(ENDSTOP_UP);
+
+    gpio_reset_pin(ENDSTOP_DOWN);
+    gpio_intr_disable(ENDSTOP_DOWN);
+    gpio_set_direction(ENDSTOP_DOWN, GPIO_MODE_INPUT);
+    gpio_pullup_en(ENDSTOP_DOWN);
+}
+
+int check_endstop_up(void)
+{
+    return gpio_get_level(ENDSTOP_UP);
+}
+
+int check_endstop_down(void)
+{
+    return gpio_get_level(ENDSTOP_DOWN);
+}
+
 void pwm_drive(int duty_L, int duty_R)
 {
     if (duty_L < 0) 
@@ -206,6 +256,159 @@ void pwm_drive(int duty_L, int duty_R)
     pwm_set(R_MOTOR, abs(duty_R));
 }
 
+void step(void)
+{
+    pwm_drive(STRAIGHT);
+    vTaskDelay(250 / portTICK_PERIOD_MS);
+
+    while(!((ir_values_front[IR_D1] > 2000) && (ir_values_front[IR_D8] > 700)))
+    {   
+        xSemaphoreTake(ir_monitor_mutex, portMAX_DELAY);
+
+        if((ir_values_back[IR_D4] > CALIBRATION_BLACK_TAPE) || (ir_values_back[IR_D5] > CALIBRATION_BLACK_TAPE))
+        {
+            strcpy(turn_decision, "Straight");
+            pwm_drive(STRAIGHT);
+        }
+        else if ((ir_values_back[IR_D3] > CALIBRATION_BLACK_TAPE))
+        {
+            strcpy(turn_decision, "Right Light");
+            pwm_drive(RIGHT_TURN_LIGHT);
+        }
+        else if ((ir_values_back[IR_D6] > CALIBRATION_BLACK_TAPE))
+        {
+            strcpy(turn_decision, "Left Light");
+            pwm_drive(LEFT_TURN_LIGHT);
+        }
+
+        ir_sensor_put_web();
+
+        xSemaphoreGive(ir_monitor_mutex);
+        vTaskDelay(10 / portTICK_PERIOD_MS);
+    }
+
+    pwm_drive(STOP);
+}
+
+void step_back(void)
+{
+    pwm_drive(REVERSE);
+    vTaskDelay(500 / portTICK_PERIOD_MS);
+
+    while(!((ir_values_front[IR_D1] > 2000) && (ir_values_front[IR_D8] > 700)))
+    {   
+        xSemaphoreTake(ir_monitor_mutex, portMAX_DELAY);
+
+        if((ir_values_back[IR_D4] > CALIBRATION_BLACK_TAPE) || (ir_values_back[IR_D5] > CALIBRATION_BLACK_TAPE))
+        {
+            strcpy(turn_decision, "Reverse");
+            pwm_drive(REVERSE);
+        }
+        else if ((ir_values_back[IR_D6] > CALIBRATION_BLACK_TAPE))
+        {
+            strcpy(turn_decision, "Right Light");
+            pwm_drive(RIGHT_TURN_LIGHT_REV);
+        }
+        else if ((ir_values_back[IR_D3] > CALIBRATION_BLACK_TAPE))
+        {
+            strcpy(turn_decision, "Left Light");
+            pwm_drive(LEFT_TURN_LIGHT_REV);
+        }
+
+        ir_sensor_put_web();
+
+        xSemaphoreGive(ir_monitor_mutex);
+        vTaskDelay(10 / portTICK_PERIOD_MS);
+    }
+
+    pwm_drive(STOP);
+}
+
+void turn(int direction)
+{
+    if(direction == LEFT)
+    {
+        pwm_drive(LEFT_ROTATE_LIGHT);
+    }
+    else
+    {
+        pwm_drive(RIGHT_ROTATE_LIGHT);
+    }
+
+    vTaskDelay(500 / portTICK_PERIOD_MS);
+
+    while(!((ir_values_back[IR_D4] > CALIBRATION_BLACK_TAPE) || (ir_values_back[IR_D5] > CALIBRATION_BLACK_TAPE)))
+    {
+        strcpy(turn_decision, "Intersection");
+        ir_sensor_put_web();
+
+        if(direction == LEFT)
+        {
+            pwm_drive(LEFT_ROTATE_LIGHT);
+        }
+        else
+        {
+            pwm_drive(RIGHT_ROTATE_LIGHT);
+        }
+            
+        vTaskDelay(10 / portTICK_PERIOD_MS);
+    } 
+
+    pwm_drive(STRAIGHT);
+    vTaskDelay(250 / portTICK_PERIOD_MS);
+    pwm_drive(STOP);
+
+}
+
+void drive_down_fork(void)
+{
+    direction_set(M_MOTOR, DOWNWARD);
+    pwm_set(M_MOTOR, 250);
+    while (!(check_endstop_down() == 0))
+    {        
+        if(check_endstop_down() == 0) 
+        {
+            vTaskDelay(275 / portTICK_PERIOD_MS);
+            pwm_set(M_MOTOR, 0);
+            break;
+        }
+        vTaskDelay(10 / portTICK_PERIOD_MS);
+    }
+    
+}
+
+void drop_pallet(int x_target, int y_target)
+{
+    step();
+    step();
+    turn(LEFT);
+
+    for (int i = 0; i < (y_target -1); i++)
+    {
+        step();
+    }
+
+    if (x_target == 1)
+    {
+        turn(RIGHT);
+    }
+    else
+    {
+        turn(LEFT);
+    }    
+    step_back();
+    step_back();
+    
+    drive_down_fork();
+
+    step();
+    
+    direction_set(M_MOTOR, UPWARD);
+    pwm_set(M_MOTOR, 250);
+    vTaskDelay(5000 / portTICK_PERIOD_MS);
+    pwm_set(M_MOTOR, 0);
+    
+}
 
 /*
 void drive_intersections(int intersection_count) 
