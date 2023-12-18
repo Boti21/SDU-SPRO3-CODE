@@ -74,7 +74,7 @@ void app_main(void)
     drive_down_fork();
     direction_set(M_MOTOR, UPWARD);
     pwm_set(M_MOTOR, 250);
-    vTaskDelay(5000 / portTICK_PERIOD_MS);
+    vTaskDelay(10000 / portTICK_PERIOD_MS);
     pwm_set(M_MOTOR, 0);
     
 
