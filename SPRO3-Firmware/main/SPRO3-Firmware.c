@@ -70,11 +70,13 @@ void app_main(void)
     init_direction_change();
     
     init_endstop();
+
+    xEventGroupWaitBits(FL_events, START_BUTTON_PRESS, pdTRUE, pdTRUE, portMAX_DELAY);
     
     drive_down_fork();
     direction_set(M_MOTOR, UPWARD);
     pwm_set(M_MOTOR, 250);
-    vTaskDelay(10000 / portTICK_PERIOD_MS);
+    vTaskDelay(30000 / portTICK_PERIOD_MS);
     pwm_set(M_MOTOR, 0);
     
 
@@ -105,6 +107,8 @@ void app_main(void)
         ESP_LOGI(main_name, "Main loop...");
         
         drop_pallet(3, 3);
+
+        xEventGroupWaitBits(FL_events, START_BUTTON_PRESS, pdTRUE, pdTRUE, portMAX_DELAY);
         
         vTaskDelay(10 / portTICK_PERIOD_MS);
         /*
