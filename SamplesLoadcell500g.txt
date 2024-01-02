@@ -1,0 +1,38 @@
+I (50678) LOADCELL:: loadcell voltage: 0.587839
+I (50678) LOADCELL:: loadcell voltage converted: 493
+I (51688) LOADCELL:: loadcell voltage: 0.589011
+I (51688) LOADCELL:: loadcell voltage converted: 496
+I (52698) LOADCELL:: loadcell voltage: 0.591355
+I (52698) LOADCELL:: loadcell voltage converted: 502
+I (53708) LOADCELL:: loadcell voltage: 0.581978
+I (53708) LOADCELL:: loadcell voltage converted: 477
+I (54718) LOADCELL:: loadcell voltage: 0.587839
+I (54718) LOADCELL:: loadcell voltage converted: 493
+I (55728) LOADCELL:: loadcell voltage: 0.575531
+I (55728) LOADCELL:: loadcell voltage converted: 460
+I (56738) LOADCELL:: loadcell voltage: 0.584908
+I (56738) LOADCELL:: loadcell voltage converted: 485
+I (57748) LOADCELL:: loadcell voltage: 0.593114
+I (57748) LOADCELL:: loadcell voltage converted: 506
+I (58758) LOADCELL:: loadcell voltage: 0.577289
+I (58758) LOADCELL:: loadcell voltage converted: 465
+I (59768) LOADCELL:: loadcell voltage: 0.573773
+I (59768) LOADCELL:: loadcell voltage converted: 456
+I (60778) LOADCELL:: loadcell voltage: 0.606593
+I (60778) LOADCELL:: loadcell voltage converted: 542
+I (61788) LOADCELL:: loadcell voltage: 0.581978
+I (61788) LOADCELL:: loadcell voltage converted: 477
+I (62798) LOADCELL:: loadcell voltage: 0.574945
+I (62798) LOADCELL:: loadcell voltage converted: 459
+I (63808) LOADCELL:: loadcell voltage: 0.590769
+I (63808) LOADCELL:: loadcell voltage converted: 500
+I (64818) LOADCELL:: loadcell voltage: 0.581392
+I (64818) LOADCELL:: loadcell voltage converted: 476
+I (65828) LOADCELL:: loadcell voltage: 0.587253
+I (65828) LOADCELL:: loadcell voltage converted: 491
+I (66838) LOADCELL:: loadcell voltage: 0.584908
+I (66838) LOADCELL:: loadcell voltage converted: 485
+I (67848) LOADCELL:: loadcell voltage: 0.583150
+I (67848) LOADCELL:: loadcell voltage converted: 480
+I (68858) LOADCELL:: loadcell voltage: 0.610696
+I (68858) LOADCELL:: loadcell voltage converted: 553

@@ -1,9 +1,9 @@
 !main/SPRO3-Firmware.c
 !ESP_pic.png
 !Pinout.png
+!Pathfinding_algorithm
 
 .vscode
 *.txt
 build
-sdkconfig
 .editorconfig
